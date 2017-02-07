@@ -2,7 +2,8 @@
 using System.Runtime.InteropServices;
 
 using System.Windows.Markup;
-using System; 
+using System;
+using System.Resources; 
 
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、

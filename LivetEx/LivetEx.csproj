@@ -38,7 +38,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-	 <SupportedCultures>ja-JP</SupportedCultures>
+    <SupportedCultures>ja-JP</SupportedCultures>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -91,12 +91,13 @@
     <Compile Include="Commands\ListenerCommand.cs" />
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\AnonymousPropertyChangedEventHandlerBag.cs" />
-    <Compile Include="WeakEventListeners\CollectionChangedWeakEventListener.cs" />
-    <Compile Include="WeakEventListeners\PropertyChangedWeakEventListener.cs" />
+    <Compile Include="Messaging\TransitionMessageGeneric.cs" />
+    <Compile Include="WeakEventListeners\LivetCollectionChangedWeakEventListener.cs" />
+    <Compile Include="WeakEventListeners\LivetPropertyChangedWeakEventListener.cs" />
     <Compile Include="LivetCompositeDisposable.cs" />
-    <Compile Include="EventListeners\CollectionChangedEventListener.cs" />
-    <Compile Include="EventListeners\EventListener.cs" />
-    <Compile Include="EventListeners\PropertyChangedEventListener.cs" />
+    <Compile Include="EventListeners\LivetCollectionChangedEventListener.cs" />
+    <Compile Include="EventListeners\LivetEventListener.cs" />
+    <Compile Include="EventListeners\LivetPropertyChangedEventListener.cs" />
     <Compile Include="Messaging\GenericInteractionMessage.cs" />
     <Compile Include="Messaging\GenericResponsiveInteractionMessage.cs" />
     <Compile Include="Messaging\MessageListener.cs" />

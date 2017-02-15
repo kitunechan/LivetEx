@@ -13,7 +13,7 @@ namespace LivetEx.WeakEventListeners
     /// <summary>
     /// INotifyPropertyChanged.PropertyChangedを受信するためのWeakイベントリスナです。
     /// </summary>
-    public sealed class PropertyChangedWeakEventListener : LivetWeakEventListener<PropertyChangedEventHandler,PropertyChangedEventArgs>,IEnumerable<KeyValuePair<string,List<PropertyChangedEventHandler>>>
+    public sealed class LivetPropertyChangedWeakEventListener : LivetWeakEventListener<PropertyChangedEventHandler,PropertyChangedEventArgs>,IEnumerable<KeyValuePair<string,List<PropertyChangedEventHandler>>>
     {
          private AnonymousPropertyChangedEventHandlerBag _bag;
 
@@ -21,7 +21,7 @@ namespace LivetEx.WeakEventListeners
         /// コンストラクタ
         /// </summary>
         /// <param name="source">INotifyPropertyChangedオブジェクト</param>
-        public PropertyChangedWeakEventListener(INotifyPropertyChanged source)
+        public LivetPropertyChangedWeakEventListener(INotifyPropertyChanged source)
         {
             _bag = new AnonymousPropertyChangedEventHandlerBag(source);
             Initialize(
@@ -36,7 +36,7 @@ namespace LivetEx.WeakEventListeners
         /// </summary>
         /// <param name="source">INotifyPropertyChangedオブジェクト</param>
         /// <param name="handler">PropertyChangedイベントハンドラ</param>
-        public PropertyChangedWeakEventListener(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
+        public LivetPropertyChangedWeakEventListener(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
            _bag = new AnonymousPropertyChangedEventHandlerBag(source,handler);
            Initialize(

@@ -28,8 +28,8 @@ namespace LivetEx
 
             _list = collection;
 
-            _listeners.Add(new PropertyChangedEventListener(_list,(sender, e) => OnPropertyChanged(e)));
-            _listeners.Add(new CollectionChangedEventListener(_list,(sender,e) => OnCollectionChanged(e)));
+            _listeners.Add(new LivetPropertyChangedEventListener(_list,(sender, e) => OnPropertyChanged(e)));
+            _listeners.Add(new LivetCollectionChangedEventListener(_list,(sender,e) => OnCollectionChanged(e)));
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ namespace LivetEx.EventListeners
     /// 汎用イベントリスナオブジェクトです。
     /// </summary>
     /// <typeparam name="THandler">イベントハンドラーの型</typeparam>
-    public class EventListener<THandler> : IDisposable where THandler : class
+    public class LivetEventListener<THandler> : IDisposable where THandler : class
     {
         private THandler _handler;
         private Action<THandler> _add;
@@ -21,13 +21,13 @@ namespace LivetEx.EventListeners
         /// <param name="add">h => obj.Event += > h の様な形でイベントの購読を登録するためのAction。hはTHandler型です。</param>
         /// <param name="remove">h => obj.Event -= > h の様な形でイベントの購読を解除するためのAction。hはTHandler型です。</param>
         /// <param name="handler">イベントを受信した際に行いたいアクション</param>
-        public EventListener(Action<THandler> add, Action<THandler> remove, THandler handler)
+        public LivetEventListener(Action<THandler> add, Action<THandler> remove, THandler handler)
         {
             Initialize(add, remove, handler);
             _initialized = true;
         }
 
-        protected EventListener()
+        protected LivetEventListener()
         {
 
         }

@@ -82,7 +82,8 @@ namespace LivetEx.Behaviors
                         if ((!_argumentType.IsSubclassOf(parameters[0].ParameterType)) && (_argumentType != parameters[0].ParameterType)) return false;
                     }
 
-                    return method.ReturnType == typeof(void);
+					return true;
+                    //return method.ReturnType == typeof(void);
                 });
 
             if (_methodInfo == null)

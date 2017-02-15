@@ -12,7 +12,7 @@ namespace LivetEx.WeakEventListeners
     /// <summary>
     /// INotifyCollectionChanged.NotifyCollectionChangedを受信するためのWeakイベントリスナです。
     /// </summary>
-    public sealed class CollectionChangedWeakEventListener : LivetWeakEventListener<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>, IEnumerable<KeyValuePair<NotifyCollectionChangedAction, List<NotifyCollectionChangedEventHandler>>>
+    public sealed class LivetCollectionChangedWeakEventListener : LivetWeakEventListener<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>, IEnumerable<KeyValuePair<NotifyCollectionChangedAction, List<NotifyCollectionChangedEventHandler>>>
     {
         private AnonymousCollectionChangedEventHandlerBag _bag;
 
@@ -20,7 +20,7 @@ namespace LivetEx.WeakEventListeners
         /// コンストラクタ
         /// </summary>
         /// <param name="source">INotifyCollectionChangedオブジェクト</param>
-        public CollectionChangedWeakEventListener(INotifyCollectionChanged source)
+        public LivetCollectionChangedWeakEventListener(INotifyCollectionChanged source)
         {
             _bag = new AnonymousCollectionChangedEventHandlerBag(source);
             Initialize(
@@ -35,7 +35,7 @@ namespace LivetEx.WeakEventListeners
         /// </summary>
         /// <param name="source">INotifyCollectionChangedオブジェクト</param>
         /// <param name="handler">NotifyCollectionChangedイベントハンドラ</param>
-        public CollectionChangedWeakEventListener(INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
+        public LivetCollectionChangedWeakEventListener(INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
         {
             _bag = new AnonymousCollectionChangedEventHandlerBag(source, handler);
             Initialize(

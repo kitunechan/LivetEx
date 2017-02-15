@@ -10,7 +10,7 @@ namespace LivetEx.EventListeners
     /// <summary>
     /// INotifyCollectionChanged.NotifyCollectionChangedを受信するためのイベントリスナです。
     /// </summary>
-    public sealed class CollectionChangedEventListener : EventListener<NotifyCollectionChangedEventHandler>, IEnumerable<KeyValuePair<NotifyCollectionChangedAction, List<NotifyCollectionChangedEventHandler>>>
+    public sealed class LivetCollectionChangedEventListener : LivetEventListener<NotifyCollectionChangedEventHandler>, IEnumerable<KeyValuePair<NotifyCollectionChangedAction, List<NotifyCollectionChangedEventHandler>>>
 
     {
         private AnonymousCollectionChangedEventHandlerBag _bag;
@@ -19,7 +19,7 @@ namespace LivetEx.EventListeners
         /// コンストラクタ
         /// </summary>
         /// <param name="source">INotifyCollectionChangedオブジェクト</param>
-        public CollectionChangedEventListener(INotifyCollectionChanged source)
+        public LivetCollectionChangedEventListener(INotifyCollectionChanged source)
         {
             _bag = new AnonymousCollectionChangedEventHandlerBag(source);
             Initialize(h => source.CollectionChanged += h, h => source.CollectionChanged -= h, (sender, e) => _bag.ExecuteHandler(e));
@@ -30,7 +30,7 @@ namespace LivetEx.EventListeners
         /// </summary>
         /// <param name="source">INotifyCollectionChangedオブジェクト</param>
         /// <param name="handler">NotifyCollectionChangedイベントハンドラ</param>
-        public CollectionChangedEventListener(INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
+        public LivetCollectionChangedEventListener(INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
         {
             _bag = new AnonymousCollectionChangedEventHandlerBag(source,handler);
             Initialize(h => source.CollectionChanged += h, h => source.CollectionChanged -= h, (sender, e) => _bag.ExecuteHandler(e));

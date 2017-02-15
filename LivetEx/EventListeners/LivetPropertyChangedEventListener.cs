@@ -10,7 +10,7 @@ namespace LivetEx.EventListeners
     /// <summary>
     /// INotifyPropertyChanged.PropertyChangedを受信するためのイベントリスナです。
     /// </summary>
-    public sealed class PropertyChangedEventListener : EventListener<PropertyChangedEventHandler>,IEnumerable<KeyValuePair<string,List<PropertyChangedEventHandler>>>
+    public sealed class LivetPropertyChangedEventListener : LivetEventListener<PropertyChangedEventHandler>,IEnumerable<KeyValuePair<string,List<PropertyChangedEventHandler>>>
     {
         private AnonymousPropertyChangedEventHandlerBag _bag;
 
@@ -18,7 +18,7 @@ namespace LivetEx.EventListeners
         /// コンストラクタ
         /// </summary>
         /// <param name="source">INotifyPropertyChangedオブジェクト</param>
-        public PropertyChangedEventListener(INotifyPropertyChanged source)
+        public LivetPropertyChangedEventListener(INotifyPropertyChanged source)
         {
             _bag = new AnonymousPropertyChangedEventHandlerBag(source);
             Initialize(h => source.PropertyChanged += h, h => source.PropertyChanged -= h, (sender, e) => _bag.ExecuteHandler(e));
@@ -29,7 +29,7 @@ namespace LivetEx.EventListeners
         /// </summary>
         /// <param name="source">INotifyPropertyChangedオブジェクト</param>
         /// <param name="handler">PropertyChangedイベントハンドラ</param>
-        public PropertyChangedEventListener(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
+        public LivetPropertyChangedEventListener(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
            _bag = new AnonymousPropertyChangedEventHandlerBag(source,handler);
            Initialize(h => source.PropertyChanged += h, h => source.PropertyChanged -= h, (sender, e) => _bag.ExecuteHandler(e));

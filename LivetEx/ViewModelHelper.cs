@@ -39,7 +39,7 @@ namespace LivetEx
             var target = new DispatcherCollection<TViewModel>(initCollection, dispatcher);
             var result = new ReadOnlyDispatcherCollection<TViewModel>(target);
 
-            var collectionChangedListener = new CollectionChangedEventListener(sourceAsNotifyCollection);
+            var collectionChangedListener = new LivetCollectionChangedEventListener(sourceAsNotifyCollection);
 
             result.EventListeners.Add(collectionChangedListener);
 

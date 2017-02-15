@@ -1,5 +1,6 @@
 ﻿using System.Windows.Interactivity;
 using System.Windows;
+using LivetEx.Messaging;
 
 namespace LivetEx.Behaviors {
 	/// <summary>
@@ -54,11 +55,29 @@ namespace LivetEx.Behaviors {
 			thisReference._parameterSet = true;
 		}
 
+		/// <summary>
+		/// MethodParameterをメッセージ(GenericInteractionMessage)から与えるかどうかを取得または設定します。
+		/// </summary>
+		[System.ComponentModel.Description( "MethodParameterをメッセージ(GenericInteractionMessage)から与えるかを示す値を取得または設定します。" )]
+		#region Register IsParameterToGenericInteractionMessage
+		public bool IsParameterToGenericInteractionMessage {
+			get { return (bool)GetValue( IsParameterToGenericInteractionMessageProperty ); }
+			set { SetValue( IsParameterToGenericInteractionMessageProperty, value ); }
+		}
+
+		// Using a DependencyProperty as the backing store for IsParameterToGenericInteractionMessage.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty IsParameterToGenericInteractionMessageProperty =
+			DependencyProperty.Register( "IsParameterToGenericInteractionMessage", typeof( bool ), typeof( LivetCallMethodAction ), new PropertyMetadata( false ) );
+		#endregion
+
+		
 		protected override void Invoke( object parameter ) {
 			if( MethodTarget == null ) return;
 			if( MethodName == null ) return;
 
-			if( !_parameterSet ) {
+			if( IsParameterToGenericInteractionMessage ) {
+				_callbackMethod.Invoke( MethodTarget, MethodName, ((GenericInteractionMessage)parameter).Value );
+			} else if( !_parameterSet ) {
 				_method.Invoke( MethodTarget, MethodName );
 			} else {
 				_callbackMethod.Invoke( MethodTarget, MethodName, MethodParameter );

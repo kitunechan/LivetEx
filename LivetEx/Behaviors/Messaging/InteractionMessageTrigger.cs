@@ -4,202 +4,174 @@ using System.Windows;
 using LivetEx.Messaging;
 using LivetEx.WeakEventListeners;
 
-namespace LivetEx.Behaviors.Messaging
-{
-    /// <summary>
-    /// ViewModelからの相互作用メッセージを受信し、アクションを実行します。
-    /// </summary>
-    public class InteractionMessageTrigger : TriggerBase<FrameworkElement>, IDisposable
-    {
-        private LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs> _listener;
-        private bool _disposed;
-        private bool _loaded = true;
+namespace LivetEx.Behaviors.Messaging {
+	/// <summary>
+	/// ViewModelからの相互作用メッセージを受信し、アクションを実行します。
+	/// </summary>
+	public class InteractionMessageTrigger: TriggerBase<FrameworkElement>, IDisposable {
+		private LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs> _listener;
+		private bool _disposed;
+		private bool _loaded = true;
 
-        /// <summary>
-        /// ViewModelのMessengerを指定、または取得します。
-        /// </summary>
-        public InteractionMessenger Messenger
-        {
-            get { return (InteractionMessenger)GetValue(MessengerProperty); }
-            set { SetValue(MessengerProperty, value); }
-        }
+		/// <summary>
+		/// ViewModelのMessengerを指定、または取得します。
+		/// </summary>
+		public InteractionMessenger Messenger {
+			get { return (InteractionMessenger)GetValue( MessengerProperty ); }
+			set { SetValue( MessengerProperty, value ); }
+		}
 
-        // Using a DependencyProperty as the backing store for Messenger.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MessengerProperty =
-            DependencyProperty.Register("Messenger", typeof(InteractionMessenger), typeof(InteractionMessageTrigger),
-                                        new PropertyMetadata(MessengerChanged));
+		// Using a DependencyProperty as the backing store for Messenger.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty MessengerProperty =
+			DependencyProperty.Register( "Messenger", typeof( InteractionMessenger ), typeof( InteractionMessageTrigger ),
+										new PropertyMetadata( MessengerChanged ) );
 
 
-        /// <summary>
-        /// アタッチされたオブジェクトがロードされている期間(Loaded~Unloaded)だけActionを実行するかどうかを指定、または取得します。デフォルトはfalseです。
-        /// </summary>
-        public bool InvokeActionsOnlyWhileAttatchedObjectLoaded
-        {
-            get { return (bool)GetValue(InvokeActionsOnlyWhileAttatchedObjectLoadedProperty); }
-            set { SetValue(InvokeActionsOnlyWhileAttatchedObjectLoadedProperty, value); }
-        }
+		/// <summary>
+		/// アタッチされたオブジェクトがロードされている期間(Loaded~Unloaded)だけActionを実行するかどうかを指定、または取得します。デフォルトはfalseです。
+		/// </summary>
+		public bool InvokeActionsOnlyWhileAttatchedObjectLoaded {
+			get { return (bool)GetValue( InvokeActionsOnlyWhileAttatchedObjectLoadedProperty ); }
+			set { SetValue( InvokeActionsOnlyWhileAttatchedObjectLoadedProperty, value ); }
+		}
 
-        // Using a DependencyProperty as the backing store for FireActionsOnlyWhileAttatchedObjectLoading.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty InvokeActionsOnlyWhileAttatchedObjectLoadedProperty =
-            DependencyProperty.Register("InvokeActionsOnlyWhileAttatchedObjectLoaded", typeof(bool), typeof(InteractionMessageTrigger), new PropertyMetadata(false));
+		// Using a DependencyProperty as the backing store for FireActionsOnlyWhileAttatchedObjectLoading.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty InvokeActionsOnlyWhileAttatchedObjectLoadedProperty =
+			DependencyProperty.Register( "InvokeActionsOnlyWhileAttatchedObjectLoaded", typeof( bool ), typeof( InteractionMessageTrigger ), new PropertyMetadata( false ) );
 
 
 
-        /// <summary>
-        /// このトリガーが有効かどうかを指定、または取得します。デフォルトはtrueです。
-        /// </summary>
-        public bool IsEnable
-        {
-            get { return (bool)GetValue(IsEnableProperty); }
-            set { SetValue(IsEnableProperty, value); }
-        }
+		/// <summary>
+		/// このトリガーが有効かどうかを指定、または取得します。デフォルトはtrueです。
+		/// </summary>
+		public bool IsEnable {
+			get { return (bool)GetValue( IsEnableProperty ); }
+			set { SetValue( IsEnableProperty, value ); }
+		}
 
-        // Using a DependencyProperty as the backing store for IsEnable.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty IsEnableProperty =
-            DependencyProperty.Register("IsEnable", typeof(bool), typeof(InteractionMessageTrigger), new PropertyMetadata(true));
-
+		// Using a DependencyProperty as the backing store for IsEnable.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty IsEnableProperty =
+			DependencyProperty.Register( "IsEnable", typeof( bool ), typeof( InteractionMessageTrigger ), new PropertyMetadata( true ) );
 
 
-        /// <summary>
-        /// このトリガーが反応する相互作用メッセージのメッセージキーを指定、または取得します。<br/>
-        /// このプロパティが指定されていない場合、このトリガーは全ての相互作用メッセージに反応します。
-        /// </summary>
-        public string MessageKey
-        {
-            get;
-            set;
-        }
 
-        private static void MessengerChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            var thisReference = obj as InteractionMessageTrigger;
+		/// <summary>
+		/// このトリガーが反応する相互作用メッセージのメッセージキーを指定、または取得します。<br/>
+		/// このプロパティが指定されていない場合、このトリガーは全ての相互作用メッセージに反応します。
+		/// </summary>
+		public string MessageKey {
+			get;
+			set;
+		}
 
-            if (e.OldValue == e.NewValue)
-            {
-                return;
-            }
+		private static void MessengerChanged( DependencyObject obj, DependencyPropertyChangedEventArgs e ) {
+			var thisReference = obj as InteractionMessageTrigger;
 
-            if (e.OldValue != null)
-            {
-                if (thisReference._listener != null)
-                {
-                    thisReference._listener.Dispose();
-                }
-            }
+			if( e.OldValue == e.NewValue ) {
+				return;
+			}
 
-            if (e.NewValue != null && thisReference != null)
-            {
-                var newMessenger = (InteractionMessenger)e.NewValue;
+			if( e.OldValue != null ) {
+				if( thisReference._listener != null ) {
+					thisReference._listener.Dispose();
+				}
+			}
 
-                thisReference._listener = new LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs>(
-                    h => h,
-                    h => newMessenger.Raised += h,
-                    h => newMessenger.Raised -= h,
-                    thisReference.MessageReceived);
-            }
-        }
+			if( e.NewValue != null && thisReference != null ) {
+				var newMessenger = (InteractionMessenger)e.NewValue;
 
-        private void MessageReceived(object sender, InteractionMessageRaisedEventArgs e)
-        {
-            var message = e.Message;
+				thisReference._listener = new LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs>(
+					h => h,
+					h => newMessenger.Raised += h,
+					h => newMessenger.Raised -= h,
+					thisReference.MessageReceived );
+			}
+		}
 
-            var cloneMessage = (InteractionMessage)message.Clone();
+		private void MessageReceived( object sender, InteractionMessageRaisedEventArgs e ) {
+			var message = e.Message;
 
-            cloneMessage.Freeze();
+			var cloneMessage = (InteractionMessage)message.Clone();
 
-            var checkResult = false;
+			cloneMessage.Freeze();
 
-            Action checkAction = () =>
-                {
-                    if (!IsEnable) return;
+			var checkResult = false;
 
-                    if (InvokeActionsOnlyWhileAttatchedObjectLoaded && (!_loaded)) return;
+			Action checkAction = () => {
+					if( !IsEnable ) return;
 
-                    if (!(string.IsNullOrEmpty(MessageKey) || MessageKey == cloneMessage.MessageKey)) return;
+					if( InvokeActionsOnlyWhileAttatchedObjectLoaded && ( !_loaded ) ) return;
 
-                    checkResult = true;
-                };
+					if( !( string.IsNullOrEmpty( MessageKey ) || MessageKey == cloneMessage.MessageKey ) ) return;
 
-            DoActionOnDispatcher(checkAction);
+					checkResult = true;
+				};
 
-            if (!checkResult)
-            {
-                return;
-            }
+			DoActionOnDispatcher( checkAction );
 
-            DoActionOnDispatcher(() => InvokeActions(cloneMessage));
+			if( !checkResult ) {
+				return;
+			}
 
-            var responsiveMessage = message as ResponsiveInteractionMessage;
+			DoActionOnDispatcher( () => InvokeActions( cloneMessage ) );
 
-            object response;
-            if (responsiveMessage != null &&
-                (response = ((ResponsiveInteractionMessage)cloneMessage).Response) != null)
-            {
-                responsiveMessage.Response = response;
-            }
-        }
+			var responsiveMessage = message as ResponsiveInteractionMessage;
 
-        private void DoActionOnDispatcher(Action action)
-        {
-            if (Dispatcher.CheckAccess())
-            {
-                action();
-            }
-            else
-            {
-                Dispatcher.Invoke(action);
-            }
-        }
+			object response;
+			if( responsiveMessage != null &&
+				( response = ( (ResponsiveInteractionMessage)cloneMessage ).Response ) != null ) {
+				responsiveMessage.Response = response;
+			}
+		}
 
-        protected override void OnAttached()
-        {
-            base.OnAttached();
+		private void DoActionOnDispatcher( Action action ) {
+			if( Dispatcher.CheckAccess() ) {
+				action();
+			} else {
+				Dispatcher.Invoke( action );
+			}
+		}
 
-            if (AssociatedObject != null)
-            {
-                AssociatedObject.Loaded += AssociatedObjectLoaded;
-                AssociatedObject.Unloaded += AssociatedObjectUnloaded;
-            }
-        }
+		protected override void OnAttached() {
+			base.OnAttached();
 
-        void AssociatedObjectLoaded(object sender, RoutedEventArgs e)
-        {
-            _loaded = true;
-        }
+			if( AssociatedObject != null ) {
+				AssociatedObject.Loaded += AssociatedObjectLoaded;
+				AssociatedObject.Unloaded += AssociatedObjectUnloaded;
+			}
+		}
 
-        void AssociatedObjectUnloaded(object sender, RoutedEventArgs e)
-        {
-            _loaded = false;
-        }
+		void AssociatedObjectLoaded( object sender, RoutedEventArgs e ) {
+			_loaded = true;
+		}
 
-        protected override void OnDetaching()
-        {
-            if (Messenger != null && _listener != null)
-            {
-                _listener.Dispose();
-            }
+		void AssociatedObjectUnloaded( object sender, RoutedEventArgs e ) {
+			_loaded = false;
+		}
 
-            if (AssociatedObject != null)
-            {
-                AssociatedObject.Loaded -= AssociatedObjectLoaded;
-                AssociatedObject.Unloaded -= AssociatedObjectUnloaded;
-            }
+		protected override void OnDetaching() {
+			if( Messenger != null && _listener != null ) {
+				_listener.Dispose();
+			}
 
-            base.OnDetaching();
-        }
+			if( AssociatedObject != null ) {
+				AssociatedObject.Loaded -= AssociatedObjectLoaded;
+				AssociatedObject.Unloaded -= AssociatedObjectUnloaded;
+			}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+			base.OnDetaching();
+		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
+		public void Dispose() {
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
 
-            _listener.Dispose();
-            _disposed = true;
-        }
-    }
+		protected virtual void Dispose( bool disposing ) {
+			if( _disposed ) return;
+
+			_listener.Dispose();
+			_disposed = true;
+		}
+	}
 }

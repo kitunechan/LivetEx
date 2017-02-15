@@ -92,6 +92,7 @@
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\AnonymousPropertyChangedEventHandlerBag.cs" />
     <Compile Include="Messaging\TransitionMessageGeneric.cs" />
+    <Compile Include="NotifyObservableSyncCollection.cs" />
     <Compile Include="WeakEventListeners\LivetCollectionChangedWeakEventListener.cs" />
     <Compile Include="WeakEventListeners\LivetPropertyChangedWeakEventListener.cs" />
     <Compile Include="LivetCompositeDisposable.cs" />

@@ -30,10 +30,12 @@ namespace LivetEx.Messaging {
 			: base( messageKey ) {
 		}
 
+
 		/// <summary>
 		/// メッセージキーを使用して、戻り値のある新しい相互作用メッセージのインスタンスを生成します
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
+		/// <param name="response">オブジェクト</param>
 		public ResponsiveInteractionMessage( string messageKey, T response )
 			: base( messageKey ) {
 				this.Response = response;

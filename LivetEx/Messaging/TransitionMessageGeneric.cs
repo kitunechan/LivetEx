@@ -19,8 +19,8 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="messageKey">メッセージキー</param>
+		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
 		public TransitionMessage( string messageKey, TransitionMode mode )
 			: this( messageKey, null, null, mode ) { }
 

@@ -43,7 +43,7 @@ namespace LivetEx.Behaviors.Messaging.IO
 			var InitialDirectory = openFileMessage.InitialDirectory;
 
 			if( string.IsNullOrWhiteSpace( InitialDirectory ) ) {
-				if( InitialDirectoryGroupList.ContainsKey( group ) ) {
+				if( group != null && InitialDirectoryGroupList.ContainsKey( group ) ) {
 					InitialDirectory = InitialDirectoryGroupList[group];
 				}
 			}

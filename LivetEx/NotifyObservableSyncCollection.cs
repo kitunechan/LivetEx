@@ -14,9 +14,10 @@ namespace LivetEx {
 	/// 保有しているプロパティの変更通知も行うコレクションです。
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
+	[Serializable]
 	public class NotifyObservableSyncCollection<T>: ObservableSynchronizedCollection<T>, IList, IDisposable {
 		public NotifyObservableSyncCollection() {
-			AddCollectionChanged( this );
+			
 		}
 
 		public NotifyObservableSyncCollection( IEnumerable<T> collection )
@@ -27,16 +28,17 @@ namespace LivetEx {
 					AddPropertyChanged( item );
 				}
 			}
-			AddCollectionChanged( this );
 		}
+
 
 		/// <summary>
 		/// コレクション内のプロパティの変更通知を伝えます。
 		/// </summary>
+		[field: NonSerialized]
 		public event PropertyChangedEventHandler CollectionItemNotifyPropertyChanged;
 
 		void AddPropertyChanged( INotifyPropertyChanged item ) {
-			var eventListener = new LivetPropertyChangedEventListener( item, item_PropertyChanged );
+			var eventListener = new LivetPropertyChangedEventListener( item, OnCollectionItemNotifyPropertyChanged );
 
 			if( !removeList.ContainsKey( item ) ) {
 				removeList[item] = new List<IDisposable>();
@@ -54,18 +56,24 @@ namespace LivetEx {
 			}
 		}
 
-		void item_PropertyChanged( object sender, PropertyChangedEventArgs e ) {
+		/// <summary>
+		/// Collection内のPropertyChangedイベントを発生させます。
+		/// </summary>
+		/// <param name="args">PropertyChangedEventArgs</param>
+		protected virtual void OnCollectionItemNotifyPropertyChanged( object sender, PropertyChangedEventArgs e ) {
 			if( this.CollectionItemNotifyPropertyChanged != null ) {
 				this.CollectionItemNotifyPropertyChanged( sender, e );
 			}
 		}
 
-		void AddCollectionChanged( INotifyCollectionChanged collection ) {
-			this.CompositeDisposable.Add( new LivetCollectionChangedEventListener( collection, NotifyObservableCollection_CollectionChanged ) );
-		}
+		/// <summary>
+		/// CollectionChangedイベントを発生させます。
+		/// </summary>
+		/// <param name="args">NotifyCollectionChangedEventArgs</param>
+		protected override void OnCollectionChanged( NotifyCollectionChangedEventArgs args ) {
+			base.OnCollectionChanged( args );
 
-		void NotifyObservableCollection_CollectionChanged( object sender, NotifyCollectionChangedEventArgs e ) {
-			switch( e.Action ) {
+			switch( args.Action ) {
 				case NotifyCollectionChangedAction.Remove:
 					return;
 				case NotifyCollectionChangedAction.Reset:
@@ -79,16 +87,16 @@ namespace LivetEx {
 				case NotifyCollectionChangedAction.Add:
 				case NotifyCollectionChangedAction.Move:
 				case NotifyCollectionChangedAction.Replace:
-					if( e.OldItems != null ) {
-						foreach( INotifyPropertyChanged item in e.OldItems ) {
+					if( args.OldItems != null ) {
+						foreach( INotifyPropertyChanged item in args.OldItems ) {
 							if( item != null ) {
 								RemovePropertyChanged( item );
 							}
 						}
 					}
 
-					if( e.NewItems != null ) {
-						foreach( INotifyPropertyChanged item in e.NewItems ) {
+					if( args.NewItems != null ) {
+						foreach( INotifyPropertyChanged item in args.NewItems ) {
 							if( item != null ) {
 								AddPropertyChanged( item );
 							}
@@ -101,10 +109,11 @@ namespace LivetEx {
 			}
 		}
 
-
+		[NonSerialized]
 		Dictionary<INotifyPropertyChanged, List<IDisposable>> removeList = new Dictionary<INotifyPropertyChanged, List<IDisposable>>();
 
 		#region CompositeDisposable
+		[NonSerialized]
 		private LivetCompositeDisposable _compositeDisposable;
 		public LivetCompositeDisposable CompositeDisposable {
 			get {
@@ -120,6 +129,7 @@ namespace LivetEx {
 		#endregion
 
 		#region Dispose
+		[NonSerialized]
 		private bool _disposed;
 		public void Dispose() {
 			Dispose( true );

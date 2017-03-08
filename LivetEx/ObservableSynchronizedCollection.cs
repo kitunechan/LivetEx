@@ -238,7 +238,7 @@ namespace LivetEx {
 		/// CollectionChangedイベントを発生させます。
 		/// </summary>
 		/// <param name="args">NotifyCollectionChangedEventArgs</param>
-		protected void OnCollectionChanged( NotifyCollectionChangedEventArgs args ) {
+		protected virtual void OnCollectionChanged( NotifyCollectionChangedEventArgs args ) {
 			var threadSafeHandler = Interlocked.CompareExchange( ref CollectionChanged, null, null );
 
 			if( threadSafeHandler != null ) {
@@ -250,7 +250,7 @@ namespace LivetEx {
 		/// PropertyChangedイベントを発生させます。
 		/// </summary>
 		/// <param name="propertyName">変更されたプロパティの名前</param>
-		protected void OnPropertyChanged( string propertyName ) {
+		protected virtual void OnPropertyChanged( string propertyName ) {
 			var threadSafeHandler = Interlocked.CompareExchange( ref PropertyChanged, null, null );
 
 			if( threadSafeHandler != null ) {

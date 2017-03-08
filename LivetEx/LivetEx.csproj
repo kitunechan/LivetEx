@@ -69,11 +69,10 @@
     <Compile Include="Behaviors\DataContextDisposeAction.cs" />
     <Compile Include="Behaviors\LivetCallMethodAction.cs" />
     <Compile Include="Behaviors\LivetDataTrigger.cs" />
+    <Compile Include="Behaviors\Messaging\MessageBoxInteractionMessageAction.cs" />
     <Compile Include="Behaviors\Messaging\DirectInteractionMessage.cs" />
     <Compile Include="Behaviors\Messaging\IO\OpenFileDialogInteractionMessageAction.cs" />
     <Compile Include="Behaviors\Messaging\IO\SaveFileDialogInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\ConfirmationDialogInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\InformationDialogInteractionMessageAction.cs" />
     <Compile Include="Behaviors\Messaging\InteractionMessageAction.cs" />
     <Compile Include="Behaviors\Messaging\InteractionMessageTrigger.cs" />
     <Compile Include="Behaviors\Messaging\TransitionInteractionMessageAction.cs" />
@@ -91,6 +90,7 @@
     <Compile Include="Commands\ListenerCommand.cs" />
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\AnonymousPropertyChangedEventHandlerBag.cs" />
+    <Compile Include="Messaging\MessageBoxMessage.cs" />
     <Compile Include="Messaging\TransitionMessageGeneric.cs" />
     <Compile Include="NotifyObservableSyncCollection.cs" />
     <Compile Include="WeakEventListeners\LivetCollectionChangedWeakEventListener.cs" />
@@ -108,10 +108,8 @@
     <Compile Include="Messaging\Windows\WindowAction.cs" />
     <Compile Include="Messaging\Windows\WindowActionMessage.cs" />
     <Compile Include="NotificationObject.cs" />
-    <Compile Include="Messaging\ConfirmationMessage.cs" />
     <Compile Include="Messaging\IO\FileSelectionMessage.cs" />
     <Compile Include="Messaging\IO\OpeningFileSelectionMessage.cs" />
-    <Compile Include="Messaging\InformationMessage.cs" />
     <Compile Include="Messaging\IO\SavingFileSelectionMessage.cs" />
     <Compile Include="Messaging\InteractionMessage.cs" />
     <Compile Include="Messaging\InteractionMessenger.cs" />

@@ -56,6 +56,7 @@ namespace LivetEx.Behaviors.Messaging.IO
 					Filter = openFileMessage.Filter,
 					Title = openFileMessage.Title,
 					Multiselect = openFileMessage.MultiSelect,
+					FilterIndex = openFileMessage.FilterIndex,
 				};
 
 				if( dialog.ShowDialog() == true ) {

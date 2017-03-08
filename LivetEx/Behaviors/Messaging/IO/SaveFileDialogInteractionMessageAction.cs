@@ -22,6 +22,7 @@ namespace LivetEx.Behaviors.Messaging.IO {
 					OverwritePrompt = saveFileMessage.OverwritePrompt,
 					Title = saveFileMessage.Title,
 					DefaultExt = saveFileMessage.DefaultExt,
+					FilterIndex = saveFileMessage.FilterIndex,
 				};
 
 				saveFileMessage.Response = dialog.ShowDialog().Value ? dialog.FileNames : null;

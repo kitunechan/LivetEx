@@ -259,7 +259,7 @@ namespace LivetEx {
 		}
 
 
-		private void ReadWithLockAction( Action readAction ) {
+		protected void ReadWithLockAction( Action readAction ) {
 			if( !_lock.IsReadLockHeld ) {
 				_lock.EnterReadLock();
 				try {
@@ -272,7 +272,7 @@ namespace LivetEx {
 			}
 		}
 
-		private TResult ReadWithLockAction<TResult>( Func<TResult> readAction ) {
+		protected TResult ReadWithLockAction<TResult>( Func<TResult> readAction ) {
 			if( !_lock.IsReadLockHeld ) {
 				_lock.EnterReadLock();
 				try {
@@ -285,7 +285,7 @@ namespace LivetEx {
 			return readAction();
 		}
 
-		private void ReadAndWriteWithLockAction( Action writeAction, Action readAfterWriteAction ) {
+		protected void ReadAndWriteWithLockAction( Action writeAction, Action readAfterWriteAction ) {
 			_lock.EnterUpgradeableReadLock();
 			try {
 				_lock.EnterWriteLock();
@@ -307,7 +307,7 @@ namespace LivetEx {
 			}
 		}
 
-		private void ReadAndWriteWithLockAction<TResult>( Func<TResult> readBeforeWriteAction, Action<TResult> writeAction, Action<TResult> readAfterWriteAction ) {
+		protected void ReadAndWriteWithLockAction<TResult>( Func<TResult> readBeforeWriteAction, Action<TResult> writeAction, Action<TResult> readAfterWriteAction ) {
 			_lock.EnterUpgradeableReadLock();
 			try {
 				TResult readActionResult = readBeforeWriteAction();

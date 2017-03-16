@@ -135,9 +135,6 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 送信されたメッセージ
 		/// </summary>
-		public InteractionMessage Message {
-			get;
-			set;
-		}
+		public InteractionMessage Message { get; set; }
 	}
 }

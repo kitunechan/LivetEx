@@ -85,7 +85,6 @@ namespace LivetEx {
 					return;
 
 				case NotifyCollectionChangedAction.Add:
-				case NotifyCollectionChangedAction.Move:
 				case NotifyCollectionChangedAction.Replace:
 					if( args.OldItems != null ) {
 						foreach( INotifyPropertyChanged item in args.OldItems ) {
@@ -104,6 +103,7 @@ namespace LivetEx {
 					}
 					return;
 
+				case NotifyCollectionChangedAction.Move:
 				default:
 					break;
 			}

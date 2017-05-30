@@ -7,14 +7,15 @@ using System.Windows;
 namespace LivetEx.Messaging {
 	public class GenericResponsiveInteractionMessage<TValue, TResponse>: ResponsiveInteractionMessage<TResponse> {
 
-		public GenericResponsiveInteractionMessage( TValue value, string messageKey )
-			: base( messageKey ) {
+		public GenericResponsiveInteractionMessage( string messageKey )
+			: base( messageKey ){
+		}
+
+		public GenericResponsiveInteractionMessage( string messageKey, TValue value )
+			: this( messageKey ) {
 			Value = value;
 		}
 
-		public GenericResponsiveInteractionMessage( TValue value )
-			: this( value, null ) {
-		}
 
 		public TValue Value {
 			get { return (TValue)GetValue( ValueProperty ); }
@@ -26,7 +27,7 @@ namespace LivetEx.Messaging {
 			DependencyProperty.Register( "Value", typeof( TValue ), typeof( GenericResponsiveInteractionMessage<TValue, TResponse> ), new PropertyMetadata( defaultValue : default( TValue ) ) );
 
 		protected override Freezable CreateInstanceCore() {
-			return new GenericResponsiveInteractionMessage<TValue, TResponse>( Value, MessageKey );
+			return new GenericResponsiveInteractionMessage<TValue, TResponse>( MessageKey, Value );
 		}
 
 	}

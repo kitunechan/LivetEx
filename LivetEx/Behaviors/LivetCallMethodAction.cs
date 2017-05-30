@@ -1,6 +1,7 @@
 ﻿using System.Windows.Interactivity;
 using System.Windows;
 using LivetEx.Messaging;
+using System.Linq;
 
 namespace LivetEx.Behaviors {
 	/// <summary>
@@ -58,7 +59,7 @@ namespace LivetEx.Behaviors {
 		/// <summary>
 		/// MethodParameterをメッセージ(GenericInteractionMessage)から与えるかどうかを取得または設定します。
 		/// </summary>
-		[System.ComponentModel.Description( "MethodParameterをメッセージ(GenericInteractionMessage)から与えるかを示す値を取得または設定します。" )]
+		[System.ComponentModel.Description( "MethodParameterをメッセージ(GenericInteractionMessage)から与えるかどうかを取得または設定します。" )]
 		#region Register IsParameterToGenericInteractionMessage
 		public bool IsParameterToGenericInteractionMessage {
 			get { return (bool)GetValue( IsParameterToGenericInteractionMessageProperty ); }
@@ -77,6 +78,9 @@ namespace LivetEx.Behaviors {
 
 			if( IsParameterToGenericInteractionMessage ) {
 				_callbackMethod.Invoke( MethodTarget, MethodName, ((GenericInteractionMessage)parameter).Value );
+			}else if( parameter is ResponsiveInteractionMessage ){
+				var responsive = (ResponsiveInteractionMessage)parameter;
+				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
 			} else if( !_parameterSet ) {
 				_method.Invoke( MethodTarget, MethodName );
 			} else {

@@ -13,10 +13,12 @@ namespace LivetEx {
 	/// <typeparam name="T">コレクションアイテムの型</typeparam>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable" )]
 	[Serializable]
-	public class ObservableSynchronizedCollection<T>: IList<T>, ICollection, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<T> {
-		protected IList<T> Items;
+	public class ObservableSynchronizedCollection<T>: IList<T>, ICollection, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<T>, IDisposable {
+		protected List<T> Items;
+
 		[NonSerialized]
 		private object _syncRoot = new object();
+
 		[NonSerialized]
 		private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
@@ -152,7 +154,7 @@ namespace LivetEx {
 		/// このコレクションが読み取り専用かどうかを取得します。
 		/// </summary>
 		public bool IsReadOnly {
-			get { return Items.IsReadOnly; }
+			get { return ((ICollection<T>)Items).IsReadOnly; }
 		}
 
 		/// <summary>
@@ -239,11 +241,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="args">NotifyCollectionChangedEventArgs</param>
 		protected virtual void OnCollectionChanged( NotifyCollectionChangedEventArgs args ) {
-			var threadSafeHandler = Interlocked.CompareExchange( ref CollectionChanged, null, null );
-
-			if( threadSafeHandler != null ) {
-				threadSafeHandler( this, args );
-			}
+			Interlocked.CompareExchange( ref CollectionChanged, null, null )?.Invoke( this, args );
 		}
 
 		/// <summary>
@@ -251,11 +249,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="propertyName">変更されたプロパティの名前</param>
 		protected virtual void OnPropertyChanged( string propertyName ) {
-			var threadSafeHandler = Interlocked.CompareExchange( ref PropertyChanged, null, null );
-
-			if( threadSafeHandler != null ) {
-				threadSafeHandler( this, EventArgsFactory.GetPropertyChangedEventArgs( propertyName ) );
-			}
+			Interlocked.CompareExchange( ref PropertyChanged, null, null )?.Invoke( this, EventArgsFactory.GetPropertyChangedEventArgs( propertyName ) );
 		}
 
 
@@ -284,6 +278,7 @@ namespace LivetEx {
 
 			return readAction();
 		}
+
 
 		protected void ReadAndWriteWithLockAction( Action writeAction, Action readAfterWriteAction ) {
 			_lock.EnterUpgradeableReadLock();
@@ -343,5 +338,27 @@ namespace LivetEx {
 		/// </summary>
 		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
+
+
+
+		#region Dispose
+		[NonSerialized]
+		private bool _disposed;
+		public void Dispose() {
+			Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+
+		protected virtual void Dispose( bool disposing ) {
+			if( _disposed ) return;
+			if( disposing ) {
+				_lock.Dispose();
+			}
+
+			// 非管理（unmanaged）リソースの破棄処理をここに記述します。
+
+			_disposed = true;
+		}
+		#endregion
 	}
 }

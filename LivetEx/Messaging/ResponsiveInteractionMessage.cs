@@ -32,16 +32,6 @@ namespace LivetEx.Messaging {
 
 
 		/// <summary>
-		/// メッセージキーを使用して、戻り値のある新しい相互作用メッセージのインスタンスを生成します
-		/// </summary>
-		/// <param name="messageKey">メッセージキー</param>
-		/// <param name="response">オブジェクト</param>
-		public ResponsiveInteractionMessage( string messageKey, T response )
-			: base( messageKey ) {
-				this.Response = response;
-		}
-
-		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
 		/// 通常このメソッドは、自身の新しいインスタンスを返すように実装します。
 		/// </summary>

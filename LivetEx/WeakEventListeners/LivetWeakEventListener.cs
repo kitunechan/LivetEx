@@ -15,14 +15,8 @@ namespace LivetEx.WeakEventListeners {
 		private bool _initialized;
 
 		private static void ReceiveEvent( WeakReference<LivetWeakEventListener<THandler, TEventArgs>> listenerWeakReference, object sender, TEventArgs args ) {
-			LivetWeakEventListener<THandler, TEventArgs> listenerResult;
-
-			if( listenerWeakReference.TryGetTarget( out listenerResult ) ) {
-				var handler = listenerResult._handler;
-
-				if( handler != null ) {
-					handler( sender, args );
-				}
+			if( listenerWeakReference.TryGetTarget( out var listenerResult ) ) {
+				listenerResult._handler?.Invoke( sender, args );
 			}
 		}
 

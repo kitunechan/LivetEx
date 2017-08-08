@@ -14,14 +14,8 @@ namespace LivetEx.Commands {
 				_canExecuteChangedHandlers.Add( new WeakReference<EventHandler>( value ) );
 			}
 			remove {
-				foreach( var weakReference in _canExecuteChangedHandlers
-					.Where( r => {
-							EventHandler result;
-							if( r.TryGetTarget( out result ) && result == value ) {
-								return true;
-							}
-							return false;
-						} ).ToList() ) {
+				var list = _canExecuteChangedHandlers.Where( r => r.TryGetTarget( out var result ) && result == value ).ToArray();
+				foreach( var weakReference in list ) {
 					_canExecuteChangedHandlers.Remove( weakReference );
 				}
 			}
@@ -31,10 +25,8 @@ namespace LivetEx.Commands {
 		/// コマンドが実行可能かどうかが変化した時に呼び出されます。
 		/// </summary>
 		protected void OnCanExecuteChanged() {
-			foreach( var handlerWeakReference in _canExecuteChangedHandlers.ToList() ) {
-				EventHandler result;
-
-				if( handlerWeakReference.TryGetTarget( out result ) ) {
+			foreach( var handlerWeakReference in _canExecuteChangedHandlers.ToArray() ) {
+				if( handlerWeakReference.TryGetTarget( out var result ) ) {
 					DispatcherHelper.UIDispatcher.InvokeAsync( () => result( this, EventArgs.Empty ) );
 				} else {
 					_canExecuteChangedHandlers.Remove( handlerWeakReference );

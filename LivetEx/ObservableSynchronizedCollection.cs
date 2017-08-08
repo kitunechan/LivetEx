@@ -13,7 +13,7 @@ namespace LivetEx {
 	/// <typeparam name="T">コレクションアイテムの型</typeparam>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable" )]
 	[Serializable]
-	public class ObservableSynchronizedCollection<T>: IList<T>, ICollection, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<T>, IDisposable {
+	public class ObservableSynchronizedCollection<T> : IList<T>, ICollection, IList, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<T>, IDisposable {
 		protected List<T> Items;
 
 		[NonSerialized]
@@ -154,7 +154,7 @@ namespace LivetEx {
 		/// このコレクションが読み取り専用かどうかを取得します。
 		/// </summary>
 		public bool IsReadOnly {
-			get { return ((ICollection<T>)Items).IsReadOnly; }
+			get { return ( (ICollection<T>)Items ).IsReadOnly; }
 		}
 
 		/// <summary>
@@ -234,6 +234,13 @@ namespace LivetEx {
 		/// </summary>
 		public object SyncRoot {
 			get { return _syncRoot; }
+		}
+
+		public bool IsFixedSize => ( (IList)Items ).IsFixedSize;
+
+		object IList.this[int index] {
+			get => this[index];
+			set => this[index] = (T)value;
 		}
 
 		/// <summary>
@@ -358,6 +365,27 @@ namespace LivetEx {
 			// 非管理（unmanaged）リソースの破棄処理をここに記述します。
 
 			_disposed = true;
+		}
+
+		public int Add( object value ) {
+			Add( (T)value  );
+			return this.Count - 1;
+		}
+
+		public bool Contains( object value ) {
+			return Contains( (T)value );
+		}
+
+		public int IndexOf( object value ) {
+			return IndexOf( (T)value );
+		}
+
+		public void Insert( int index, object value ) {
+			Insert( index, (T)value );
+		}
+
+		public void Remove( object value ) {
+			Remove( (T)value );
 		}
 		#endregion
 	}

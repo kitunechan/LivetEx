@@ -15,7 +15,7 @@ namespace LivetEx {
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[Serializable]
-	public class NotifyObservableSyncCollection<T> : ObservableSynchronizedCollection<T> {
+	public class NotifyObservableSyncCollection<T> : ObservableSynchronizedCollection<T>, ICollectionItemNotifyPropertyChanged {
 		public NotifyObservableSyncCollection() {
 
 		}

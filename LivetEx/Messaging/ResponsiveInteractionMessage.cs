@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+
 namespace LivetEx.Messaging {
 	/// <summary>
 	/// 戻り値のある相互作用メッセージの抽象基底クラスです。
@@ -44,12 +45,8 @@ namespace LivetEx.Messaging {
 		/// 戻り値情報
 		/// </summary>
 		public new T Response {
-			get {
-				return (T)base.Response;
-			}
-			set {
-				base.Response = value;
-			}
+			get { return (T)base.Response; }
+			set { base.Response = value; }
 		}
 	}
 }

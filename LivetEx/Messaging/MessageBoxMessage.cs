@@ -4,7 +4,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 確認相互作用メッセージを表します。
 	/// </summary>
-	public class MessageBoxMessage: ResponsiveInteractionMessage<MessageBoxResult> {
+	public class MessageBoxMessage : ResponsiveInteractionMessage<MessageBoxResult> {
 
 		public MessageBoxMessage() { }
 
@@ -14,63 +14,6 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		public MessageBoxMessage( string messageKey ) : base( messageKey ) { }
 
-		///// <summary>
-		///// 表示するメッセージ・キャプション・メッセージボックスイメージ・メッセージボックスボタン・メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		///// </summary>
-		///// <param name="text">表示するメッセージ</param>
-		///// <param name="caption">キャプション</param>
-		///// <param name="image">メッセージボックスイメージ</param>
-		///// <param name="button">メッセージボックスボタン</param>
-		///// <param name="defaultResult">既定の結果</param>
-		///// <param name="messageKey">メッセージキー</param>
-		//public MessageBoxMessage( string text, string caption, MessageBoxImage image, MessageBoxButton button, MessageBoxResult defaultResult, string messageKey )
-		//	: base( messageKey ) {
-		//	Text = text;
-		//	Caption = caption;
-		//	Image = image;
-		//	Button = button;
-		//	DefaultResult = defaultResult;
-		//}
-
-		///// <summary>
-		///// 表示するメッセージ・キャプション・メッセージボックスイメージ・メッセージボックスボタン・メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		///// </summary>
-		///// <param name="text">表示するメッセージ</param>
-		///// <param name="caption">キャプション</param>
-		///// <param name="image">メッセージボックスイメージ</param>
-		///// <param name="button">メッセージボックスボタン</param>
-		///// <param name="messageKey">メッセージキー</param>
-		//public MessageBoxMessage( string text, string caption, MessageBoxImage image, MessageBoxButton button, string messageKey )
-		//	: this( text, caption, image, button, MessageBoxResult.OK, messageKey ) { }
-
-		///// <summary>
-		///// 表示するメッセージ・キャプション・メッセージボックスイメージ・メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		///// </summary>
-		///// <param name="text">表示するメッセージ</param>
-		///// <param name="caption">キャプション</param>
-		///// <param name="image">メッセージボックスイメージ</param>
-		///// <param name="messageKey">メッセージキー</param>
-		//public MessageBoxMessage( string text, string caption, MessageBoxImage image, string messageKey )
-		//	: this( text, caption, image, MessageBoxButton.OK, messageKey ) { }
-
-		///// <summary>
-		///// 表示するメッセージ・キャプション・メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		///// </summary>
-		///// <param name="text">表示するメッセージ</param>
-		///// <param name="caption">キャプション</param>
-		///// <param name="messageKey">メッセージキー</param>
-		//public MessageBoxMessage( string text, string caption, string messageKey )
-		//	: this( text, caption, MessageBoxImage.None, messageKey ) { }
-
-		///// <summary>
-		///// 表示するメッセージ・キャプションを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		///// </summary>
-		///// <param name="text">表示するメッセージ</param>
-		///// <param name="caption">キャプション</param>
-		//public MessageBoxMessage( string text, string caption )
-		//	: this( text, caption, null ) { }
-
-
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
 		/// 通常このメソッドは、自身の新しいインスタンスを返すように実装します。
@@ -79,6 +22,21 @@ namespace LivetEx.Messaging {
 		protected override Freezable CreateInstanceCore() {
 			return new MessageBoxMessage();
 		}
+
+		/// <summary>
+		/// メッセージボックスがアクションの親ウインドウに所有されるかを設定します。
+		/// </summary>
+		#region Register IsOwnedProperty
+		public bool? IsOwned {
+			get { return (bool?)GetValue( IsOwnedProperty ); }
+			set { SetValue( IsOwnedProperty, value ); }
+		}
+
+		// Using a DependencyProperty as the backing store for IsOwnedProperty.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty IsOwnedProperty =
+			DependencyProperty.Register( "IsOwnedProperty", typeof( bool? ), typeof( MessageBoxMessage ), new PropertyMetadata( null ) );
+		#endregion
+
 
 		/// <summary>
 		/// 表示するメッセージを指定、または取得します。

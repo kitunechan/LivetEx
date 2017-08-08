@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -32,7 +33,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\LivetEx.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -46,6 +48,39 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Remote\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'RemoteVenue8|AnyCPU'">
+    <OutputPath>bin\RemoteVenue8\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\LivetEx.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Suface4 Ohya|AnyCPU'">
+    <OutputPath>bin\Suface4 Ohya\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\LivetEx.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -66,21 +101,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousDisposable.cs" />
-    <Compile Include="Behaviors\DataContextDisposeAction.cs" />
-    <Compile Include="Behaviors\LivetCallMethodAction.cs" />
-    <Compile Include="Behaviors\LivetDataTrigger.cs" />
-    <Compile Include="Behaviors\Messaging\MessageBoxInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\DirectInteractionMessage.cs" />
-    <Compile Include="Behaviors\Messaging\IO\OpenFileDialogInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\IO\SaveFileDialogInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\InteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\InteractionMessageTrigger.cs" />
-    <Compile Include="Behaviors\Messaging\TransitionInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\Messaging\Windows\WindowInteractionMessageAction.cs" />
-    <Compile Include="Behaviors\MethodBinder.cs" />
-    <Compile Include="Behaviors\MethodBinderWithArgument.cs" />
-    <Compile Include="Behaviors\RoutedEventTrigger.cs" />
-    <Compile Include="Behaviors\SetFocusAction.cs" />
+    <Compile Include="PropertyChangedTree.cs" />
+    <Compile Include="Commands\CommandBindingService.cs" />
+    <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="EventListeners\AnonymousCollectionItemNotifyPropertyChangedEventHandlerBag.cs" />
+    <Compile Include="EventListeners\LivetCollectionItemNotifyPropertyChangedEventListener.cs" />
+    <Compile Include="ICollectionItemNotifyPropertyChanged.cs" />
+    <Compile Include="Triggers\DataContextDisposeAction.cs" />
+    <Compile Include="Triggers\LivetCallMethodAction.cs" />
+    <Compile Include="Triggers\DataTrigger.cs" />
+    <Compile Include="Messaging\MessageBoxInteractionMessageAction.cs" />
+    <Compile Include="Messaging\DirectInteractionMessage.cs" />
+    <Compile Include="Messaging\InteractionMessageAction.cs" />
+    <Compile Include="Messaging\InteractionMessageTrigger.cs" />
+    <Compile Include="Messaging\MultiInteractionMessageAction.cs" />
+    <Compile Include="Messaging\OpenFileDialogInteractionMessageAction.cs" />
+    <Compile Include="Messaging\SaveFileDialogInteractionMessageAction.cs" />
+    <Compile Include="Messaging\WindowActionInteractionMessageAction.cs" />
+    <Compile Include="Messaging\WindowTransitionInteractionMessageAction.cs" />
+    <Compile Include="Triggers\MethodBinder.cs" />
+    <Compile Include="Triggers\MethodBinderWithArgument.cs" />
+    <Compile Include="Triggers\RoutedEventTrigger.cs" />
+    <Compile Include="Triggers\SetFocusAction.cs" />
     <Compile Include="Behaviors\WindowCloseCancelBehavior.cs" />
     <None Include="license-jp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -91,30 +133,30 @@
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\AnonymousPropertyChangedEventHandlerBag.cs" />
     <Compile Include="Messaging\MessageBoxMessage.cs" />
-    <Compile Include="Messaging\TransitionMessageGeneric.cs" />
+    <Compile Include="Messaging\WindowTransitionMessageGeneric.cs" />
     <Compile Include="NotifyObservableSyncCollection.cs" />
     <Compile Include="WeakEventListeners\LivetCollectionChangedWeakEventListener.cs" />
     <Compile Include="WeakEventListeners\LivetPropertyChangedWeakEventListener.cs" />
-    <Compile Include="LivetCompositeDisposable.cs" />
+    <Compile Include="DisposableCollection.cs" />
     <Compile Include="EventListeners\LivetCollectionChangedEventListener.cs" />
     <Compile Include="EventListeners\LivetEventListener.cs" />
     <Compile Include="EventListeners\LivetPropertyChangedEventListener.cs" />
-    <Compile Include="Messaging\GenericInteractionMessage.cs" />
-    <Compile Include="Messaging\GenericResponsiveInteractionMessage.cs" />
+    <Compile Include="Messaging\InteractionMessageGeneric.cs" />
+    <Compile Include="Messaging\ResponsiveInteractionMessageGeneric.cs" />
     <Compile Include="Messaging\MessageListener.cs" />
     <Compile Include="ObservableSynchronizedCollection.cs" />
     <Compile Include="DispatcherCollection.cs" />
-    <Compile Include="Messaging\TransitionMode.cs" />
-    <Compile Include="Messaging\Windows\WindowAction.cs" />
-    <Compile Include="Messaging\Windows\WindowActionMessage.cs" />
+    <Compile Include="Messaging\WindowTransitionMode.cs" />
+    <Compile Include="Messaging\WindowAction.cs" />
+    <Compile Include="Messaging\WindowActionMessage.cs" />
     <Compile Include="NotificationObject.cs" />
-    <Compile Include="Messaging\IO\FileSelectionMessage.cs" />
-    <Compile Include="Messaging\IO\OpeningFileSelectionMessage.cs" />
-    <Compile Include="Messaging\IO\SavingFileSelectionMessage.cs" />
+    <Compile Include="Messaging\FileDialogMessage.cs" />
+    <Compile Include="Messaging\OpenFileDialogMessage.cs" />
+    <Compile Include="Messaging\SaveFileDialogMessage.cs" />
     <Compile Include="Messaging\InteractionMessage.cs" />
     <Compile Include="Messaging\InteractionMessenger.cs" />
     <Compile Include="Messaging\ResponsiveInteractionMessage.cs" />
-    <Compile Include="Messaging\TransitionMessage.cs" />
+    <Compile Include="Messaging\WindowTransitionMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DispatcherHelper.cs" />
     <Compile Include="EventArgsFactory.cs" />
@@ -122,8 +164,8 @@
     <Compile Include="ViewModel.cs" />
     <Compile Include="WeakEventListeners\LivetWeakEventListener.cs" />
     <Compile Include="ViewModelHelper.cs" />
-    <Compile Include="WeakReference.generic.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

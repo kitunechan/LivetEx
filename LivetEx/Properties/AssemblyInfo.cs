@@ -47,10 +47,7 @@ using System.Resources;
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Commands")]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Messaging")]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Behaviors")]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Messaging.IO")]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Messaging.Windows")]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Behaviors.Messaging")]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Behaviors.Messaging.IO")]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Behaviors.Messaging.Windows")]
+[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Triggers" )]
+[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Converters" )]
 
-[assembly: AssemblyFileVersion( "1.3.1.0" )]
+[assembly: AssemblyFileVersion( "1.3.2.0" )]

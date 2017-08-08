@@ -19,7 +19,7 @@ namespace LivetEx
     public class ReadOnlyDispatcherCollection<T> : ReadOnlyCollection<T>,INotifyCollectionChanged,INotifyPropertyChanged, IDisposable
     {
         private DispatcherCollection<T> _list;
-        private LivetCompositeDisposable _listeners = new LivetCompositeDisposable();
+        private DisposableCollection _listeners = new DisposableCollection();
         private bool _disposed;
 
         public ReadOnlyDispatcherCollection(DispatcherCollection<T> collection) : base(collection) 
@@ -59,7 +59,7 @@ namespace LivetEx
         /// <summary>
         /// この読み取り専用コレクションが保持するイベントリスナのコレクションを取得します。
         /// </summary>
-        public LivetCompositeDisposable EventListeners
+        public DisposableCollection EventListeners
         {
             get
             {

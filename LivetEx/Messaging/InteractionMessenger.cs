@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
+
 namespace LivetEx.Messaging {
 	/// <summary>
 	/// ViewModelで使用するMessengerクラスです。
@@ -12,19 +13,17 @@ namespace LivetEx.Messaging {
 		/// <param name="message">相互作用メッセージ</param>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1030:UseEventsWhereAppropriate" )]
 		public void Raise( InteractionMessage message ) {
-
 			if( message == null ) {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
 			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-
 			if( threadSafeHandler != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
 
-				threadSafeHandler( this, new InteractionMessageRaisedEventArgs( message ) );
+				threadSafeHandler.Invoke( this, new InteractionMessageRaisedEventArgs( message ) );
 			}
 		}
 
@@ -34,14 +33,12 @@ namespace LivetEx.Messaging {
 		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
 		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
 		/// <returns>アクション実行後に、戻り情報を含んだ相互作用メッセージ</returns>
-		public T GetResponse<T>( T message )
-			where T: ResponsiveInteractionMessage {
+		public T GetResponse<T>( T message ) where T : ResponsiveInteractionMessage {
 			if( message == null ) {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
 			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-
 			if( threadSafeHandler != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
@@ -73,7 +70,7 @@ namespace LivetEx.Messaging {
 				message.Freeze();
 			}
 
-			await Task.Factory.StartNew( () => Raise( message ) );
+			await Task.Run( () => Raise( message ) );
 		}
 
 		/// <summary>
@@ -82,7 +79,7 @@ namespace LivetEx.Messaging {
 		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
 		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
 		public async Task<T> GetResponseAsync<T>( T message )
-			where T: ResponsiveInteractionMessage {
+			where T : ResponsiveInteractionMessage {
 			if( message == null ) {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
@@ -91,39 +88,16 @@ namespace LivetEx.Messaging {
 				message.Freeze();
 			}
 
-			return await Task<T>.Factory.StartNew( () => GetResponse( message ) );
+			return await Task.Run( () => GetResponse( message ) );
 		}
 
-		/// <summary>
-		/// 指定された、戻り値情報のある相互作用メッセージを非同期で送信します。
-		/// </summary>
-		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
-		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
-		/// <param name="callback">コールバック</param>
-		[Obsolete( "callbackを取らないオーバーロードの使用を検討してください。" )]
-		public async Task<T> GetResponseAsync<T>( T message, Action<T> callback )
-			where T: ResponsiveInteractionMessage {
-			if( message == null ) {
-				throw new ArgumentException( "messageはnullにできません" );
-			}
-
-			if( !message.IsFrozen ) {
-				message.Freeze();
-			}
-
-			var msg = await Task<T>.Factory.StartNew( () => GetResponse( message ) );
-			if( callback != null ) {
-				callback( msg );
-			}
-			return msg;
-		}
 	}
 
 
 	/// <summary>
 	/// 相互作用メッセージ送信時イベント用のイベント引数です。
 	/// </summary>
-	public class InteractionMessageRaisedEventArgs: EventArgs {
+	public class InteractionMessageRaisedEventArgs : EventArgs {
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>

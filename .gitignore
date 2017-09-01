@@ -18,6 +18,7 @@ bld/
 
 # Roslyn cache directories
 *.ide/
+.vs/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -187,3 +188,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+

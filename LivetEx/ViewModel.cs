@@ -26,7 +26,7 @@ namespace LivetEx {
 				}
 				return _disposableCollection;
 			}
-			set {
+			internal set {
 				_disposableCollection = value;
 			}
 		}
@@ -42,7 +42,7 @@ namespace LivetEx {
 				}
 				return _messenger;
 			}
-			set {
+			internal set {
 				_messenger = value;
 			}
 		}

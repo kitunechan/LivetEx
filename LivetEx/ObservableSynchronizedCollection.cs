@@ -20,7 +20,7 @@ namespace LivetEx {
 		private object _syncRoot = new object();
 
 		[NonSerialized]
-		private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+		private ReaderWriterLockSlimEx _lock = new ReaderWriterLockSlimEx();
 
 		/// <summary>
 		/// デフォルトコンストラクタ
@@ -38,49 +38,12 @@ namespace LivetEx {
 			Items = new List<T>( source );
 		}
 
-		/// <summary>
-		/// 指定したオブジェクトを検索し、最初に見つかった位置の 0 から始まるインデックスを返します。
-		/// </summary>
-		/// <param name="item">検索するオブジェクト</param>
-		/// <returns>最初に見つかった位置のインデックス</returns>
-		public int IndexOf( T item ) {
-			return ReadWithLockAction( () => Items.IndexOf( item ) );
-		}
-
-		/// <summary>
-		/// 指定したインデックスの位置に要素を挿入します。
-		/// </summary>
-		/// <param name="index">指定するインデックス</param>
-		/// <param name="item">挿入するオブジェクト</param>
-		public void Insert( int index, T item ) {
-			ReadAndWriteWithLockAction( () => Items.Insert( index, item ),
-				() => {
-					OnPropertyChanged( "Count" );
-					OnPropertyChanged( "Item[]" );
-					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
-				} );
-		}
-
-		/// <summary>
-		/// 指定したインデックスにある要素を削除します。
-		/// </summary>
-		/// <param name="index">指定するインデックス</param>
-		public void RemoveAt( int index ) {
-			ReadAndWriteWithLockAction( () => Items[index],
-				removeItem => Items.RemoveAt( index ),
-				removeItem => {
-					OnPropertyChanged( "Count" );
-					OnPropertyChanged( "Item[]" );
-					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removeItem, index ) );
-				} );
-		}
-
 		public T this[int index] {
 			get {
-				return ReadWithLockAction( () => Items[index] );
+				return _lock.ReadWithLockAction( () => Items[index] );
 			}
 			set {
-				ReadAndWriteWithLockAction( () => Items[index],
+				_lock.WriteReadWithLockAction( () => Items[index],
 					oldItem => {
 						Items[index] = value;
 					},
@@ -96,67 +59,40 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="item">追加するオブジェクト</param>
 		public void Add( T item ) {
-			ReadAndWriteWithLockAction( () => Items.Add( item ),
+			_lock.ReadAndWriteWithLockAction( () => Items.Add( item ),
 				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
 					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, Items.Count - 1 ) );
 				} );
 		}
-
 		/// <summary>
-		/// すべての要素を削除します。
+		/// 指定したインデックスの位置に要素を挿入します。
 		/// </summary>
-		public void Clear() {
-			ReadAndWriteWithLockAction( () => Items.Count,
-			count => {
-				if( count != 0 ) {
-					Items.Clear();
-				}
-			},
-			count => {
-				if( count != 0 ) {
+		/// <param name="index">指定するインデックス</param>
+		/// <param name="item">挿入するオブジェクト</param>
+		public void Insert( int index, T item ) {
+			_lock.ReadAndWriteWithLockAction( () => Items.Insert( index, item ),
+				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
-					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
-				}
-			} );
+					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+				} );
 		}
 
 		/// <summary>
-		/// ある要素がこのコレクションに含まれているかどうかを判断します。
+		/// 指定したインデックスにある要素を削除します。
 		/// </summary>
-		/// <param name="item">コレクションに含まれているか判断したい要素</param>
-		/// <returns>このコレクションに含まれているかどうか</returns>
-		public bool Contains( T item ) {
-			return ReadWithLockAction( () => Items.Contains( item ) );
+		/// <param name="index">指定するインデックス</param>
+		public void RemoveAt( int index ) {
+			_lock.WriteReadWithLockAction( () => Items[index],
+				removeItem => Items.RemoveAt( index ),
+				removeItem => {
+					OnPropertyChanged( "Count" );
+					OnPropertyChanged( "Item[]" );
+					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removeItem, index ) );
+				} );
 		}
-
-		/// <summary>
-		/// 全体を互換性のある1次元の配列にコピーします。コピー操作は、コピー先の配列の指定したインデックスから始まります。
-		/// </summary>
-		/// <param name="array">コピー先の配列</param>
-		/// <param name="arrayIndex">コピー先の配列のどこからコピー操作をするかのインデックス</param>
-		public void CopyTo( T[] array, int arrayIndex ) {
-			ReadWithLockAction( () => Items.CopyTo( array, arrayIndex ) );
-		}
-
-		/// <summary>
-		/// 実際に格納されている要素の数を取得します。
-		/// </summary>
-		public int Count {
-			get {
-				return ReadWithLockAction( () => Items.Count );
-			}
-		}
-
-		/// <summary>
-		/// このコレクションが読み取り専用かどうかを取得します。
-		/// </summary>
-		public bool IsReadOnly {
-			get { return ( (ICollection<T>)Items ).IsReadOnly; }
-		}
-
 		/// <summary>
 		/// 最初に見つかった特定のオブジェクトを削除します。
 		/// </summary>
@@ -165,7 +101,7 @@ namespace LivetEx {
 		public bool Remove( T item ) {
 			bool result = false;
 
-			ReadAndWriteWithLockAction( () => Items.IndexOf( item ),
+			_lock.WriteReadWithLockAction( () => Items.IndexOf( item ),
 				index => {
 					result = Items.Remove( item );
 				},
@@ -181,12 +117,48 @@ namespace LivetEx {
 		}
 
 		/// <summary>
+		/// すべての要素を削除します。
+		/// </summary>
+		public void Clear() {
+			_lock.WriteReadWithLockAction( () => Items.Count,
+			count => {
+				if( count != 0 ) {
+					Items.Clear();
+				}
+			},
+			count => {
+				if( count != 0 ) {
+					OnPropertyChanged( "Count" );
+					OnPropertyChanged( "Item[]" );
+					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
+				}
+			} );
+		}
+
+		/// <summary>
+		/// 指定したオブジェクトを検索し、最初に見つかった位置の 0 から始まるインデックスを返します。
+		/// </summary>
+		/// <param name="item">検索するオブジェクト</param>
+		/// <returns>最初に見つかった位置のインデックス</returns>
+		public int IndexOf( T item ) {
+			return _lock.ReadWithLockAction( () => Items.IndexOf( item ) );
+		}
+
+		/// <summary>
+		/// ある要素がこのコレクションに含まれているかどうかを判断します。
+		/// </summary>
+		/// <param name="item">コレクションに含まれているか判断したい要素</param>
+		/// <returns>このコレクションに含まれているかどうか</returns>
+		public bool Contains( T item ) {
+			return _lock.ReadWithLockAction( () => Items.Contains( item ) );
+		}
+		/// <summary>
 		/// 指定されたインデックスの要素を指定されたインデックスに移動します。
 		/// </summary>
 		/// <param name="oldIndex">移動したい要素のインデックス</param>
 		/// <param name="newIndex">移動先のインデックス</param>
 		public void Move( int oldIndex, int newIndex ) {
-			ReadAndWriteWithLockAction( () => Items[oldIndex],
+			_lock.WriteReadWithLockAction( () => Items[oldIndex],
 				item => {
 					Items.RemoveAt( oldIndex );
 					Items.Insert( newIndex, item );
@@ -198,11 +170,35 @@ namespace LivetEx {
 		}
 
 		/// <summary>
+		/// 全体を互換性のある1次元の配列にコピーします。コピー操作は、コピー先の配列の指定したインデックスから始まります。
+		/// </summary>
+		/// <param name="array">コピー先の配列</param>
+		/// <param name="arrayIndex">コピー先の配列のどこからコピー操作をするかのインデックス</param>
+		public void CopyTo( T[] array, int arrayIndex ) {
+			_lock.ReadWithLockAction( () => Items.CopyTo( array, arrayIndex ) );
+		}
+
+		/// <summary>
+		/// 実際に格納されている要素の数を取得します。
+		/// </summary>
+		public int Count {
+			get {
+				return _lock.ReadWithLockAction( () => Items.Count );
+			}
+		}
+
+		/// <summary>
+		/// このコレクションが読み取り専用かどうかを取得します。
+		/// </summary>
+		public bool IsReadOnly {
+			get { return ( (ICollection<T>)Items ).IsReadOnly; }
+		}
+		/// <summary>
 		/// 反復処理するためのスナップショットの列挙子を返します。
 		/// </summary>
 		/// <returns>列挙子</returns>
 		public IEnumerator<T> GetEnumerator() {
-			return ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
+			return _lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
 		}
 
 		/// <summary>
@@ -210,7 +206,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <returns>列挙子</returns>
 		IEnumerator IEnumerable.GetEnumerator() {
-			return ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
+			return _lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
 		}
 
 		/// <summary>
@@ -243,6 +239,65 @@ namespace LivetEx {
 			set => this[index] = (T)value;
 		}
 
+		int IList.Add( object item ) {
+			return _lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Add( item ),
+				x => {
+					OnPropertyChanged( "Count" );
+					OnPropertyChanged( "Item[]" );
+					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, Items.Count - 1 ) );
+
+
+				} );
+		}
+
+		//-----------
+
+		bool IList.Contains( object item ) {
+			return _lock.ReadWithLockAction( () => ( (IList)this.Items ).Contains( item ) );
+		}
+
+		int IList.IndexOf( object item ) {
+			return _lock.ReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ) );
+		}
+
+		void IList.Insert( int index, object item ) {
+			_lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Insert( index, item ),
+				() => {
+					OnPropertyChanged( "Count" );
+					OnPropertyChanged( "Item[]" );
+					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+				} );
+		}
+
+		void IList.Remove( object item ) {
+			_lock.WriteReadWithLockAction( () => ( (IList)this.Items ).IndexOf(item),
+				index => {
+					if( index != -1 ) {
+						( (IList)this.Items ).Remove( item );
+					}
+				},
+				index => {
+					if( index != -1 ) {
+						OnPropertyChanged( "Count" );
+						OnPropertyChanged( "Item[]" );
+						OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
+					}
+				} );
+		}
+
+		/// <summary>
+		/// コレクションが変更された際に発生するイベントです。
+		/// </summary>
+		[field: NonSerialized]
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		/// <summary>
+		/// プロパティが変更された際に発生するイベントです。
+		/// </summary>
+		[field: NonSerialized]
+		public event PropertyChangedEventHandler PropertyChanged;
+
+
 		/// <summary>
 		/// CollectionChangedイベントを発生させます。
 		/// </summary>
@@ -260,106 +315,20 @@ namespace LivetEx {
 		}
 
 
-		protected void ReadWithLockAction( Action readAction ) {
-			if( !_lock.IsReadLockHeld ) {
-				_lock.EnterReadLock();
-				try {
-					readAction();
-				} finally {
-					_lock.ExitReadLock();
-				}
-			} else {
-				readAction();
-			}
-		}
-
-		protected TResult ReadWithLockAction<TResult>( Func<TResult> readAction ) {
-			if( !_lock.IsReadLockHeld ) {
-				_lock.EnterReadLock();
-				try {
-					return readAction();
-				} finally {
-					_lock.ExitReadLock();
-				}
-			}
-
-			return readAction();
-		}
-
-
-		protected void ReadAndWriteWithLockAction( Action writeAction, Action readAfterWriteAction ) {
-			_lock.EnterUpgradeableReadLock();
-			try {
-				_lock.EnterWriteLock();
-				try {
-					writeAction();
-				} finally {
-					_lock.ExitWriteLock();
-				}
-
-				_lock.EnterReadLock();
-
-				try {
-					readAfterWriteAction();
-				} finally {
-					_lock.ExitReadLock();
-				}
-			} finally {
-				_lock.ExitUpgradeableReadLock();
-			}
-		}
-
-		protected void ReadAndWriteWithLockAction<TResult>( Func<TResult> readBeforeWriteAction, Action<TResult> writeAction, Action<TResult> readAfterWriteAction ) {
-			_lock.EnterUpgradeableReadLock();
-			try {
-				TResult readActionResult = readBeforeWriteAction();
-
-				_lock.EnterWriteLock();
-
-				try {
-					writeAction( readActionResult );
-				} finally {
-					_lock.ExitWriteLock();
-				}
-
-				_lock.EnterReadLock();
-
-				try {
-					readAfterWriteAction( readActionResult );
-				} finally {
-					_lock.ExitReadLock();
-				}
-			} finally {
-				_lock.ExitUpgradeableReadLock();
-			}
-		}
-
-		/// <summary>
-		/// コレクションが変更された際に発生するイベントです。
-		/// </summary>
-		[field: NonSerialized]
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-		/// <summary>
-		/// プロパティが変更された際に発生するイベントです。
-		/// </summary>
-		[field: NonSerialized]
-		public event PropertyChangedEventHandler PropertyChanged;
-
-
-
 		#region Dispose
 		[NonSerialized]
 		private bool _disposed;
 		public void Dispose() {
 			Dispose( true );
-			GC.SuppressFinalize( this );
+			//GC.SuppressFinalize( this );
 		}
 
 		protected virtual void Dispose( bool disposing ) {
 			if( _disposed ) return;
 			if( disposing ) {
 				_lock.Dispose();
+
+
 			}
 
 			// 非管理（unmanaged）リソースの破棄処理をここに記述します。
@@ -367,26 +336,8 @@ namespace LivetEx {
 			_disposed = true;
 		}
 
-		public int Add( object value ) {
-			Add( (T)value  );
-			return this.Count - 1;
-		}
-
-		public bool Contains( object value ) {
-			return Contains( (T)value );
-		}
-
-		public int IndexOf( object value ) {
-			return IndexOf( (T)value );
-		}
-
-		public void Insert( int index, object value ) {
-			Insert( index, (T)value );
-		}
-
-		public void Remove( object value ) {
-			Remove( (T)value );
-		}
 		#endregion
+
+
 	}
 }

@@ -49,35 +49,22 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Remote\</OutputPath>
+    <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'RemoteVenue8|AnyCPU'">
-    <OutputPath>bin\RemoteVenue8\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>bin\Release\LivetEx.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>1591</NoWarn>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Suface4 Ohya|AnyCPU'">
-    <OutputPath>bin\Suface4 Ohya\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\LivetEx.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <NoWarn>1591</NoWarn>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -101,7 +88,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousDisposable.cs" />
-    <Compile Include="PropertyChangedTree.cs" />
+    <Compile Include="DisposableAction.cs" />
+    <Compile Include="ObservableSynchronizedHashSet.cs" />
+    <Compile Include="ReaderWriterLockSlimEx.cs" />
+    <Compile Include="SystemTypeExtension.cs" />
+    <Compile Include="ObservableDisposableCollection.cs" />
     <Compile Include="Commands\CommandBindingService.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="EventListeners\AnonymousCollectionItemNotifyPropertyChangedEventHandlerBag.cs" />

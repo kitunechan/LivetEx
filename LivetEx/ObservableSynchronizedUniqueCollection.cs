@@ -55,8 +55,9 @@ namespace LivetEx {
 		/// <param name="source">初期値となるソース</param>
 		public ObservableSynchronizedUniqueCollection( IEnumerable<T> source ) {
 			if( source == null ) throw new ArgumentNullException( "source" );
-			hash = new HashSet<T>();
-			Items = new List<T>( source );
+			
+			hash = new HashSet<T>( source );
+			Items = new List<T>( hash );
 		}
 
 		/// <summary>
@@ -66,8 +67,9 @@ namespace LivetEx {
 		/// <param name="comparer"></param>
 		public ObservableSynchronizedUniqueCollection( IEnumerable<T> source, IEqualityComparer<T> comparer ) {
 			if( source == null ) throw new ArgumentNullException( "source" );
-			hash = new HashSet<T>( comparer );
-			Items = new List<T>( source );
+			
+			hash = new HashSet<T>( source, comparer );
+			Items = new List<T>( hash );
 		}
 
 		public T this[int index] {

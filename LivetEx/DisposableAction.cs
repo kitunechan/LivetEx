@@ -9,7 +9,7 @@ namespace LivetEx {
 		Action _action;
 
 		public void Dispose() {
-			_action.Invoke();
+			_action();
 		}
 	}
 }

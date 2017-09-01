@@ -35,10 +35,45 @@ namespace LivetEx.Tests {
 
 		[TestMethod()]
 		public void ObservableSynchronizedUniqueCollectionTest3() {
-			var source = Enumerable.Range( 0, 100 ).Select( x => Tuple.Create( x, "str" + x ) );
+			var source = Enumerable.Range( 0, 5 ).Select( x => Tuple.Create( x, "str" + x ) );
 
 			var intList = new ObservableSynchronizedUniqueCollection<Tuple<int, string>>( source, new EqualityComparer<Tuple<int, string>, int>( x => x.Item1 ) );
+			intList.Add( Tuple.Create( 0, "str999" ) );
+			Assert.IsTrue( intList.Count == 5 );
+
 			var stringList = new ObservableSynchronizedUniqueCollection<Tuple<int, string>>( source, new EqualityComparer<Tuple<int, string>, string>( x => x.Item2 ) );
+			stringList.Add( Tuple.Create( 999, "str0" ) );
+			Assert.IsTrue( stringList.Count == 5 );
+
+			var list = new ObservableSynchronizedUniqueCollection<Test>( Enumerable.Range( 0, 5 ).Select( x => new Test { Num = x, Str = "str" + x } ), new EqualityComparer<Test, int>( x => x.Num ) );
+			list.Add( new Test() { Num = 0, Str = "str999" } );
+			Assert.IsTrue( list.Count == 5 );
+
+		}
+
+		[TestMethod()]
+		public void ObservableSynchronizedUniqueCollectionTest4() {
+			var intList = new ObservableSynchronizedUniqueCollection<int> { 1, 2, 3 };
+			var stringList = new ObservableSynchronizedUniqueCollection<string> { "1", "2", "3", };
+			var list = new ObservableSynchronizedUniqueCollection<Test>( Enumerable.Range(0,5).Select( x=> new Test { Num = x, Str ="str"+x } ), new EqualityComparer<Test,int>( x=> x.Num ) );
+
+			var intList2 = new ObservableSynchronizedUniqueCollection<int>( intList );
+			var stringList2 = new ObservableSynchronizedUniqueCollection<string>( stringList );
+
+			var list2 =  new ObservableSynchronizedUniqueCollection<Test>( list.Select(x=> new Test(x) ), list.Comparer );
+
+			Assert.IsFalse( list[0] == list2[0] );
+		}
+
+		[TestMethod()]
+		public void ContentChange() {
+			var list = new ObservableSynchronizedUniqueCollection<Test>( 
+					Enumerable.Range( 0, 5 ).Select( x => new Test { Num = x, Str = "str" + x } ), new EqualityComparer<Test, int>( x => x.Num )
+				);
+			list[2].Num = 0;
+
+
+			
 		}
 
 		[TestMethod()]
@@ -255,6 +290,44 @@ namespace LivetEx.Tests {
 			stringList.Dispose();
 			stringList.Dispose();
 			stringList.Dispose();
+		}
+
+
+		[TestMethod()]
+		public void Lock() {
+
+			var list = new ObservableSynchronizedUniqueCollection<string>();
+
+			var count = 0;
+
+			list.CollectionChanged += ( x, v ) => {
+				count = list.Count;
+			};
+
+			Enumerable.Range( 0, 100 ).AsParallel().ForAll( x => {
+				list.Add( x.ToString() );
+			} );
+
+			Assert.IsTrue( count == 100 );
+		}
+
+
+		public class Test  {
+			/// <summary>
+			/// コピーコンストラクタ
+			/// </summary>
+			public Test( Test value ) {
+				this.Num = value.Num;
+				this.Str = value.Str;
+			}
+
+			public Test() {
+			}
+			
+
+			public int Num { get; set; }
+			public string Str { get; set; }
+			
 		}
 	}
 }

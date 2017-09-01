@@ -31,14 +31,22 @@ namespace LivetEx {
 
 
 		public void ReadWithLockAction( Action readAction ) {
-			using( ReadLock() ) {
+			if( _lock.IsReadLockHeld ) {
 				readAction();
+			} else {
+				using( ReadLock() ) {
+					readAction();
+				}
 			}
 		}
 
 		public TResult ReadWithLockAction<TResult>( Func<TResult> readAction ) {
-			using( ReadLock() ) {
+			if( _lock.IsReadLockHeld ) {
 				return readAction();
+			} else {
+				using( ReadLock() ) {
+					return readAction();
+				}
 			}
 		}
 

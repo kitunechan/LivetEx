@@ -56,6 +56,17 @@ namespace LivetEx.Messaging {
 			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata( true ) );
 
 
+		#region Register WindowState
+		public WindowState WindowState {
+			get { return (WindowState)GetValue( WindowStateProperty ); }
+			set { SetValue( WindowStateProperty, value ); }
+		}
+
+		// Using a DependencyProperty as the backing store for WindowState.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty WindowStateProperty =
+			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata( WindowState.Normal ) );
+		#endregion
+
 		protected override void InvokeAction( InteractionMessage message ) {
 			if( message is WindowTransitionMessage transitionMessage ) {
 				var clone = (WindowTransitionMessage)transitionMessage.Clone();
@@ -63,6 +74,10 @@ namespace LivetEx.Messaging {
 					clone.WindowType = transitionMessage.WindowType ?? WindowType;
 					clone.Mode = ( transitionMessage.Mode != WindowTransitionMode.UnKnown ) ? transitionMessage.Mode : Mode;
 					clone.IsOwned = transitionMessage.IsOwned ?? IsOwned;
+
+					if( transitionMessage.WindowState == WindowState.Normal ) {
+						clone.WindowState = this.WindowState;
+					}
 
 					clone.Freeze();
 				}
@@ -105,6 +120,8 @@ namespace LivetEx.Messaging {
 						targetWindow.WindowStartupLocation = message.WindowStartupLocation.Value;
 					}
 
+					targetWindow.WindowState = message.WindowState;
+
 					if( mode == WindowTransitionMode.Modeless ) {
 						targetWindow.Show();
 						message.Response = null;
@@ -120,6 +137,7 @@ namespace LivetEx.Messaging {
 						.OfType<Window>()
 						.FirstOrDefault( w => w.GetType() == targetType );
 
+
 					if( window == null ) {
 						window = (Window)defaultConstructor.Invoke( null );
 
@@ -132,6 +150,8 @@ namespace LivetEx.Messaging {
 						if( message.IsOwned == true ) {
 							window.Owner = Window.GetWindow( element );
 						}
+
+						window.WindowState = message.WindowState;
 						window.Show();
 						message.Response = null;
 					} else {
@@ -145,10 +165,8 @@ namespace LivetEx.Messaging {
 							window.Owner = Window.GetWindow( element );
 						}
 						window.Activate();
-						// 最小化中なら戻す
-						if( window.WindowState == WindowState.Minimized ) {
-							window.WindowState = WindowState.Normal;
-						}
+						window.WindowState = message.WindowState;
+						
 						message.Response = null;
 					}
 

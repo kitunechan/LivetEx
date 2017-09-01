@@ -5,7 +5,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
-	[System.Windows.Markup.ContentProperty( "TransitionViewModel" )]
+	[System.Windows.Markup.ContentProperty( "ViewModel" )]
 	public class WindowTransitionMessage: ResponsiveInteractionMessage<bool?> {
 		public WindowTransitionMessage() {
 		}
@@ -28,31 +28,31 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( ViewModel transitionViewModel, string messageKey )
-			: this( null, transitionViewModel, WindowTransitionMode.UnKnown, messageKey ) { }
+		public WindowTransitionMessage( ViewModel ViewModel, string messageKey )
+			: this( null, ViewModel, WindowTransitionMode.UnKnown, messageKey ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelと画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( ViewModel transitionViewModel, WindowTransitionMode mode, string messageKey )
-			: this( null, transitionViewModel, mode, messageKey ) { }
+		public WindowTransitionMessage( ViewModel ViewModel, WindowTransitionMode mode, string messageKey )
+			: this( null, ViewModel, mode, messageKey ) { }
 
 		/// <summary>
 		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="windowType">新しいWindowの型</param>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( Type windowType, ViewModel transitionViewModel, WindowTransitionMode mode, string messageKey )
+		public WindowTransitionMessage( Type windowType, ViewModel viewModel, WindowTransitionMode mode, string messageKey )
 			: base( messageKey ) {
 			Mode = mode;
-			ViewModel = transitionViewModel;
+			ViewModel = viewModel;
 
 			if( windowType != null ) {
 				if( !windowType.IsSubclassOf( typeof( Window ) ) ) {
@@ -66,26 +66,26 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowTransitionMessage( ViewModel transitionViewModel )
-			: this( null, transitionViewModel, WindowTransitionMode.UnKnown, null ) { }
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		public WindowTransitionMessage( ViewModel ViewModel )
+			: this( null, ViewModel, WindowTransitionMode.UnKnown, null ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelと画面遷移モードを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		public WindowTransitionMessage( ViewModel transitionViewModel, WindowTransitionMode mode )
-			: this( null, transitionViewModel, mode, null ) { }
+		public WindowTransitionMessage( ViewModel ViewModel, WindowTransitionMode mode )
+			: this( null, ViewModel, mode, null ) { }
 
 		/// <summary>
 		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="windowType">新しいWindowの型</param>
-		/// <param name="transitionViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		public WindowTransitionMessage( Type windowType, ViewModel transitionViewModel, WindowTransitionMode mode )
-			: this( windowType, transitionViewModel, mode, null ) { }
+		public WindowTransitionMessage( Type windowType, ViewModel ViewModel, WindowTransitionMode mode )
+			: this( windowType, ViewModel, mode, null ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
@@ -137,6 +137,19 @@ namespace LivetEx.Messaging {
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
 			DependencyProperty.Register( "IsOwned", typeof( bool? ), typeof( WindowTransitionMessage ), new PropertyMetadata( true ) );
+
+
+
+		#region Register WindowState
+		public WindowState WindowState {
+			get { return (WindowState)GetValue( WindowStateProperty ); }
+			set { SetValue( WindowStateProperty, value ); }
+		}
+
+		// Using a DependencyProperty as the backing store for WindowState.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty WindowStateProperty =
+			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowTransitionMessage ), new PropertyMetadata( WindowState.Normal ) );
+		#endregion
 
 
 		public WindowStartupLocation? WindowStartupLocation { get; set; }

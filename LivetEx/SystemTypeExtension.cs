@@ -20,8 +20,8 @@ namespace LivetEx {
 		}
 	}
 
-	public class InExtensiont : MarkupExtension {
-		public InExtensiont( int value ) {
+	public class IntExtension : MarkupExtension {
+		public IntExtension( int value ) {
 			this.value = value;
 		}
 

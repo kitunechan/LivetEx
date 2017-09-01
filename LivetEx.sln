@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivetEx", "LivetEx\LivetEx.csproj", "{0EF98261-40BF-45A5-B990-8DAC1DE43D67}"
 EndProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{09144B
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivetExTests", "LivetExTests\LivetExTests.csproj", "{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,8 +27,17 @@ Global
 		{0EF98261-40BF-45A5-B990-8DAC1DE43D67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0EF98261-40BF-45A5-B990-8DAC1DE43D67}.Remote|Any CPU.ActiveCfg = Release|Any CPU
 		{0EF98261-40BF-45A5-B990-8DAC1DE43D67}.Remote|Any CPU.Build.0 = Release|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Remote|Any CPU.ActiveCfg = Release|Any CPU
+		{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}.Remote|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DDD4696-D884-4157-9964-0366649AA1BD}
 	EndGlobalSection
 EndGlobal

@@ -1,40 +1,72 @@
-﻿using System;
+﻿using System.Security.Cryptography.X509Certificates;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using System.Collections;
+using System.Threading.Tasks;
 
 namespace LivetEx {
+
 	/// <summary>
 	/// スレッドセーフな変更通知コレクションです。
 	/// </summary>
 	/// <typeparam name="T">コレクションアイテムの型</typeparam>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable" )]
 	[Serializable]
-	public class ObservableSynchronizedCollection<T> : IList<T>, IReadOnlyList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable {
+	public class ObservableSynchronizedUniqueCollection<T> : IList<T>, IReadOnlyList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable {
 		protected List<T> Items;
+		protected HashSet<T> hash;
+
+		[NonSerialized]
+		private ReaderWriterLockSlimEx _lock = new ReaderWriterLockSlimEx();
 
 		[NonSerialized]
 		private object _syncRoot = new object();
 
-		[NonSerialized]
-		internal ReaderWriterLockSlimEx _lock = new ReaderWriterLockSlimEx();
+
+		public IEqualityComparer<T> Comparer => hash.Comparer;
+
 
 		/// <summary>
 		/// デフォルトコンストラクタ
 		/// </summary>
-		public ObservableSynchronizedCollection() {
+		public ObservableSynchronizedUniqueCollection() {
+			hash = new HashSet<T>();
 			Items = new List<T>();
 		}
 
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
+		// <param name="comparer"></param>
+		public ObservableSynchronizedUniqueCollection( IEqualityComparer<T> comparer ) {
+			hash = new HashSet<T>( comparer );
+			Items = new List<T>();
+
+		}
+
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
 		/// <param name="source">初期値となるソース</param>
-		public ObservableSynchronizedCollection( IEnumerable<T> source ) {
+		public ObservableSynchronizedUniqueCollection( IEnumerable<T> source ) {
 			if( source == null ) throw new ArgumentNullException( "source" );
+			hash = new HashSet<T>();
+			Items = new List<T>( source );
+		}
+
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="source">初期値となるソース</param>
+		/// <param name="comparer"></param>
+		public ObservableSynchronizedUniqueCollection( IEnumerable<T> source, IEqualityComparer<T> comparer ) {
+			if( source == null ) throw new ArgumentNullException( "source" );
+			hash = new HashSet<T>( comparer );
 			Items = new List<T>( source );
 		}
 
@@ -45,6 +77,9 @@ namespace LivetEx {
 			set {
 				_lock.WriteReadWithLockAction( () => Items[index],
 					oldItem => {
+						hash.Remove( Items[index] );
+						hash.Add( value );
+
 						Items[index] = value;
 					},
 					oldItem => {
@@ -59,11 +94,20 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="item">追加するオブジェクト</param>
 		public void Add( T item ) {
-			_lock.ReadAndWriteWithLockAction( () => Items.Add( item ),
+			_lock.ReadAndWriteWithLockAction(
 				() => {
-					OnPropertyChanged( "Count" );
-					OnPropertyChanged( "Item[]" );
-					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, Items.Count - 1 ) );
+					var result = hash.Add( item );
+					if( result ) {
+						Items.Add( item );
+					}
+					return result;
+				},
+				x => {
+					if( x ) {
+						OnPropertyChanged( "Count" );
+						OnPropertyChanged( "Item[]" );
+						OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, Items.Count - 1 ) );
+					}
 				} );
 		}
 		/// <summary>
@@ -72,11 +116,20 @@ namespace LivetEx {
 		/// <param name="index">指定するインデックス</param>
 		/// <param name="item">挿入するオブジェクト</param>
 		public void Insert( int index, T item ) {
-			_lock.ReadAndWriteWithLockAction( () => Items.Insert( index, item ),
+			_lock.ReadAndWriteWithLockAction( 
 				() => {
-					OnPropertyChanged( "Count" );
-					OnPropertyChanged( "Item[]" );
-					OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+					var result = hash.Add( item );
+					if( result ) {
+						Items.Insert( index, item );
+					}
+					return result;
+				},
+				x => {
+					if( x ) {
+						OnPropertyChanged( "Count" );
+						OnPropertyChanged( "Item[]" );
+						OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+					}
 				} );
 		}
 
@@ -86,7 +139,10 @@ namespace LivetEx {
 		/// <param name="index">指定するインデックス</param>
 		public void RemoveAt( int index ) {
 			_lock.WriteReadWithLockAction( () => Items[index],
-				removeItem => Items.RemoveAt( index ),
+				removeItem => {
+					hash.Remove( removeItem );
+					Items.RemoveAt( index );
+				},
 				removeItem => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -103,6 +159,7 @@ namespace LivetEx {
 
 			_lock.WriteReadWithLockAction( () => Items.IndexOf( item ),
 				index => {
+					hash.Remove( item );
 					result = Items.Remove( item );
 				},
 				index => {
@@ -123,6 +180,7 @@ namespace LivetEx {
 			_lock.WriteReadWithLockAction( () => Items.Count,
 			count => {
 				if( count != 0 ) {
+					hash.Clear();
 					Items.Clear();
 				}
 			},
@@ -150,7 +208,7 @@ namespace LivetEx {
 		/// <param name="item">コレクションに含まれているか判断したい要素</param>
 		/// <returns>このコレクションに含まれているかどうか</returns>
 		public bool Contains( T item ) {
-			return _lock.ReadWithLockAction( () => Items.Contains( item ) );
+			return _lock.ReadWithLockAction( () => hash.Contains( item ) );
 		}
 		/// <summary>
 		/// 指定されたインデックスの要素を指定されたインデックスに移動します。
@@ -215,7 +273,7 @@ namespace LivetEx {
 		/// <param name="array">コピー先の配列</param>
 		/// <param name="index">コピー先の配列のどこからコピー操作をするかのインデックス</param>
 		public void CopyTo( Array array, int index ) {
-			CopyTo( array.Cast<T>().ToArray(), index );
+			CopyTo( (T[])array, index );
 		}
 
 		/// <summary>
@@ -238,11 +296,20 @@ namespace LivetEx {
 
 		object IList.this[int index] {
 			get => this[index];
-			set => this[index] = (T)value;
+			set {
+				this.hash.Remove( this[index] );
+				this.hash.Add( (T)value );
+
+				this[index] = (T)value;
+			}
 		}
 
 		int IList.Add( object item ) {
-			return _lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Add( item ),
+			return _lock.ReadAndWriteWithLockAction( 
+				() => {
+					this.hash.Add( (T)item );
+					return ( (IList)this.Items ).Add( item );
+				},
 				x => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -253,7 +320,7 @@ namespace LivetEx {
 		}
 
 		bool IList.Contains( object item ) {
-			return _lock.ReadWithLockAction( () => ( (IList)this.Items ).Contains( item ) );
+			return _lock.ReadWithLockAction( () => this.hash.Contains( (T)item ) );
 		}
 
 		int IList.IndexOf( object item ) {
@@ -261,7 +328,11 @@ namespace LivetEx {
 		}
 
 		void IList.Insert( int index, object item ) {
-			_lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Insert( index, item ),
+			_lock.ReadAndWriteWithLockAction( 
+				() => {
+					this.hash.Add( (T)item );
+					( (IList)this.Items ).Insert( index, item );
+				},
 				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -273,6 +344,7 @@ namespace LivetEx {
 			_lock.WriteReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ),
 				index => {
 					if( index != -1 ) {
+						this.hash.Remove( (T)item );
 						( (IList)this.Items ).Remove( item );
 					}
 				},

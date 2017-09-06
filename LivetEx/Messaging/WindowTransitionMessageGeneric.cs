@@ -6,9 +6,18 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowTransitionMessage<T>: WindowTransitionMessage where T: ViewModel{
+	public class WindowTransitionMessage<T> : WindowTransitionMessage where T : ViewModel {
 		public WindowTransitionMessage() {
 		}
+
+
+		/// <summary>
+		/// コピーコンストラクタ
+		/// </summary>
+		public WindowTransitionMessage( WindowTransitionMessage value ) : base( value ) {
+
+		}
+
 
 		/// <summary>
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
@@ -16,13 +25,6 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		public WindowTransitionMessage( string messageKey ) : base( messageKey ) { }
 
-		/// <summary>
-		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="messageKey">メッセージキー</param>
-		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		public WindowTransitionMessage( string messageKey, WindowTransitionMode mode )
-			: this( messageKey, null, null, mode ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
@@ -30,16 +32,7 @@ namespace LivetEx.Messaging {
 		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="messageKey">メッセージキー</param>
 		public WindowTransitionMessage( string messageKey, T ViewModel )
-			: this( messageKey, null, ViewModel, WindowTransitionMode.UnKnown ) { }
-
-		/// <summary>
-		/// 新しいWindowのDataContextに設定するViewModelと画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( T ViewModel, WindowTransitionMode mode, string messageKey )
-			: this( messageKey, null, ViewModel, mode ) { }
+			: this( messageKey, null, ViewModel ) { }
 
 		/// <summary>
 		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
@@ -48,9 +41,8 @@ namespace LivetEx.Messaging {
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( string messageKey, Type windowType, T viewModel, WindowTransitionMode mode )
-			: base( messageKey ) {
-			Mode = mode;
+		public WindowTransitionMessage( string messageKey, Type windowType, T viewModel )
+			: base( messageKey, windowType, viewModel ) {
 			ViewModel = viewModel;
 
 			if( windowType != null ) {
@@ -62,29 +54,7 @@ namespace LivetEx.Messaging {
 			WindowType = windowType;
 		}
 
-		/// <summary>
-		/// 新しいWindowのDataContextに設定するViewModelを指定して新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowTransitionMessage( T ViewModel )
-			: this( null, null, ViewModel, WindowTransitionMode.UnKnown) { }
 
-		/// <summary>
-		/// 新しいWindowのDataContextに設定するViewModelと画面遷移モードを指定して新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		public WindowTransitionMessage( T ViewModel, WindowTransitionMode mode )
-			: this( null, null, ViewModel, mode ) { }
-
-		/// <summary>
-		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="windowType">新しいWindowの型</param>
-		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		public WindowTransitionMessage( Type windowType, T ViewModel, WindowTransitionMode mode )
-			: this( null, windowType, ViewModel, mode ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
@@ -101,7 +71,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessage<T>( MessageKey, ViewModel );
+			return new WindowTransitionMessage<T>( this );
 		}
 	}
 }

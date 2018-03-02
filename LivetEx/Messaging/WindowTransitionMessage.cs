@@ -19,6 +19,8 @@ namespace LivetEx.Messaging {
 			this.IsOwned = value.IsOwned;
 			this.WindowState = value.WindowState;
 			this.WindowStartupLocation = value.WindowStartupLocation;
+
+			this.WindowSetting = value.WindowSetting;
 		}
 
 		/// <summary>
@@ -120,6 +122,12 @@ namespace LivetEx.Messaging {
 
 
 		public WindowStartupLocation? WindowStartupLocation { get; set; }
+
+
+		/// <summary>
+		/// ウインドウの設定を行う関数
+		/// </summary>
+		public Action<Window> WindowSetting { get; set; } 
 
 
 		/// <summary>

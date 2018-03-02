@@ -37,10 +37,9 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
+		/// <param name="messageKey">メッセージキー</param>
 		/// <param name="windowType">新しいWindowの型</param>
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
-		/// <param name="mode">画面遷移の方法を決定するTransitionMode列挙体。初期値はUnKnownです。</param>
-		/// <param name="messageKey">メッセージキー</param>
 		public WindowTransitionMessage( string messageKey, Type windowType, T viewModel )
 			: base( messageKey, windowType, viewModel ) {
 			ViewModel = viewModel;
@@ -72,6 +71,56 @@ namespace LivetEx.Messaging {
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
 			return new WindowTransitionMessage<T>( this );
+		}
+	}
+
+
+	/// <summary>
+	/// 画面遷移アクション用の相互作用メッセージです。
+	/// </summary>
+	[System.Windows.Markup.ContentProperty( "ViewModel" )]
+	public class WindowTransitionMessageV<V> : WindowTransitionMessage where V : Window {
+		public WindowTransitionMessageV() {
+			this.WindowType = this.GetType().GetGenericArguments()[0];
+		}
+
+
+		/// <summary>
+		/// コピーコンストラクタ
+		/// </summary>
+		public WindowTransitionMessageV( WindowTransitionMessageV<V> value ) : base( value ) {
+			this.WindowSetting = value.WindowSetting;
+		}
+
+
+		/// <summary>
+		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
+		/// </summary>
+		/// <param name="messageKey">メッセージキー</param>
+		public WindowTransitionMessageV( string messageKey ) : base( messageKey ) {
+			this.WindowType = this.GetType().GetGenericArguments()[0];
+		}
+
+		/// <summary>
+		/// ウインドウの設定を行う関数
+		/// </summary>
+		new public Action<V> WindowSetting {
+			get {
+				return base.WindowSetting;
+			}
+			set {
+				base.WindowSetting = window => value( (V)window );
+			}
+		}
+
+
+		/// <summary>
+		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
+		/// 通常このメソッドは、自身の新しいインスタンスを返すように実装します。
+		/// </summary>
+		/// <returns>自身の新しいインスタンス</returns>
+		protected override Freezable CreateInstanceCore() {
+			return new WindowTransitionMessageV<V>( this );
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LivetEx.EventListeners;
+using System;
 using System.Linq;
 using System.Windows;
 using LivetEx.Messaging;
@@ -122,11 +123,26 @@ namespace LivetEx.Messaging {
 
 					targetWindow.WindowState = message.WindowState;
 
+					message.WindowSetting?.Invoke( targetWindow );
+
 					if( mode == WindowTransitionMode.Modeless ) {
 						targetWindow.Show();
 						message.Response = null;
 					} else {
+						var minimizedEvent = new LivetEventListener<SizeChangedEventHandler>(
+							h => targetWindow.SizeChanged += h,
+							h => targetWindow.SizeChanged -= h,
+							( s, e ) => {
+								if( targetWindow.WindowState == WindowState.Minimized ) {
+									if( targetWindow.Owner != null ) {
+										targetWindow.Owner.WindowState = WindowState.Minimized;
+									}
+								}
+							} );
+
 						message.Response = targetWindow.ShowDialog();
+
+						minimizedEvent.Dispose();
 					}
 
 					break;

@@ -80,7 +80,7 @@ namespace LivetEx.Triggers {
 				if( parameter is InteractionMessageOneParameter interaction ) {
 					_callbackMethod.Invoke( MethodTarget, MethodName, interaction.Value );
 				}else if( parameter is ResponsiveInteractionMessageOneParameter responsive ) {
-					responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, responsive.Value, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
+					responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, responsive.Value, responsive.GetType().GenericTypeArguments.ElementAtOrDefault(1) ?? typeof( object ) );
 				}
 			}else if( parameter is ResponsiveInteractionMessage responsive ) {
 				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );

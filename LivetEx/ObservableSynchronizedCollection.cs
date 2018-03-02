@@ -20,7 +20,7 @@ namespace LivetEx {
 		private object _syncRoot = new object();
 
 		[NonSerialized]
-		internal ReaderWriterLockSlimEx _lock = new ReaderWriterLockSlimEx();
+		protected internal ReaderWriterLockSlimEx Lock = new ReaderWriterLockSlimEx();
 
 		/// <summary>
 		/// デフォルトコンストラクタ
@@ -40,10 +40,10 @@ namespace LivetEx {
 
 		public T this[int index] {
 			get {
-				return _lock.ReadWithLockAction( () => Items[index] );
+				return Lock.ReadWithLockAction( () => Items[index] );
 			}
 			set {
-				_lock.WriteReadWithLockAction( () => Items[index],
+				Lock.WriteReadWithLockAction( () => Items[index],
 					oldItem => {
 						Items[index] = value;
 					},
@@ -59,7 +59,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="item">追加するオブジェクト</param>
 		public void Add( T item ) {
-			_lock.ReadAndWriteWithLockAction( () => Items.Add( item ),
+			Lock.ReadAndWriteWithLockAction( () => Items.Add( item ),
 				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -72,7 +72,7 @@ namespace LivetEx {
 		/// <param name="index">指定するインデックス</param>
 		/// <param name="item">挿入するオブジェクト</param>
 		public void Insert( int index, T item ) {
-			_lock.ReadAndWriteWithLockAction( () => Items.Insert( index, item ),
+			Lock.ReadAndWriteWithLockAction( () => Items.Insert( index, item ),
 				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -85,7 +85,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="index">指定するインデックス</param>
 		public void RemoveAt( int index ) {
-			_lock.WriteReadWithLockAction( () => Items[index],
+			Lock.WriteReadWithLockAction( () => Items[index],
 				removeItem => Items.RemoveAt( index ),
 				removeItem => {
 					OnPropertyChanged( "Count" );
@@ -101,7 +101,7 @@ namespace LivetEx {
 		public bool Remove( T item ) {
 			bool result = false;
 
-			_lock.WriteReadWithLockAction( () => Items.IndexOf( item ),
+			Lock.WriteReadWithLockAction( () => Items.IndexOf( item ),
 				index => {
 					result = Items.Remove( item );
 				},
@@ -120,7 +120,7 @@ namespace LivetEx {
 		/// すべての要素を削除します。
 		/// </summary>
 		public void Clear() {
-			_lock.WriteReadWithLockAction( () => Items.Count,
+			Lock.WriteReadWithLockAction( () => Items.Count,
 			count => {
 				if( count != 0 ) {
 					Items.Clear();
@@ -141,7 +141,7 @@ namespace LivetEx {
 		/// <param name="item">検索するオブジェクト</param>
 		/// <returns>最初に見つかった位置のインデックス</returns>
 		public int IndexOf( T item ) {
-			return _lock.ReadWithLockAction( () => Items.IndexOf( item ) );
+			return Lock.ReadWithLockAction( () => Items.IndexOf( item ) );
 		}
 
 		/// <summary>
@@ -150,7 +150,7 @@ namespace LivetEx {
 		/// <param name="item">コレクションに含まれているか判断したい要素</param>
 		/// <returns>このコレクションに含まれているかどうか</returns>
 		public bool Contains( T item ) {
-			return _lock.ReadWithLockAction( () => Items.Contains( item ) );
+			return Lock.ReadWithLockAction( () => Items.Contains( item ) );
 		}
 		/// <summary>
 		/// 指定されたインデックスの要素を指定されたインデックスに移動します。
@@ -158,7 +158,7 @@ namespace LivetEx {
 		/// <param name="oldIndex">移動したい要素のインデックス</param>
 		/// <param name="newIndex">移動先のインデックス</param>
 		public void Move( int oldIndex, int newIndex ) {
-			_lock.WriteReadWithLockAction( () => Items[oldIndex],
+			Lock.WriteReadWithLockAction( () => Items[oldIndex],
 				item => {
 					Items.RemoveAt( oldIndex );
 					Items.Insert( newIndex, item );
@@ -175,7 +175,7 @@ namespace LivetEx {
 		/// <param name="array">コピー先の配列</param>
 		/// <param name="arrayIndex">コピー先の配列のどこからコピー操作をするかのインデックス</param>
 		public void CopyTo( T[] array, int arrayIndex ) {
-			_lock.ReadWithLockAction( () => Items.CopyTo( array, arrayIndex ) );
+			Lock.ReadWithLockAction( () => Items.CopyTo( array, arrayIndex ) );
 		}
 
 		/// <summary>
@@ -183,7 +183,7 @@ namespace LivetEx {
 		/// </summary>
 		public int Count {
 			get {
-				return _lock.ReadWithLockAction( () => Items.Count );
+				return Lock.ReadWithLockAction( () => Items.Count );
 			}
 		}
 
@@ -198,7 +198,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <returns>列挙子</returns>
 		public IEnumerator<T> GetEnumerator() {
-			return _lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
+			return Lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
 		}
 
 		/// <summary>
@@ -206,7 +206,7 @@ namespace LivetEx {
 		/// </summary>
 		/// <returns>列挙子</returns>
 		IEnumerator IEnumerable.GetEnumerator() {
-			return _lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
+			return Lock.ReadWithLockAction( () => ( (IEnumerable<T>)Items.ToArray() ).GetEnumerator() );
 		}
 
 		/// <summary>
@@ -242,7 +242,7 @@ namespace LivetEx {
 		}
 
 		int IList.Add( object item ) {
-			return _lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Add( item ),
+			return Lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Add( item ),
 				x => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -253,15 +253,15 @@ namespace LivetEx {
 		}
 
 		bool IList.Contains( object item ) {
-			return _lock.ReadWithLockAction( () => ( (IList)this.Items ).Contains( item ) );
+			return Lock.ReadWithLockAction( () => ( (IList)this.Items ).Contains( item ) );
 		}
 
 		int IList.IndexOf( object item ) {
-			return _lock.ReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ) );
+			return Lock.ReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ) );
 		}
 
 		void IList.Insert( int index, object item ) {
-			_lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Insert( index, item ),
+			Lock.ReadAndWriteWithLockAction( () => ( (IList)this.Items ).Insert( index, item ),
 				() => {
 					OnPropertyChanged( "Count" );
 					OnPropertyChanged( "Item[]" );
@@ -270,7 +270,7 @@ namespace LivetEx {
 		}
 
 		void IList.Remove( object item ) {
-			_lock.WriteReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ),
+			Lock.WriteReadWithLockAction( () => ( (IList)this.Items ).IndexOf( item ),
 				index => {
 					if( index != -1 ) {
 						( (IList)this.Items ).Remove( item );
@@ -326,7 +326,7 @@ namespace LivetEx {
 		protected virtual void Dispose( bool disposing ) {
 			if( _disposed ) return;
 			if( disposing ) {
-				_lock.Dispose();
+				Lock.Dispose();
 
 
 			}

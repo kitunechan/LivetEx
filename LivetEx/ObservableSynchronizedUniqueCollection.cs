@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace LivetEx {
 
@@ -19,6 +20,8 @@ namespace LivetEx {
 	[Serializable]
 	public class ObservableSynchronizedUniqueCollection<T> : IList<T>, IReadOnlyList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable {
 		protected List<T> Items;
+
+		[NonSerialized]
 		protected HashSet<T> hash;
 
 		[NonSerialized]
@@ -36,7 +39,7 @@ namespace LivetEx {
 		/// </summary>
 		public ObservableSynchronizedUniqueCollection() {
 			hash = new HashSet<T>();
-			Items = new List<T>();
+			Items = hash.ToList();
 		}
 
 		/// <summary>
@@ -45,8 +48,7 @@ namespace LivetEx {
 		// <param name="comparer"></param>
 		public ObservableSynchronizedUniqueCollection( IEqualityComparer<T> comparer ) {
 			hash = new HashSet<T>( comparer );
-			Items = new List<T>();
-
+			Items = hash.ToList();
 		}
 
 		/// <summary>
@@ -57,7 +59,7 @@ namespace LivetEx {
 			if( source == null ) throw new ArgumentNullException( "source" );
 			
 			hash = new HashSet<T>( source );
-			Items = new List<T>( hash );
+			Items = hash.ToList();
 		}
 
 		/// <summary>
@@ -69,8 +71,9 @@ namespace LivetEx {
 			if( source == null ) throw new ArgumentNullException( "source" );
 			
 			hash = new HashSet<T>( source, comparer );
-			Items = new List<T>( hash );
+			Items = hash.ToList();
 		}
+
 
 		public T this[int index] {
 			get {

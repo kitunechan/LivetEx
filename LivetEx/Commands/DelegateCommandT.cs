@@ -7,10 +7,10 @@ using System.Windows.Input;
 
 namespace LivetEx.Commands {
 	/// <summary>
-	/// ViewModelにおいて、Viewからメッセージ、あるいはオブジェクトを受け取って動作するコマンドを表します。
+	/// <see cref="{T}"/>型オブジェクトを受け取る汎用的コマンドを表します。
 	/// </summary>
-	/// <typeparam name="T">Viewから受け取るオブジェクトの型</typeparam>
-	public sealed class ListenerCommand<T> : Command, ICommand, INotifyPropertyChanged {
+	/// <typeparam name="T">受け取るオブジェクトの型</typeparam>
+	public sealed class DelegateCommand<T> : Command, ICommand, INotifyPropertyChanged {
 		Action<T> _execute;
 		Func<T, bool> _canExecute;
 
@@ -18,14 +18,14 @@ namespace LivetEx.Commands {
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
-		public ListenerCommand( Action<T> execute ) : this( execute, null ) { }
+		public DelegateCommand( Action<T> execute ) : this( execute, null ) { }
 
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
 		/// <param name="canExecute">コマンドが実行可能かどうかをあらわすFunc&lt;bool&gt;</param>
-		public ListenerCommand( Action<T> execute, Func<T, bool> canExecute ) {
+		public DelegateCommand( Action<T> execute, Func<T, bool> canExecute ) {
 			_execute = execute ?? throw new ArgumentNullException( "execute" );
 			_canExecute = canExecute;
 		}
@@ -43,6 +43,15 @@ namespace LivetEx.Commands {
 		/// <param name="parameter">Viewから渡されたオブジェクト</param>
 		public void Execute( T parameter ) {
 			_execute( parameter );
+		}
+
+		/// <summary>
+		/// コマンドを試行します。
+		/// </summary>
+		public void TryExecute( T parameter ) {
+			if( CanExecute( parameter ) ) {
+				_execute( parameter );
+			}
 		}
 
 		void ICommand.Execute( object parameter ) {
@@ -63,7 +72,7 @@ namespace LivetEx.Commands {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged() {
-			PropertyChanged?.Invoke( this, EventArgsFactory.GetPropertyChangedEventArgs( nameof(CanExecute) ) );
+			PropertyChanged?.Invoke( this, EventArgsFactory.GetPropertyChangedEventArgs( nameof( CanExecute ) ) );
 		}
 
 		/// <summary>
@@ -77,7 +86,12 @@ namespace LivetEx.Commands {
 
 	}
 
-	public sealed class ListenerCommand<T, V> : Command, ICommand, INotifyPropertyChanged {
+	/// <summary>
+	/// <see cref="{T}"/>型オブジェクトを受け取って<see cref="{V}"/>型オブジェクトを返す汎用的コマンドを表します。
+	/// </summary>
+	/// <typeparam name="T">受け取るオブジェクトの型</typeparam>
+	/// <typeparam name="V">返すオブジェクトの型</typeparam>
+	public sealed class DelegateCommand<T, V> : Command, ICommand, INotifyPropertyChanged {
 		Action<T> _execute;
 		Func<V, bool> _canExecute;
 
@@ -85,14 +99,14 @@ namespace LivetEx.Commands {
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
-		public ListenerCommand( Action<T> execute ) : this( execute, null ) { }
+		public DelegateCommand( Action<T> execute ) : this( execute, null ) { }
 
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
 		/// <param name="canExecute">コマンドが実行可能かどうかをあらわすFunc&lt;bool&gt;</param>
-		public ListenerCommand( Action<T> execute, Func<V, bool> canExecute ) {
+		public DelegateCommand( Action<T> execute, Func<V, bool> canExecute ) {
 			_execute = execute ?? throw new ArgumentNullException( "execute" );
 			_canExecute = canExecute;
 		}

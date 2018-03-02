@@ -8,7 +8,7 @@ namespace LivetEx {
 		public IDisposable ReadLock() {
 			_lock.EnterReadLock();
 
-			return new DisposableAction( () => {
+			return new AnonymousDisposable( () => {
 				_lock.ExitReadLock();
 			} );
 		}
@@ -16,7 +16,7 @@ namespace LivetEx {
 		public IDisposable WriteLock() {
 			_lock.EnterWriteLock();
 
-			return new DisposableAction( () => {
+			return new AnonymousDisposable( () => {
 				_lock.ExitWriteLock();
 			} );
 		}
@@ -24,7 +24,7 @@ namespace LivetEx {
 		public IDisposable UpgradeableReadLock() {
 			_lock.EnterUpgradeableReadLock();
 
-			return new DisposableAction( () => {
+			return new AnonymousDisposable( () => {
 				_lock.ExitUpgradeableReadLock();
 			} );
 		}

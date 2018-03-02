@@ -113,7 +113,11 @@ namespace LivetEx.Triggers {
 			}else if( Nullable.GetUnderlyingType( resultType ) != null ) {
 				// Func<object,Nullable>が作れない・・・
 
-			} else {
+			//} else if( resultType == typeof( ValueType ) ) {
+				// Func<object,ValueType>が作れない・・・
+
+
+			} else if( resultType == typeof( object ) || resultType.BaseType == typeof(object) ) {
 				Task.Factory.StartNew( arg => {
 					var taskArg = (Tuple<Type, MethodInfo>)arg;
 

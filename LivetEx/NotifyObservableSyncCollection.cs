@@ -97,7 +97,7 @@ namespace LivetEx {
 
 			ResumeEvent();
 
-			_lock.ReadWithLockAction( () => {
+			Lock.ReadWithLockAction( () => {
 				OnPropertyChanged( "Count" );
 				OnPropertyChanged( "Item[]" );
 				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, items ) );
@@ -113,7 +113,7 @@ namespace LivetEx {
 
 			ResumeEvent();
 
-			_lock.ReadWithLockAction( () => {
+			Lock.ReadWithLockAction( () => {
 				OnPropertyChanged( "Count" );
 				OnPropertyChanged( "Item[]" );
 				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, items ) );

@@ -52,7 +52,7 @@ namespace LivetEx.Messaging {
 
 
 		/// <summary>
-		/// キャプションを指定、または取得します。
+		/// キャプション（タイトル部分）を指定、または取得します。
 		/// </summary>
 		public string Caption {
 			get { return (string)GetValue( CaptionProperty ); }

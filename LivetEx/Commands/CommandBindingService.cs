@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace LivetEx.Commands {
-	public class CommandBindingService : ICollection<BindingUnit> {
+	public class CommandBindingService : IEnumerable<BindingUnit> {
 		public CommandBindingService() {
 
 		}
@@ -107,19 +107,7 @@ namespace LivetEx.Commands {
 		public int Count {
 			get { return Items.Count; }
 		}
-
-		bool ICollection<BindingUnit>.Contains( BindingUnit item ) {
-			throw new NotImplementedException();
-		}
-
-		void ICollection<BindingUnit>.CopyTo( BindingUnit[] array, int arrayIndex ) {
-			throw new NotImplementedException();
-		}
-
-		bool ICollection<BindingUnit>.IsReadOnly {
-			get { return true; }
-		}
-
+		
 	}
 
 	public class BindingUnit {
@@ -130,13 +118,13 @@ namespace LivetEx.Commands {
 		public BindingUnit( RoutedUICommand target, Action action ) {
 			this.Target = target;
 
-			this.Command = new ViewModelCommand( action );
+			this.Command = new DelegateCommand( action );
 		}
 
 		public BindingUnit( RoutedUICommand target, Action action, Func<bool> canExecute ) {
 			this.Target = target;
 
-			this.Command = new ViewModelCommand( action, canExecute );
+			this.Command = new DelegateCommand( action, canExecute );
 		}
 
 		public BindingUnit( RoutedUICommand target, ICommand command ) {

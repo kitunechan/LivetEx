@@ -14,7 +14,7 @@ namespace LivetEx {
 	/// <summary>
 	/// 内部で公開可能なメソッドを定義
 	/// </summary>
-	public interface IObservableDisposableCollection {
+	public interface IObservableDisposableCollectionCurrentAction {
 		/// <summary>
 		/// 再構築します。
 		/// </summary>
@@ -27,9 +27,19 @@ namespace LivetEx {
 	}
 
 	/// <summary>
+	/// 内部で公開可能なメソッドを定義
+	/// </summary>
+	public interface IObservableDisposableCollectionChildAction {
+		/// <summary>
+		/// 基本処理を実行します。
+		/// </summary>
+		void ActionRun();
+	}
+
+	/// <summary>
 	/// イベントリスナーの親子関係を紐付けるためのクラスです。
 	/// </summary>
-	public class ObservableDisposableCollection : IObservableDisposableCollection, IDisposable, IEnumerable<IDisposable> {
+	public class ObservableDisposableCollection : IObservableDisposableCollectionCurrentAction, IObservableDisposableCollectionChildAction, IDisposable, IEnumerable<IDisposable> {
 
 		/// <summary>
 		/// 
@@ -41,7 +51,7 @@ namespace LivetEx {
 		/// <summary>
 		/// 元となるIDisposableを取得する関数を設定して、インスタンスを作成します。
 		/// </summary>
-		public ObservableDisposableCollection( Func<IObservableDisposableCollection, IDisposable> currentGenerator ) {
+		public ObservableDisposableCollection( Func<IObservableDisposableCollectionCurrentAction, IDisposable> currentGenerator ) {
 			this.Current = currentGenerator( this );
 		}
 
@@ -68,33 +78,33 @@ namespace LivetEx {
 		/// </summary>
 		public void Refresh() {
 			_disposableCollection.Dispose();
-			_disposableCollection = new DisposableCollection( _ChildGenerateList.Select( x => x( ActionRun ) ).Where( x => x != null ) );
+			_disposableCollection = new DisposableCollection( _ChildGenerateList.Select( x => x( this ) ).Where( x => x != null ) );
 		}
 
 		/// <summary>
 		/// 基本処理を設定または取得します。
 		/// </summary>
-		public Action DefaultAction { get; set; }
+		public Action Action { get; set; }
 
 		/// <summary>
 		/// 基本処理を実行します。
 		/// </summary>
 		public void ActionRun() {
-			DefaultAction?.Invoke();
+			Action?.Invoke();
 		}
 
 		private DisposableCollection _disposableCollection = new DisposableCollection();
 
-		List<Func<Action, IDisposable>> _ChildGenerateList = new List<Func<Action, IDisposable>>();
+		List<Func<IObservableDisposableCollectionChildAction, IDisposable>> _ChildGenerateList = new List<Func<IObservableDisposableCollectionChildAction, IDisposable>>();
 
 		/// <summary>
 		/// 子のIDisposableを取得する関数を追加します。
 		/// </summary>
-		public void Add( params Func<Action, IDisposable>[] childGenerators ) {
+		public void Add( params Func<IObservableDisposableCollectionChildAction, IDisposable>[] childGenerators ) {
 			foreach( var func in childGenerators ) {
 				_ChildGenerateList.Add( func );
 
-				var child = func( ActionRun );
+				var child = func( this );
 				if( child != null ) {
 					_disposableCollection.Add( child );
 				}
@@ -144,15 +154,15 @@ namespace LivetEx {
 		/// <summary>
 		/// 基本処理を設定します。
 		/// </summary>
-		public static ObservableDisposableCollection SetDefaultAction( this ObservableDisposableCollection tree, Action defaultAction ) {
-			tree.DefaultAction = defaultAction;
+		public static ObservableDisposableCollection SetDefaultAction( this ObservableDisposableCollection tree, Action action ) {
+			tree.Action = action;
 			return tree;
 		}
 
 		/// <summary>
 		/// 関数の戻り値により、Currentプロパティを設定します。
 		/// </summary>
-		public static ObservableDisposableCollection SetCurrentFunc( this ObservableDisposableCollection tree, Func<IObservableDisposableCollection, IDisposable> currentFunc ) {
+		public static ObservableDisposableCollection SetCurrentFunc( this ObservableDisposableCollection tree, Func<IObservableDisposableCollectionCurrentAction, IDisposable> currentFunc ) {
 			tree.Current = currentFunc( tree );
 
 			return tree;
@@ -162,7 +172,7 @@ namespace LivetEx {
 		/// <summary>
 		/// 子のIDisposableを取得する関数を追加します。
 		/// </summary>
-		public static ObservableDisposableCollection AddChildren( this ObservableDisposableCollection tree, params Func<Action, IDisposable>[] funcs ) {
+		public static ObservableDisposableCollection AddChildren( this ObservableDisposableCollection tree, params Func<IObservableDisposableCollectionChildAction, IDisposable>[] funcs ) {
 			tree.Add( funcs );
 			return tree;
 		}

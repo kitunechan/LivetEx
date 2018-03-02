@@ -1,13 +1,13 @@
-﻿using System;
+﻿using System.Windows.Input;
+using System;
 using System.ComponentModel;
 using System.Threading;
-using System.Windows.Input;
 
 namespace LivetEx.Commands {
 	/// <summary>
-	/// ViewModelがViewに公開するコマンドを表します。
+	/// 汎用的コマンドを表します。
 	/// </summary>
-	public sealed class ViewModelCommand: Command, ICommand, INotifyPropertyChanged {
+	public sealed class DelegateCommand : Command, ICommand, INotifyPropertyChanged {
 		Action _execute;
 		Func<bool> _canExecute;
 
@@ -15,16 +15,15 @@ namespace LivetEx.Commands {
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
-		public ViewModelCommand( Action execute ) : this( execute, null ) { }
+		public DelegateCommand( Action execute ) : this( execute, null ) { }
 
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
 		/// <param name="canExecute">コマンドが実行可能かどうかをあらわすFunc&lt;bool&gt;</param>
-		public ViewModelCommand( Action execute, Func<bool> canExecute ) {
-			if( execute == null ) throw new ArgumentNullException( "execute" );
-			_execute = execute;
+		public DelegateCommand( Action execute, Func<bool> canExecute ) {
+			_execute = execute ?? throw new ArgumentNullException( "execute" );
 			_canExecute = canExecute;
 		}
 
@@ -32,7 +31,7 @@ namespace LivetEx.Commands {
 		/// コマンドが実行可能かどうかを取得します。
 		/// </summary>
 		public bool CanExecute {
-			get { return _canExecute == null ? true : _canExecute(); }
+			get { return _canExecute?.Invoke() ?? true; }
 		}
 
 		/// <summary>
@@ -40,6 +39,15 @@ namespace LivetEx.Commands {
 		/// </summary>
 		public void Execute() {
 			_execute();
+		}
+
+		/// <summary>
+		/// コマンドを試行します。
+		/// </summary>
+		public void TryExecute() {
+			if( CanExecute ) {
+				_execute();
+			}
 		}
 
 		void ICommand.Execute( object parameter ) {
@@ -56,10 +64,7 @@ namespace LivetEx.Commands {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged() {
-			var handler = Interlocked.CompareExchange( ref PropertyChanged, null, null );
-			if( handler != null ) {
-				handler( this, EventArgsFactory.GetPropertyChangedEventArgs( "CanExecute" ) );
-			}
+			PropertyChanged?.Invoke( this, EventArgsFactory.GetPropertyChangedEventArgs( nameof( CanExecute ) ) );
 		}
 
 		/// <summary>

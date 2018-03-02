@@ -208,12 +208,15 @@ namespace LivetEx {
 		}
 	}
 
-	public static class DisposableCollectionExtension {
+
+}
+
+namespace LivetEx.Extensions {
+	public static class DisposableCollectionExtensions {
 		public static IDisposable AddTo( this IDisposable disposable, DisposableCollection disposableCollection ) {
 			disposableCollection.Add( disposable );
 
 			return disposable;
 		}
 	}
-
 }

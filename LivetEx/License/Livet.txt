@@ -1,12 +1,7 @@
-﻿LivetEx Copyright © 2015 fox
-　Livet v1.3﻿ を改変したライブラリです。
+﻿LivetEx Copyright (c) 2010-2011 LivetEx Project
 
 
-
-Livet Copyright (c) 2010-2011 Livet Project
-
-
-Livetはzlib/libpngライセンスで提供しています。
+LivetExはzlib/libpngライセンスで提供しています。
 ご意見・ご要望・各種連絡はugaya40@hotmail.comまでお願いいたします。
 
 

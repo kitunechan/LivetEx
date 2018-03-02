@@ -12,6 +12,14 @@ namespace LivetEx.Messaging {
 		private WeakReference<InteractionMessenger> _source;
 		private ConcurrentDictionary<string, ConcurrentBag<Action<InteractionMessage>>> _actionDictionary = new ConcurrentDictionary<string, ConcurrentBag<Action<InteractionMessage>>>();
 
+
+		public MessageListener( InteractionMessenger sendMessenger, InteractionMessenger receiveMessenger )
+			: this( sendMessenger ) {
+			RegisterAction( message=> {
+				receiveMessenger.Raise( message );
+			} );
+		}
+
 		public MessageListener( InteractionMessenger messenger ) {
 			Dispatcher = Dispatcher.CurrentDispatcher;
 			_source = new WeakReference<InteractionMessenger>( messenger );

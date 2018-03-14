@@ -7,7 +7,7 @@ namespace LivetEx.Triggers {
 	/// <summary>
 	/// 引数を一つだけ持つメソッドに対応したCallMethodActionです。
 	/// </summary>
-	public class LivetCallMethodAction: TriggerAction<DependencyObject> {
+	public class LivetCallMethodAction : TriggerAction<DependencyObject> {
 		private MethodBinder _method = new MethodBinder();
 		private MethodBinderWithArgument _callbackMethod = new MethodBinderWithArgument();
 
@@ -71,24 +71,34 @@ namespace LivetEx.Triggers {
 			DependencyProperty.Register( "IsParameterFromMessage", typeof( bool ), typeof( LivetCallMethodAction ), new PropertyMetadata( false ) );
 		#endregion
 
-		
+
 		protected override void Invoke( object parameter ) {
 			if( MethodTarget == null ) return;
 			if( MethodName == null ) return;
 
 			if( IsParameterFromMessage ) {
 				if( parameter is InteractionMessageOneParameter interaction ) {
-					_callbackMethod.Invoke( MethodTarget, MethodName, interaction.Value );
-				}else if( parameter is ResponsiveInteractionMessageOneParameter responsive ) {
-					responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, responsive.Value, responsive.GetType().GenericTypeArguments.ElementAtOrDefault(1) ?? typeof( object ) );
+					if( interaction.Value == null ) {
+						_callbackMethod.Invoke( MethodTarget, MethodName, interaction.GetType().GetGenericArguments().First(), null );
+					} else {
+						_callbackMethod.Invoke( MethodTarget, MethodName, null, interaction.Value );
+					}
+				} else if( parameter is ResponsiveInteractionMessageOneParameter responsive ) {
+					var t = responsive.GetType();
+
+					if( responsive.Value == null ) {
+						responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, t.GenericTypeArguments.First(), null, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
+					} else {
+						responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, null, responsive.Value, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
+					}
 				}
-			}else if( parameter is ResponsiveInteractionMessage responsive ) {
+			} else if( parameter is ResponsiveInteractionMessage responsive ) {
 				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
 
 			} else if( !_parameterSet ) {
 				_method.Invoke( MethodTarget, MethodName );
 			} else {
-				_callbackMethod.Invoke( MethodTarget, MethodName, MethodParameter );
+				_callbackMethod.Invoke( MethodTarget, MethodName, typeof( object ), MethodParameter );
 			}
 		}
 	}

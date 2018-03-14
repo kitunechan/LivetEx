@@ -109,7 +109,7 @@ namespace LivetEx.Messaging {
 				return base.WindowSetting;
 			}
 			set {
-				base.WindowSetting = window => value( (V)window );
+				base.WindowSetting = window => value?.Invoke( (V)window );
 			}
 		}
 

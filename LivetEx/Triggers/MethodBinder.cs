@@ -60,7 +60,7 @@ namespace LivetEx.Triggers {
 						_action( targetObject );
 						return null;
 					}
-					
+
 				} else {
 					if( _function != null ) {
 						return _function( targetObject );
@@ -89,8 +89,8 @@ namespace LivetEx.Triggers {
 					return _function( targetObject );
 				}
 			}
-			
-			_methodInfo = _targetObjectType.GetMethods()
+
+			_methodInfo = _targetObjectType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
 							.FirstOrDefault( method => method.Name == methodName && !method.GetParameters().Any() && method.ReturnType == resultType );
 
 			if( _methodInfo == null ) {
@@ -110,14 +110,14 @@ namespace LivetEx.Triggers {
 					var dic = _ActionCacheDictionary.GetOrAdd( taskArg.Item1, _ => new ConcurrentDictionary<string, Action<object>>() );
 					dic.TryAdd( taskArg.Item2.Name, method );
 				}, taskArgument );
-			}else if( Nullable.GetUnderlyingType( resultType ) != null ) {
+			} else if( Nullable.GetUnderlyingType( resultType ) != null ) {
 				// Func<object,Nullable>が作れない・・・
 
-			//} else if( resultType == typeof( ValueType ) ) {
+				//} else if( resultType == typeof( ValueType ) ) {
 				// Func<object,ValueType>が作れない・・・
 
 
-			} else if( resultType == typeof( object ) || resultType.BaseType == typeof(object) ) {
+			} else if( resultType == typeof( object ) || resultType.BaseType == typeof( object ) ) {
 				Task.Factory.StartNew( arg => {
 					var taskArg = (Tuple<Type, MethodInfo>)arg;
 

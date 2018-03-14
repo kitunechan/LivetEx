@@ -41,16 +41,16 @@ namespace LivetEx.Triggers {
 		private Action<object, object> _action;
 		private Func<object, object, object> _func;
 
-		public void Invoke( object targetObject, string methodName, object argument ) {
-			Invoke( targetObject, methodName, argument, typeof( void ) );
+		public void Invoke( object targetObject, string methodName, Type argumentType, object argument ) {
+			Invoke( targetObject, methodName, argumentType, argument, typeof( void ) );
 		}
 
-		public object Invoke( object targetObject, string methodName, object argument, Type resultType ) {
+		public object Invoke( object targetObject, string methodName, Type argumentType, object argument, Type resultType ) {
 			if( targetObject == null ) throw new ArgumentNullException( "targetObject" );
 			if( methodName == null ) throw new ArgumentNullException( "methodName" );
 
 			var newTargetObjectType = targetObject.GetType();
-			var newArgumentType = argument.GetType();
+			var newArgumentType = argument?.GetType() ?? argumentType;
 
 			if( _targetObjectType == newTargetObjectType && _methodName == methodName && _argumentType == newArgumentType ) {
 				if( resultType == typeof( void ) ) {
@@ -97,7 +97,7 @@ namespace LivetEx.Triggers {
 			}
 
 
-			_methodInfo = _targetObjectType.GetMethods()
+			_methodInfo = _targetObjectType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
 				.FirstOrDefault( method => {
 					if( method.Name != methodName ) {
 						return false;

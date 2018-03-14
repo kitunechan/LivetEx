@@ -129,20 +129,16 @@ namespace LivetEx.Messaging {
 						targetWindow.Show();
 						message.Response = null;
 					} else {
-						var minimizedEvent = new LivetEventListener<SizeChangedEventHandler>(
-							h => targetWindow.SizeChanged += h,
-							h => targetWindow.SizeChanged -= h,
-							( s, e ) => {
-								if( targetWindow.WindowState == WindowState.Minimized ) {
-									if( targetWindow.Owner != null ) {
-										targetWindow.Owner.WindowState = WindowState.Minimized;
-									}
+
+						targetWindow.StateChanged += ( s, e ) => {
+							if( targetWindow.WindowState == WindowState.Minimized ) {
+								if( targetWindow.Owner != null ) {
+									targetWindow.Owner.WindowState = WindowState.Minimized;
 								}
-							} );
+							}
+						};
 
 						message.Response = targetWindow.ShowDialog();
-
-						minimizedEvent.Dispose();
 					}
 
 					break;

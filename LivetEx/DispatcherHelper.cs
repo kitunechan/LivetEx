@@ -7,10 +7,10 @@ namespace LivetEx {
 	/// <summary>
 	/// UIDispatcherへのアクセスを簡易化します。
 	/// </summary>
-	public static class DispatcherHelper {
+	public static class LivetDispatcherHelper {
 		private static Dispatcher _uiDispatcher;
 
-		/// <summary>s
+		/// <summary>
 		/// UIDispatcherを指定、または取得します。通常このプロパティはApp_StartUpで指定されます。
 		/// </summary>
 		public static Dispatcher UIDispatcher {

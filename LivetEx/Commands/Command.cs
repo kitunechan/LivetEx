@@ -27,7 +27,7 @@ namespace LivetEx.Commands {
 		protected void OnCanExecuteChanged() {
 			foreach( var handlerWeakReference in _canExecuteChangedHandlers.ToArray() ) {
 				if( handlerWeakReference.TryGetTarget( out var result ) ) {
-					DispatcherHelper.UIDispatcher.InvokeAsync( () => result( this, EventArgs.Empty ) );
+					LivetDispatcherHelper.UIDispatcher.InvokeAsync( () => result( this, EventArgs.Empty ) );
 				} else {
 					_canExecuteChangedHandlers.Remove( handlerWeakReference );
 				}

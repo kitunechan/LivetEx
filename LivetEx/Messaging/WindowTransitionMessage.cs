@@ -20,7 +20,7 @@ namespace LivetEx.Messaging {
 			this.WindowState = value.WindowState;
 			this.WindowStartupLocation = value.WindowStartupLocation;
 
-			this.WindowSetting = value.WindowSetting;
+			this.WindowSettingAction = value.WindowSettingAction;
 		}
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		public Action<Window> WindowSetting { get; set; } 
+		public Action<Window> WindowSettingAction { get; set; } 
 
 
 		/// <summary>

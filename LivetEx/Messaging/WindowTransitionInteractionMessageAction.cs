@@ -123,7 +123,7 @@ namespace LivetEx.Messaging {
 
 					targetWindow.WindowState = message.WindowState;
 
-					message.WindowSetting?.Invoke( targetWindow );
+					message.WindowSettingAction?.Invoke( targetWindow );
 
 					if( mode == WindowTransitionMode.Modeless ) {
 						targetWindow.Show();
@@ -131,9 +131,10 @@ namespace LivetEx.Messaging {
 					} else {
 
 						targetWindow.StateChanged += ( s, e ) => {
-							if( targetWindow.WindowState == WindowState.Minimized ) {
-								if( targetWindow.Owner != null ) {
-									targetWindow.Owner.WindowState = WindowState.Minimized;
+							var target = (Window)s;
+							if( target.WindowState == WindowState.Minimized ) {
+								if( target.Owner != null ) {
+									target.Owner.WindowState = WindowState.Minimized;
 								}
 							}
 						};

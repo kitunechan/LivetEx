@@ -89,7 +89,7 @@ namespace LivetEx.Messaging {
 		/// コピーコンストラクタ
 		/// </summary>
 		public WindowTransitionMessageV( WindowTransitionMessageV<V> value ) : base( value ) {
-			this.WindowSetting = value.WindowSetting;
+			this.WindowSettingAction = value.WindowSettingAction;
 		}
 
 
@@ -104,12 +104,12 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		new public Action<V> WindowSetting {
+		new public Action<V> WindowSettingAction {
 			get {
-				return base.WindowSetting;
+				return base.WindowSettingAction;
 			}
 			set {
-				base.WindowSetting = window => value?.Invoke( (V)window );
+				base.WindowSettingAction = window => value?.Invoke( (V)window );
 			}
 		}
 

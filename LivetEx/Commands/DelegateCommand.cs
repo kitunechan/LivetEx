@@ -8,8 +8,8 @@ namespace LivetEx.Commands {
 	/// 汎用的コマンドを表します。
 	/// </summary>
 	public sealed class DelegateCommand : Command, ICommand, INotifyPropertyChanged {
-		Action _execute;
-		Func<bool> _canExecute;
+		readonly Action _execute;
+		readonly Func<bool> _canExecute;
 
 		/// <summary>
 		/// コンストラクタ

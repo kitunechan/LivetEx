@@ -9,59 +9,44 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 戻り値のある相互作用メッセージの基底クラスです。
 	/// </summary>
-	public abstract class ResponsiveInteractionMessageOneParameter : ResponsiveInteractionMessage {
-
-		public ResponsiveInteractionMessageOneParameter( string messageKey )
-			: base( messageKey ) {
-		}
-
-		public ResponsiveInteractionMessageOneParameter( string messageKey, object value )
-			: this( messageKey ) {
-			Value = value;
-		}
-
-
-		public object Value {
-			get { return (object)GetValue( ValueProperty ); }
-			set { SetValue( ValueProperty, value ); }
-		}
-
-		// Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty ValueProperty =
-			DependencyProperty.Register( "Value", typeof( object ), typeof( ResponsiveInteractionMessageOneParameter ), new PropertyMetadata( default( object ) ) );
-
+	public interface IResponsiveInteractionMessageOneParameter : IResponsiveInteractionMessage {
+		object Value { get; set; }
 	}
 
 	/// <summary>
 	/// 戻り値のある相互作用メッセージの基底クラスです。
 	/// </summary>
-	public class ResponsiveInteractionMessage<TValue, TResponse> : ResponsiveInteractionMessageOneParameter {
+	public class ResponsiveInteractionMessage<TValue, TResponse> : InteractionMessage, IResponsiveInteractionMessageOneParameter {
+		public ResponsiveInteractionMessage() {
 
-		public ResponsiveInteractionMessage( string messageKey )
-			: base( messageKey ) {
 		}
 
-		public ResponsiveInteractionMessage( string messageKey, TValue value )
-			: this( messageKey ) {
+		public ResponsiveInteractionMessage( string messageKey ) : base( messageKey ) {
+		}
+
+		public ResponsiveInteractionMessage( string messageKey, TValue value ) : this( messageKey ) {
 			Value = value;
 		}
 
-
-		new public TValue Value {
-			get { return (TValue)GetValue( ValueProperty ); }
-			set { SetValue( ValueProperty, value ); }
+		protected override Freezable CreateInstanceCore() {
+			return new ResponsiveInteractionMessage<TValue, TResponse>();
 		}
+
+		public TValue Value { get; set; }
+		object IResponsiveInteractionMessageOneParameter.Value {
+			get => this.Value;
+			set => this.Value = (TValue)value;
+		}
+
 
 		/// <summary>
 		/// 戻り値情報
 		/// </summary>
-		public new TResponse Response {
-			get { return (TResponse)base.Response; }
-			set { base.Response = value; }
-		}
+		public TResponse Response { get; set; }
 
-		protected override Freezable CreateInstanceCore() {
-			return new ResponsiveInteractionMessage<TValue, TResponse>( MessageKey, Value );
+		object IResponsiveInteractionMessage.Response {
+			get => this.Response;
+			set => this.Response = (TResponse)value;
 		}
 
 	}

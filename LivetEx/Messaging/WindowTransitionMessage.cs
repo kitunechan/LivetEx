@@ -66,7 +66,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for ViewModel.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ViewModelProperty =
-			DependencyProperty.Register( "ViewModel", typeof( ViewModel ), typeof( WindowTransitionMessage ), new PropertyMetadata( null ) );
+			DependencyProperty.Register( nameof( ViewModel ), typeof( ViewModel ), typeof( WindowTransitionMessage ), new PropertyMetadata( null ) );
 
 
 		/// <summary>
@@ -121,13 +121,30 @@ namespace LivetEx.Messaging {
 		#endregion
 
 
-		public WindowStartupLocation? WindowStartupLocation { get; set; }
+		#region Register WindowStartupLocation
+		public WindowStartupLocation? WindowStartupLocation {
+			get => (WindowStartupLocation?)GetValue( WindowStartupLocationProperty );
+			set => SetValue( WindowStartupLocationProperty, value );
+		}
+
+		public static readonly DependencyProperty WindowStartupLocationProperty =
+			DependencyProperty.Register( nameof( WindowStartupLocation ), typeof( WindowStartupLocation? ), typeof( WindowTransitionMessage ), new PropertyMetadata( default( WindowStartupLocation? ) ) );
+		#endregion
 
 
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		public Action<Window> WindowSettingAction { get; set; } 
+		#region Register WindowSettingAction
+		public Action<Window> WindowSettingAction {
+			get => (Action<Window>)GetValue( WindowSettingActionProperty );
+			set => SetValue( WindowSettingActionProperty, value );
+		}
+
+		public static readonly DependencyProperty WindowSettingActionProperty =
+			DependencyProperty.Register( nameof( WindowSettingAction ), typeof( Action<Window> ), typeof( WindowTransitionMessage ), new PropertyMetadata( default( Action<Window> ) ) );
+		#endregion
+
 
 
 		/// <summary>
@@ -136,7 +153,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessage( this );
+			return new WindowTransitionMessage();
 		}
 	}
 }

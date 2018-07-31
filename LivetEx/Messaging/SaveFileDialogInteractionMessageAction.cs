@@ -25,6 +25,8 @@ namespace LivetEx.Messaging {
 					Title = message.Title,
 					DefaultExt = message.DefaultExt,
 					FilterIndex = message.FilterIndex,
+					CheckFileExists = message.CheckFileExists,
+					CheckPathExists = message.CheckPathExists,
 				};
 
 				var window = Window.GetWindow(element);

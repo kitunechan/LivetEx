@@ -22,7 +22,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new SaveFileDialogMessage( MessageKey );
+			return new SaveFileDialogMessage();
 		}
 
 		/// <summary>
@@ -49,18 +49,6 @@ namespace LivetEx.Messaging {
 		// Using a DependencyProperty as the backing store for OverwritePrompt.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OverwritePromptProperty =
 			DependencyProperty.Register( "OverwritePrompt", typeof( bool ), typeof( SaveFileDialogMessage ), new PropertyMetadata( true ) );
-
-
-		#region Register DefaultExt
-		public string DefaultExt {
-			get { return (string)GetValue( DefaultExtProperty ); }
-			set { SetValue( DefaultExtProperty, value ); }
-		}
-
-		// Using a DependencyProperty as the backing store for DefaultExt.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty DefaultExtProperty =
-			DependencyProperty.Register( "DefaultExt", typeof( string ), typeof( SaveFileDialogMessage ), new PropertyMetadata( null ) );
-		#endregion
 
 
 	}

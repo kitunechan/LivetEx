@@ -58,11 +58,10 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
 		/// </summary>
-		new public T ViewModel {
+		public new T ViewModel {
 			get { return (T)GetValue( ViewModelProperty ); }
 			set { SetValue( ViewModelProperty, value ); }
 		}
-
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -70,7 +69,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessage<T>( this );
+			return new WindowTransitionMessage<T>();
 		}
 	}
 
@@ -104,13 +103,9 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		new public Action<V> WindowSettingAction {
-			get {
-				return base.WindowSettingAction;
-			}
-			set {
-				base.WindowSettingAction = window => value?.Invoke( (V)window );
-			}
+		public new Action<V> WindowSettingAction {
+			get => base.WindowSettingAction;
+			set => base.WindowSettingAction = window => value?.Invoke( (V)window );
 		}
 
 
@@ -120,7 +115,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessageV<V>( this );
+			return new WindowTransitionMessageV<V>();
 		}
 	}
 }

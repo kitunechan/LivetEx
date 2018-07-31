@@ -179,7 +179,7 @@ namespace LivetEx.Messaging {
 						}
 						window.Activate();
 						window.WindowState = message.WindowState;
-						
+
 						message.Response = null;
 					}
 

@@ -73,6 +73,10 @@ namespace LivetEx.Triggers {
 
 
 		protected override void Invoke( object parameter ) {
+			_Invoke( parameter );
+		}
+
+		internal void _Invoke( object parameter ) {
 			if( MethodTarget == null ) return;
 			if( MethodName == null ) return;
 
@@ -83,7 +87,7 @@ namespace LivetEx.Triggers {
 					} else {
 						_callbackMethod.Invoke( MethodTarget, MethodName, null, interaction.Value );
 					}
-				} else if( parameter is ResponsiveInteractionMessageOneParameter responsive ) {
+				} else if( parameter is IResponsiveInteractionMessageOneParameter responsive ) {
 					var t = responsive.GetType();
 
 					if( responsive.Value == null ) {
@@ -92,7 +96,7 @@ namespace LivetEx.Triggers {
 						responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, null, responsive.Value, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
 					}
 				}
-			} else if( parameter is ResponsiveInteractionMessage responsive ) {
+			} else if( parameter is IResponsiveInteractionMessage responsive ) {
 				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
 
 			} else if( !_parameterSet ) {

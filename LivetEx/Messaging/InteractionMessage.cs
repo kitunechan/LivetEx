@@ -21,13 +21,13 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを指定、または取得します。
 		/// </summary>
 		public string MessageKey {
-			get { return (string)GetValue( MessageKeyProperty ); }
-			set { SetValue( MessageKeyProperty, value ); }
+			get => (string)GetValue( MessageKeyProperty );
+			set => SetValue( MessageKeyProperty, value );
 		}
 
 		// Using a DependencyProperty as the backing store for MessageKey.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty MessageKeyProperty =
-			DependencyProperty.Register( "MessageKey", typeof( string ), typeof( InteractionMessage ), new PropertyMetadata( null ) );
+			DependencyProperty.Register( nameof(MessageKey), typeof( string ), typeof( InteractionMessage ), new PropertyMetadata( null ) );
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -35,7 +35,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new InteractionMessage( MessageKey );
+			return new InteractionMessage();
 		}
 	}
 }

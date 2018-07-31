@@ -11,6 +11,15 @@ namespace LivetEx.Messaging {
 		protected override void InvokeAction( InteractionMessage message ) {
 			switch( message ) {
 
+				case CallMethodMessageGeneric _message:{
+					CallMethodInteractionMessageAction.Action( this.AssociatedObject, _message );
+					break;
+				}
+				case CallMethodMessage _message: {
+					CallMethodInteractionMessageAction.Action( this.AssociatedObject, _message );
+					break;
+				}
+
 				case MessageBoxMessage _message: {
 					MessageBoxInteractionMessageAction.Action( this.AssociatedObject, _message );
 					break;
@@ -37,7 +46,7 @@ namespace LivetEx.Messaging {
 				}
 
 				default:
-				break;
+					break;
 			}
 
 		}

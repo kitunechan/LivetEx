@@ -68,8 +68,8 @@ namespace LivetEx.Messaging {
 				GetValue( e, cloneMessage );
 			} );
 
-			if( message is ResponsiveInteractionMessage responsiveMessage ) {
-				responsiveMessage.Response = ( (ResponsiveInteractionMessage)cloneMessage ).Response;
+			if( message is IResponsiveInteractionMessage responsiveMessage ) {
+				responsiveMessage.Response = ( (IResponsiveInteractionMessage)cloneMessage ).Response;
 			}
 		}
 

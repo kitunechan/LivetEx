@@ -5,7 +5,7 @@ namespace LivetEx {
 	/// 指定されたリソース解放用のActionをIDsposableとして扱います。
 	/// </summary>
 	public class AnonymousDisposable: IDisposable {
-		private Action _releaseAction;
+		private readonly Action _releaseAction;
 		private bool _disposed;
 
 		/// <summary>

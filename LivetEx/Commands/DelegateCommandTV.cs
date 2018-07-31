@@ -1,18 +1,16 @@
-﻿using LivetEx;
-using LivetEx.Commands;
-using System;
+﻿using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows.Input;
 
 namespace LivetEx.Commands {
 	/// <summary>
-	/// <see cref="{T}"/>型オブジェクトを受け取る汎用的コマンドを表します。
+	/// <see cref="{T}"/>型オブジェクトを受け取って<see cref="{V}"/>型オブジェクトを返す汎用的コマンドを表します。
 	/// </summary>
 	/// <typeparam name="T">受け取るオブジェクトの型</typeparam>
-	public sealed class DelegateCommand<T> : Command, ICommand, INotifyPropertyChanged {
-		readonly Action<T> _execute;
-		readonly Func<T, bool> _canExecute;
+	/// <typeparam name="V">返すオブジェクトの型</typeparam>
+	public sealed class DelegateCommand<T, V> : Command, ICommand, INotifyPropertyChanged {
+		Action<T> _execute;
+		Func<V, bool> _canExecute;
 
 		/// <summary>
 		/// コンストラクタ
@@ -25,7 +23,7 @@ namespace LivetEx.Commands {
 		/// </summary>
 		/// <param name="execute">コマンドが実行するAction</param>
 		/// <param name="canExecute">コマンドが実行可能かどうかをあらわすFunc&lt;bool&gt;</param>
-		public DelegateCommand( Action<T> execute, Func<T, bool> canExecute ) {
+		public DelegateCommand( Action<T> execute, Func<V, bool> canExecute ) {
 			_execute = execute ?? throw new ArgumentNullException( "execute" );
 			_canExecute = canExecute;
 		}
@@ -33,7 +31,7 @@ namespace LivetEx.Commands {
 		/// <summary>
 		/// コマンドが実行可能かどうかを取得します。
 		/// </summary>
-		public bool CanExecute( T parameter ) {
+		public bool CanExecute( V parameter ) {
 			return _canExecute?.Invoke( parameter ) ?? true;
 		}
 
@@ -45,21 +43,12 @@ namespace LivetEx.Commands {
 			_execute( parameter );
 		}
 
-		/// <summary>
-		/// コマンドを試行します。
-		/// </summary>
-		public void TryExecute( T parameter ) {
-			if( CanExecute( parameter ) ) {
-				_execute( parameter );
-			}
-		}
-
 		void ICommand.Execute( object parameter ) {
 			Execute( (T)parameter );
 		}
 
 		bool ICommand.CanExecute( object parameter ) {
-			return CanExecute( (T)parameter );
+			return CanExecute( (V)parameter );
 		}
 
 		/// <summary>

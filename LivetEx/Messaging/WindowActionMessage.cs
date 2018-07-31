@@ -120,7 +120,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowActionMessage( MessageKey );
+			return new WindowActionMessage(  );
 		}
 
 		/// <summary>

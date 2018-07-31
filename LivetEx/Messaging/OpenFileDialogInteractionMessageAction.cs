@@ -60,6 +60,9 @@ namespace LivetEx.Messaging {
 				Title = message.Title,
 				Multiselect = message.MultiSelect,
 				FilterIndex = message.FilterIndex,
+				DefaultExt = message.DefaultExt,
+				CheckPathExists = message.CheckPathExists,
+				CheckFileExists = message.CheckFileExists,
 			};
 
 			if( dialog.ShowDialog(window) == true ) {

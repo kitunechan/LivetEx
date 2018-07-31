@@ -102,6 +102,48 @@ namespace LivetEx.Messaging {
 
 
 
+		/// <summary>
+		/// ユーザーが無効なパスとファイル名を入力した場合に警告を表示するかどうかを指定する値を取得または設定します。
+		///  警告を表示する場合は true。それ以外の場合は false。 既定値は、true です。
+		/// </summary>
+		#region Register CheckPathExists
+		public bool CheckPathExists {
+			get => (bool)GetValue( CheckPathExistsProperty );
+			set => SetValue( CheckPathExistsProperty, value );
+		}
 
+		public static readonly DependencyProperty CheckPathExistsProperty =
+			DependencyProperty.Register( nameof( CheckPathExists ), typeof( bool ), typeof( FileDialogMessage ), new PropertyMetadata( true ) );
+		#endregion
+
+
+		/// <summary>
+		/// 存在しないファイル名をユーザーが指定した場合に、ファイル ダイアログで警告を表示するかどうかを示す値を取得または設定します。
+		/// 警告を表示する場合は true。それ以外の場合は false。 この基本クラスの既定値は false です。
+		/// </summary>
+		#region Register CheckFileExists
+		public bool CheckFileExists {
+			get => (bool)GetValue( CheckFileExistsProperty );
+			set => SetValue( CheckFileExistsProperty, value );
+		}
+
+		public static readonly DependencyProperty CheckFileExistsProperty =
+			DependencyProperty.Register( nameof( CheckFileExists ), typeof( bool ), typeof( FileDialogMessage ), new PropertyMetadata( true ) );
+		#endregion
+
+
+		/// <summary>
+		/// 既定のファイル名の拡張子を取得または設定します。
+		/// </summary>
+		#region Register DefaultExt
+		public string DefaultExt {
+			get { return (string)GetValue( DefaultExtProperty ); }
+			set { SetValue( DefaultExtProperty, value ); }
+		}
+
+		// Using a DependencyProperty as the backing store for DefaultExt.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty DefaultExtProperty =
+			DependencyProperty.Register( "DefaultExt", typeof( string ), typeof( SaveFileDialogMessage ), new PropertyMetadata( null ) );
+		#endregion
 	}
 }

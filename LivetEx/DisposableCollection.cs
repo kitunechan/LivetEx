@@ -58,7 +58,7 @@ namespace LivetEx {
 			}
 		}
 
-		internal void AddRange( IEnumerable<IDisposable> collection ) {
+		public void AddRange( IEnumerable<IDisposable> collection ) {
 			if( collection == null ) throw new ArgumentNullException( "collection" );
 
 			ThrowExceptionIfDisposed();
@@ -213,10 +213,22 @@ namespace LivetEx {
 
 namespace LivetEx.Extensions {
 	public static class DisposableCollectionExtensions {
+		public static IDisposable AddTo( this ObservableDisposableCollection disposable, DisposableCollection disposableCollection ) {
+			disposableCollection.Add( disposable );
+
+			return disposable;
+		}
+
 		public static IDisposable AddTo( this IDisposable disposable, DisposableCollection disposableCollection ) {
 			disposableCollection.Add( disposable );
 
 			return disposable;
+		}
+
+		public static IEnumerable<IDisposable> AddTo( this IEnumerable<IDisposable> disposables, DisposableCollection disposableCollection ) {
+			disposableCollection.AddRange( disposables );
+
+			return disposables;
 		}
 	}
 }

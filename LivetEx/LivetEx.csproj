@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LivetEx</RootNamespace>
     <AssemblyName>LivetEx</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -108,12 +108,15 @@
   <ItemGroup>
     <Compile Include="AnonymousDisposable.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Commands\DelegateCommandTV.cs" />
     <Compile Include="Converters\AnyConverter.cs" />
     <Compile Include="Converters\EqualConverter.cs" />
     <Compile Include="EqualityComparer.cs" />
-    <Content Include="License\LivetEx.txt">
+    <None Include="License\LivetEx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <Compile Include="Messaging\CallMethodInteractionMessageAction.cs" />
+    <Compile Include="Messaging\CallMethodMessage.cs" />
     <Compile Include="ObservableSynchronizedUniqueCollection.cs" />
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />
@@ -140,9 +143,9 @@
     <Compile Include="Triggers\RoutedEventTrigger.cs" />
     <Compile Include="Triggers\SetFocusAction.cs" />
     <Compile Include="Behaviors\WindowCloseCancelBehavior.cs" />
-    <Content Include="License\Livet.txt">
+    <None Include="License\Livet.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\DelegateCommandT.cs" />
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />

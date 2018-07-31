@@ -22,7 +22,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new OpenFileDialogMessage( MessageKey );
+			return new OpenFileDialogMessage();
 		}
 
 		/// <summary>

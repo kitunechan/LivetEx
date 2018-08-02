@@ -50,4 +50,4 @@ using System.Resources;
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Triggers" )]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Converters" )]
 
-[assembly: AssemblyFileVersion( "1.3.2.0" )]
+[assembly: AssemblyFileVersion( "1.3.3" )]

@@ -128,7 +128,7 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty CheckFileExistsProperty =
-			DependencyProperty.Register( nameof( CheckFileExists ), typeof( bool ), typeof( FileDialogMessage ), new PropertyMetadata( true ) );
+			DependencyProperty.Register( nameof( CheckFileExists ), typeof( bool ), typeof( FileDialogMessage ), new PropertyMetadata( false ) );
 		#endregion
 
 

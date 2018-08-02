@@ -38,6 +38,9 @@ namespace LivetEx.Messaging {
 			DependencyProperty.Register( "MultiSelect", typeof( bool ), typeof( OpenFileDialogMessage ), new PropertyMetadata( false ) );
 
 
+		/// <summary>
+		/// ファイル ダイアログに表示される初期ディレクトリのグループを取得または設定します。
+		/// </summary>
 		#region Register InitialDirectoryGroup
 		public string InitialDirectoryGroup {
 			get { return (string)GetValue( InitialDirectoryGroupProperty ); }

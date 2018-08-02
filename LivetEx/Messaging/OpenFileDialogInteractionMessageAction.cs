@@ -14,6 +14,9 @@ namespace LivetEx.Messaging {
 		static Settings setting;
 		static Dictionary<string, string> InitialDirectoryGroupList;
 
+		/// <summary>
+		/// ファイル ダイアログに表示される初期ディレクトリのグループを取得または設定します。
+		/// </summary>
 		public string InitialDirectoryGroup { get; set; }
 
 		protected override void InvokeAction( InteractionMessage message ) {

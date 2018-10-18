@@ -124,6 +124,9 @@ namespace LivetEx.Messaging {
 					targetWindow.WindowState = message.WindowState;
 
 					message.WindowSettingAction?.Invoke( targetWindow );
+					targetWindow.ContentRendered += ( x, e ) => {
+						message.InitializeAction?.Invoke( targetWindow );
+					};
 
 					if( mode == WindowTransitionMode.Modeless ) {
 						targetWindow.Show();
@@ -165,6 +168,12 @@ namespace LivetEx.Messaging {
 						}
 
 						window.WindowState = message.WindowState;
+
+						message.WindowSettingAction?.Invoke( window );
+						window.ContentRendered += ( x, e ) => {
+							message.InitializeAction?.Invoke( window );
+						};
+
 						window.Show();
 						message.Response = null;
 					} else {

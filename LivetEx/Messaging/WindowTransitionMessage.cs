@@ -8,22 +8,6 @@ namespace LivetEx.Messaging {
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
 	public class WindowTransitionMessage : ResponsiveInteractionMessage<bool?> {
 		/// <summary>
-		/// コピーコンストラクタ
-		/// </summary>
-		public WindowTransitionMessage( WindowTransitionMessage value ) {
-			this.ViewModel = value.ViewModel;
-
-			this.Mode = value.Mode;
-
-			this.WindowType = value.WindowType;
-			this.IsOwned = value.IsOwned;
-			this.WindowState = value.WindowState;
-			this.WindowStartupLocation = value.WindowStartupLocation;
-
-			this.WindowSettingAction = value.WindowSettingAction;
-		}
-
-		/// <summary>
 		/// 相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		public WindowTransitionMessage() {
@@ -135,16 +119,12 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		#region Register WindowSettingAction
-		public Action<Window> WindowSettingAction {
-			get => (Action<Window>)GetValue( WindowSettingActionProperty );
-			set => SetValue( WindowSettingActionProperty, value );
-		}
+		public Action<Window> WindowSettingAction { get; set; }
 
-		public static readonly DependencyProperty WindowSettingActionProperty =
-			DependencyProperty.Register( nameof( WindowSettingAction ), typeof( Action<Window> ), typeof( WindowTransitionMessage ), new PropertyMetadata( default( Action<Window> ) ) );
-		#endregion
-
+		/// <summary>
+		/// ウインドウコンテンツがレンダリングされた後に実行する関数
+		/// </summary>
+		public Action<Window> InitializeAction { get; set; }
 
 
 		/// <summary>
@@ -155,5 +135,20 @@ namespace LivetEx.Messaging {
 		protected override Freezable CreateInstanceCore() {
 			return new WindowTransitionMessage();
 		}
+
+
+		/// <summary>
+		/// DependencyProperty 以外のものはここでコピー処理を行う
+		/// </summary>
+		protected override void CloneCore( Freezable sourceFreezable ) {
+			base.CloneCore( sourceFreezable );
+
+			var source = (WindowTransitionMessage)sourceFreezable;
+
+			this.InitializeAction = source.InitializeAction;
+			this.WindowSettingAction = source.WindowSettingAction;
+		}
+
+
 	}
 }

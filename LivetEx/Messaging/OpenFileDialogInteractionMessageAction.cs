@@ -57,7 +57,7 @@ namespace LivetEx.Messaging {
 
 			var dialog = new OpenFileDialog() {
 				FileName = message.FileName,
-				InitialDirectory = initialDirectory,
+				InitialDirectory = !string.IsNullOrEmpty( initialDirectory ) ? Path.GetFullPath( initialDirectory ) : initialDirectory,
 				AddExtension = message.AddExtension,
 				Filter = message.Filter,
 				Title = message.Title,

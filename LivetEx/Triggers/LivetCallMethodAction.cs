@@ -87,16 +87,22 @@ namespace LivetEx.Triggers {
 					} else {
 						_callbackMethod.Invoke( MethodTarget, MethodName, null, interaction.Value );
 					}
-				} else if( parameter is IResponsiveInteractionMessageOneParameter responsive ) {
-					var t = responsive.GetType();
 
-					if( responsive.Value == null ) {
-						responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, t.GenericTypeArguments.First(), null, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
+					return;
+				} else if( parameter is IResponsiveInteractionMessageOneParameter responsiveOne ) {
+					var t = responsiveOne.GetType();
+
+					if( responsiveOne.Value == null ) {
+						responsiveOne.Response = _callbackMethod.Invoke( MethodTarget, MethodName, t.GenericTypeArguments.First(), null, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
 					} else {
-						responsive.Response = _callbackMethod.Invoke( MethodTarget, MethodName, null, responsive.Value, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
+						responsiveOne.Response = _callbackMethod.Invoke( MethodTarget, MethodName, null, responsiveOne.Value, t.GenericTypeArguments.ElementAtOrDefault( 1 ) ?? typeof( object ) );
 					}
+
+					return;
 				}
-			} else if( parameter is IResponsiveInteractionMessage responsive ) {
+			}
+
+			if( parameter is IResponsiveInteractionMessage responsive ) {
 				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
 
 			} else if( !_parameterSet ) {

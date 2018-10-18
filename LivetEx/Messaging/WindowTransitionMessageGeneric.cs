@@ -10,15 +10,6 @@ namespace LivetEx.Messaging {
 		public WindowTransitionMessage() {
 		}
 
-
-		/// <summary>
-		/// コピーコンストラクタ
-		/// </summary>
-		public WindowTransitionMessage( WindowTransitionMessage value ) : base( value ) {
-
-		}
-
-
 		/// <summary>
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
@@ -33,6 +24,13 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		public WindowTransitionMessage( string messageKey, T ViewModel )
 			: this( messageKey, null, ViewModel ) { }
+
+		/// <summary>
+		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
+		/// </summary>
+		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
+		public WindowTransitionMessage( T ViewModel )
+			: this( null, null, ViewModel ) { }
 
 		/// <summary>
 		/// 新しいWindowの型と新しいWindowに設定するViewModel、画面遷移モードとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
@@ -83,15 +81,6 @@ namespace LivetEx.Messaging {
 			this.WindowType = this.GetType().GetGenericArguments()[0];
 		}
 
-
-		/// <summary>
-		/// コピーコンストラクタ
-		/// </summary>
-		public WindowTransitionMessageV( WindowTransitionMessageV<V> value ) : base( value ) {
-			this.WindowSettingAction = value.WindowSettingAction;
-		}
-
-
 		/// <summary>
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
@@ -108,6 +97,13 @@ namespace LivetEx.Messaging {
 			set => base.WindowSettingAction = window => value?.Invoke( (V)window );
 		}
 
+		/// <summary>
+		/// ウインドウコンテンツがレンダリングされた後に実行する関数
+		/// </summary>
+		public new Action<V> InitializeAction {
+			get => base.InitializeAction;
+			set => base.InitializeAction = window => value?.Invoke( (V)window );
+		}
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -117,5 +113,7 @@ namespace LivetEx.Messaging {
 		protected override Freezable CreateInstanceCore() {
 			return new WindowTransitionMessageV<V>();
 		}
+
+
 	}
 }

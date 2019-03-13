@@ -5,8 +5,8 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 「ファイルを保存する」ダイアログを表示するアクションです。<see cref="SaveFileDialogMessage"/>に対応します。
 	/// </summary>
-	public class SaveFileDialogInteractionMessageAction : InteractionMessageAction<DependencyObject> {
-		protected override void InvokeAction( InteractionMessage message ) {
+	public class SaveFileDialogMessageAction : MessageAction<DependencyObject> {
+		protected override void InvokeAction( Message message ) {
 			if( message is SaveFileDialogMessage saveFileMessage ) {
 				Action( this.AssociatedObject, saveFileMessage );
 			}

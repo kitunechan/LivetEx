@@ -2,17 +2,13 @@
 
 namespace LivetEx.Messaging {
 	/// <summary>
-	/// 確認相互作用メッセージを表します。
+	/// ウインドウのメソッドを呼び出すメッセージです。
 	/// </summary>
-	public class CallMethodMessage : InteractionMessage {
+	public class WindowCallMethodMessage : Message {
 
-		public CallMethodMessage() { }
+		public WindowCallMethodMessage() { }
 
-		/// <summary>
-		/// メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
-		/// </summary>
-		/// <param name="messageKey">メッセージキー</param>
-		public CallMethodMessage( string messageKey ) : base( messageKey ) { }
+		public WindowCallMethodMessage( string messageKey ) : base( messageKey ) { }
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -20,7 +16,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new CallMethodMessage();
+			return new WindowCallMethodMessage();
 		}
 
 
@@ -31,7 +27,7 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty MethodNameProperty =
-			DependencyProperty.Register( nameof( MethodName ), typeof( string ), typeof( CallMethodMessage ), new PropertyMetadata( default( string ) ) );
+			DependencyProperty.Register( nameof( MethodName ), typeof( string ), typeof( WindowCallMethodMessage ), new PropertyMetadata( default( string ) ) );
 		#endregion
 
 
@@ -43,25 +39,22 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty MethodParameterProperty =
-			DependencyProperty.Register( nameof( MethodParameter ), typeof( object ), typeof( CallMethodMessage ), new PropertyMetadata( default( object ) ) );
+			DependencyProperty.Register( nameof( MethodParameter ), typeof( object ), typeof( WindowCallMethodMessage ), new PropertyMetadata( default( object ) ) );
 		#endregion
 
 	}
 
-	public class CallMethodMessageGeneric<T> : CallMethodMessageGeneric {
-
-
-
-	}
-
-	public class CallMethodMessageGeneric : InteractionMessage, IResponsiveInteractionMessage {
-		public CallMethodMessageGeneric() { }
+	/// <summary>
+	/// ウインドウの返り値のあるメソッドを呼び出すメッセージです。
+	/// </summary>
+	public class WindowCallResponseMethodMessage : Message, IResponsiveMessage {
+		public WindowCallResponseMethodMessage() { }
 
 		/// <summary>
 		/// メッセージキーを指定して、新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public CallMethodMessageGeneric( string messageKey ) : base( messageKey ) { }
+		public WindowCallResponseMethodMessage( string messageKey ) : base( messageKey ) { }
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -69,7 +62,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new CallMethodMessage();
+			return new WindowCallMethodMessage();
 		}
 
 
@@ -80,10 +73,8 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty MethodNameProperty =
-			DependencyProperty.Register( nameof( MethodName ), typeof( string ), typeof( CallMethodMessage ), new PropertyMetadata( default( string ) ) );
+			DependencyProperty.Register( nameof( MethodName ), typeof( string ), typeof( WindowCallMethodMessage ), new PropertyMetadata( default( string ) ) );
 		#endregion
-
-
 
 		#region Register MethodParameter
 		public object MethodParameter {
@@ -92,7 +83,7 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty MethodParameterProperty =
-			DependencyProperty.Register( nameof( MethodParameter ), typeof( object ), typeof( CallMethodMessage ), new PropertyMetadata( default( object ) ) );
+			DependencyProperty.Register( nameof( MethodParameter ), typeof( object ), typeof( WindowCallMethodMessage ), new PropertyMetadata( default( object ) ) );
 		#endregion
 
 		public object Response { get; set; }

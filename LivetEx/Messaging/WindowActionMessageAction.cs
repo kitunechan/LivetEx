@@ -5,8 +5,8 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// Windowの最小化・最大化・閉じる・通常化・ダイアログ結果を行うアクションです。WindowActionMessageに対応します。
 	/// </summary>
-	public class WindowActionInteractionMessageAction : InteractionMessageAction<FrameworkElement> {
-		protected override void InvokeAction( InteractionMessage message ) {
+	public class WindowActionMessageAction : MessageAction<FrameworkElement> {
+		protected override void InvokeAction( Message message ) {
 			if( message is WindowActionMessage windowMessage){
 				Action( this.AssociatedObject, windowMessage );
 			}

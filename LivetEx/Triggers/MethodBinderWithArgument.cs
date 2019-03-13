@@ -65,13 +65,11 @@ namespace LivetEx.Triggers {
 					}
 				} else {
 					if( _func != null ) {
-						_func( targetObject, argument );
-						return null;
+						return _func( targetObject, argument );
 					}
 
 					if( TryGetCacheFromFuncCacheDictionary( _targetObjectType, _methodName, out _func ) ) {
-						_func( targetObject, argument );
-						return null;
+						return _func( targetObject, argument );
 					}
 				}
 
@@ -150,9 +148,6 @@ namespace LivetEx.Triggers {
 					dic.TryAdd( taskArg.Item2.Name, method );
 				}, taskArgument );
 
-			} else if( Nullable.GetUnderlyingType( resultType ) != null ) {
-				// Func<object,Nullable>が作れない・・・
-
 			} else {
 				Task.Factory.StartNew( arg => {
 					var taskArg = (Tuple<Type, MethodInfo, Type>)arg;
@@ -161,10 +156,13 @@ namespace LivetEx.Triggers {
 					var paraMessage = Expression.Parameter( typeof( object ), "argument" );
 
 					var method = Expression.Lambda<Func<object, object, object>>(
-								Expression.Call( Expression.Convert( paraTarget, taskArg.Item1 ), taskArg.Item2, Expression.Convert( paraMessage, taskArg.Item3 ) ),
-								paraTarget,
-								paraMessage
-							).Compile();
+									Expression.Convert(
+										Expression.Call( Expression.Convert( paraTarget, taskArg.Item1 ), taskArg.Item2, Expression.Convert( paraMessage, taskArg.Item3 ) ),
+										typeof(object)
+									),
+									paraTarget,
+									paraMessage
+								).Compile();
 
 					var dic = _funcCacheDictionary.GetOrAdd( taskArg.Item1, _ => new ConcurrentDictionary<string, Func<object, object, object>>() );
 					dic.TryAdd( taskArg.Item2.Name, method );

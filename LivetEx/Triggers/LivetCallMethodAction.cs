@@ -2,8 +2,42 @@
 using System.Windows;
 using LivetEx.Messaging;
 using System.Linq;
+using System.Windows.Input;
 
 namespace LivetEx.Triggers {
+
+
+	public class LivetCallCommandAction : TriggerAction<DependencyObject> {
+		protected override void Invoke( object parameter ) {
+			if( Command.CanExecute( parameter ) ) {
+				Command.Execute( parameter );
+			}
+		}
+
+
+		#region Register Command
+		public ICommand Command {
+			get => (ICommand)GetValue( CommandProperty );
+			set => SetValue( CommandProperty, value );
+		}
+
+		public static readonly DependencyProperty CommandProperty =
+			DependencyProperty.Register( nameof( Command ), typeof( ICommand ), typeof( LivetCallCommandAction ), new PropertyMetadata( default( ICommand ) ) );
+		#endregion
+
+
+		#region Register CommandParameter
+		public object CommandParameter {
+			get => (object)GetValue( CommandParameterProperty );
+			set => SetValue( CommandParameterProperty, value );
+		}
+
+		public static readonly DependencyProperty CommandParameterProperty =
+			DependencyProperty.Register( nameof( CommandParameter ), typeof( object ), typeof( LivetCallCommandAction ), new PropertyMetadata( default( object ) ) );
+		#endregion
+
+	}
+
 	/// <summary>
 	/// 引数を一つだけ持つメソッドに対応したCallMethodActionです。
 	/// </summary>
@@ -60,7 +94,7 @@ namespace LivetEx.Triggers {
 		/// MethodParameterをメッセージから与えるかどうかを取得または設定します。
 		/// </summary>
 		[System.ComponentModel.Description( "MethodParameterをメッセージから与えるかどうかを取得または設定します。" )]
-		#region Register IsParameterToGenericInteractionMessage
+		#region Register IsParameterToGenericMessage
 		public bool IsParameterFromMessage {
 			get { return (bool)GetValue( IsParameterFromMessageProperty ); }
 			set { SetValue( IsParameterFromMessageProperty, value ); }
@@ -81,15 +115,15 @@ namespace LivetEx.Triggers {
 			if( MethodName == null ) return;
 
 			if( IsParameterFromMessage ) {
-				if( parameter is InteractionMessageOneParameter interaction ) {
-					if( interaction.Value == null ) {
-						_callbackMethod.Invoke( MethodTarget, MethodName, interaction.GetType().GetGenericArguments().First(), null );
+				if( parameter is MessageOneParameter messageOneParameter ) {
+					if( messageOneParameter.Value == null ) {
+						_callbackMethod.Invoke( MethodTarget, MethodName, messageOneParameter.GetType().GetGenericArguments().First(), null );
 					} else {
-						_callbackMethod.Invoke( MethodTarget, MethodName, null, interaction.Value );
+						_callbackMethod.Invoke( MethodTarget, MethodName, null, messageOneParameter.Value );
 					}
 
 					return;
-				} else if( parameter is IResponsiveInteractionMessageOneParameter responsiveOne ) {
+				} else if( parameter is IResponsiveMessageOneParameter responsiveOne ) {
 					var t = responsiveOne.GetType();
 
 					if( responsiveOne.Value == null ) {
@@ -102,7 +136,7 @@ namespace LivetEx.Triggers {
 				}
 			}
 
-			if( parameter is IResponsiveInteractionMessage responsive ) {
+			if( parameter is IResponsiveMessage responsive ) {
 				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
 
 			} else if( !_parameterSet ) {

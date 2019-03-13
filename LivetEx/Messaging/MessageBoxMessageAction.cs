@@ -9,8 +9,8 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// メッセージボックスを表示するアクションです。<see cref="MessageBoxMessage"/>に対応します。
 	/// </summary>
-	public class MessageBoxInteractionMessageAction : InteractionMessageAction<FrameworkElement> {
-		protected override void InvokeAction( InteractionMessage message ) {
+	public class MessageBoxMessageAction : MessageAction<FrameworkElement> {
+		protected override void InvokeAction( Message message ) {
 			if( message is MessageBoxMessage messageBoxMessage ) {
 				var clone = (MessageBoxMessage)messageBoxMessage.Clone();
 				{
@@ -34,7 +34,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
-			DependencyProperty.Register( "IsOwned", typeof( bool? ), typeof( MessageBoxInteractionMessageAction ), new PropertyMetadata( null ) );
+			DependencyProperty.Register( "IsOwned", typeof( bool? ), typeof( MessageBoxMessageAction ), new PropertyMetadata( null ) );
 
 
 		public static void Action( FrameworkElement element, MessageBoxMessage message ) {

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LivetEx {
 	/// <summary>
-	/// 保有しているプロパティの変更通知も行うコレクションです。
+	/// 保有しているプロパティの変更通知も行うスレッドセーフなコレクションです。
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[Serializable]
@@ -57,7 +57,7 @@ namespace LivetEx {
 		}
 
 		void ClearPropertyChanged() {
-			foreach( var item in CompositeDisposableTable.SelectMany(x=>x.Value) ) {
+			foreach( var item in CompositeDisposableTable.SelectMany( x => x.Value ) ) {
 				item.Dispose();
 			}
 			CompositeDisposableTable.Clear();
@@ -91,7 +91,9 @@ namespace LivetEx {
 		public void Insert( int index, IEnumerable<T> items ) {
 			SuspendEvent();
 
-			foreach( var item in items ) {
+			var _items = items.ToArray();
+
+			foreach( var item in _items ) {
 				this.Insert( ++index, item );
 			}
 
@@ -100,14 +102,16 @@ namespace LivetEx {
 			Lock.ReadWithLockAction( () => {
 				OnPropertyChanged( "Count" );
 				OnPropertyChanged( "Item[]" );
-				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, items ) );
+				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, _items ) );
 			} );
 		}
 
 		public void AddRange( IEnumerable<T> items ) {
 			SuspendEvent();
 
-			foreach( var item in items ) {
+			var _items = items.ToArray();
+
+			foreach( var item in _items ) {
 				this.Add( item );
 			}
 
@@ -116,7 +120,7 @@ namespace LivetEx {
 			Lock.ReadWithLockAction( () => {
 				OnPropertyChanged( "Count" );
 				OnPropertyChanged( "Item[]" );
-				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, items ) );
+				OnCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, _items ) );
 			} );
 		}
 
@@ -131,49 +135,49 @@ namespace LivetEx {
 
 			switch( args.Action ) {
 				case NotifyCollectionChangedAction.Remove:
-				if( args.OldItems != null ) {
-					foreach( var item in args.OldItems.OfType<INotifyPropertyChanged>() ) {
-						RemovePropertyChanged( item );
-					}
-				}
-				return;
-
-				case NotifyCollectionChangedAction.Reset:
-				ClearPropertyChanged();
-				
-				return;
-
-				case NotifyCollectionChangedAction.Add:
-				case NotifyCollectionChangedAction.Replace:
-				if( args.OldItems != args.NewItems ) {
 					if( args.OldItems != null ) {
 						foreach( var item in args.OldItems.OfType<INotifyPropertyChanged>() ) {
 							RemovePropertyChanged( item );
 						}
 					}
+					return;
 
-					if( args.NewItems != null ) {
-						foreach( var item in args.NewItems.OfType<INotifyPropertyChanged>() ) {
-							AddPropertyChanged( item );
+				case NotifyCollectionChangedAction.Reset:
+					ClearPropertyChanged();
+
+					return;
+
+				case NotifyCollectionChangedAction.Add:
+				case NotifyCollectionChangedAction.Replace:
+					if( args.OldItems != args.NewItems ) {
+						if( args.OldItems != null ) {
+							foreach( var item in args.OldItems.OfType<INotifyPropertyChanged>() ) {
+								RemovePropertyChanged( item );
+							}
 						}
 
-						//foreach( var item in args.NewItems ) {
-						//	if( item is INotifyPropertyChanged notify ) {
-						//		AddPropertyChanged( notify );
+						if( args.NewItems != null ) {
+							foreach( var item in args.NewItems.OfType<INotifyPropertyChanged>() ) {
+								AddPropertyChanged( item );
+							}
 
-						//	} else if( item is IEnumerable items ) {
-						//		foreach( var item2 in items.OfType<INotifyPropertyChanged>() ) {
-						//			AddPropertyChanged( item2 );
-						//		}
-						//	}
-						//}
+							//foreach( var item in args.NewItems ) {
+							//	if( item is INotifyPropertyChanged notify ) {
+							//		AddPropertyChanged( notify );
+
+							//	} else if( item is IEnumerable items ) {
+							//		foreach( var item2 in items.OfType<INotifyPropertyChanged>() ) {
+							//			AddPropertyChanged( item2 );
+							//		}
+							//	}
+							//}
+						}
 					}
-				}
-				return;
+					return;
 
 				case NotifyCollectionChangedAction.Move:
 				default:
-				break;
+					break;
 			}
 		}
 

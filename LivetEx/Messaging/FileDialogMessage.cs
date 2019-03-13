@@ -6,7 +6,7 @@ namespace LivetEx.Messaging {
 	/// ファイルを開くアクションをViewに行わせたい場合は、<see cref="FileDialogMessage"/>を使用してください。<br/>
 	/// ファイルを保存するアクションをViewに行わせたい場合は、<see cref="SaveFileDialogMessage"/>を使用してください。
 	/// </summary>
-	public abstract class FileDialogMessage : ResponsiveInteractionMessage<string[]> {
+	public abstract class FileDialogMessage : ResponsiveMessage<string[]> {
 		protected FileDialogMessage() {
 		}
 

@@ -7,23 +7,23 @@ using System.Text;
 using LivetEx.WeakEventListeners;
 
 namespace LivetEx.Messaging {
-	public sealed class MessageListener : IDisposable, IEnumerable<KeyValuePair<string, ConcurrentBag<Action<InteractionMessage>>>> {
-		private LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs> _listener;
-		private WeakReference<InteractionMessenger> _source;
-		private ConcurrentDictionary<string, ConcurrentBag<Action<InteractionMessage>>> _actionDictionary = new ConcurrentDictionary<string, ConcurrentBag<Action<InteractionMessage>>>();
+	public sealed class MessageListener : IDisposable, IEnumerable<KeyValuePair<string, ConcurrentBag<Action<Message>>>> {
+		private LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs> _listener;
+		private WeakReference<Messenger> _source;
+		private ConcurrentDictionary<string, ConcurrentBag<Action<Message>>> _actionDictionary = new ConcurrentDictionary<string, ConcurrentBag<Action<Message>>>();
 
 
-		public MessageListener( InteractionMessenger sendMessenger, InteractionMessenger receiveMessenger )
+		public MessageListener( Messenger sendMessenger, Messenger receiveMessenger )
 			: this( sendMessenger ) {
 			RegisterAction( message=> {
 				receiveMessenger.Raise( message );
 			} );
 		}
 
-		public MessageListener( InteractionMessenger messenger ) {
+		public MessageListener( Messenger messenger ) {
 			Dispatcher = Dispatcher.CurrentDispatcher;
-			_source = new WeakReference<InteractionMessenger>( messenger );
-			_listener = new LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs>
+			_source = new WeakReference<Messenger>( messenger );
+			_listener = new LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs>
 				(
 					h => h,
 					h => messenger.Raised += h,
@@ -32,7 +32,7 @@ namespace LivetEx.Messaging {
 				);
 		}
 
-		public MessageListener( InteractionMessenger messenger, string messageKey, Action<InteractionMessage> action )
+		public MessageListener( Messenger messenger, string messageKey, Action<Message> action )
 			: this( messenger ) {
 			if( messageKey == null ) {
 				messageKey = string.Empty;
@@ -41,26 +41,26 @@ namespace LivetEx.Messaging {
 			RegisterAction( messageKey, action );
 		}
 
-		public MessageListener( InteractionMessenger messenger, Action<InteractionMessage> action )
+		public MessageListener( Messenger messenger, Action<Message> action )
 			: this( messenger, null, action ) {
 		}
 
-		public void RegisterAction( Action<InteractionMessage> action ) {
+		public void RegisterAction( Action<Message> action ) {
 			ThrowExceptionIfDisposed();
-			_actionDictionary.GetOrAdd( string.Empty, _ => new ConcurrentBag<Action<InteractionMessage>>() ).Add( action );
+			_actionDictionary.GetOrAdd( string.Empty, _ => new ConcurrentBag<Action<Message>>() ).Add( action );
 		}
 
-		public void RegisterAction( string messageKey, Action<InteractionMessage> action ) {
+		public void RegisterAction( string messageKey, Action<Message> action ) {
 			ThrowExceptionIfDisposed();
-			_actionDictionary.GetOrAdd( messageKey, _ => new ConcurrentBag<Action<InteractionMessage>>() ).Add( action );
+			_actionDictionary.GetOrAdd( messageKey, _ => new ConcurrentBag<Action<Message>>() ).Add( action );
 		}
 
-		private void MessageReceived( object sender, InteractionMessageRaisedEventArgs e ) {
+		private void MessageReceived( object sender, MessageRaisedEventArgs e ) {
 			if( _disposed ) return;
 
 			var message = e.Message;
 
-			var cloneMessage = (InteractionMessage)message.Clone();
+			var cloneMessage = (Message)message.Clone();
 
 			cloneMessage.Freeze();
 
@@ -68,12 +68,12 @@ namespace LivetEx.Messaging {
 				GetValue( e, cloneMessage );
 			} );
 
-			if( message is IResponsiveInteractionMessage responsiveMessage ) {
-				responsiveMessage.Response = ( (IResponsiveInteractionMessage)cloneMessage ).Response;
+			if( message is IResponsiveMessage responsiveMessage ) {
+				responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
 			}
 		}
 
-		private void GetValue( InteractionMessageRaisedEventArgs e, InteractionMessage cloneMessage ) {
+		private void GetValue( MessageRaisedEventArgs e, Message cloneMessage ) {
 			if( _source.TryGetTarget( out var _ ) ) {
 				if( e.Message.MessageKey != null ) {
 					_actionDictionary.TryGetValue( e.Message.MessageKey, out var list );
@@ -102,7 +102,7 @@ namespace LivetEx.Messaging {
 			}
 		}
 
-		IEnumerator<KeyValuePair<string, ConcurrentBag<Action<InteractionMessage>>>> IEnumerable<KeyValuePair<string, ConcurrentBag<Action<InteractionMessage>>>>.GetEnumerator() {
+		IEnumerator<KeyValuePair<string, ConcurrentBag<Action<Message>>>> IEnumerable<KeyValuePair<string, ConcurrentBag<Action<Message>>>>.GetEnumerator() {
 			ThrowExceptionIfDisposed();
 			return _actionDictionary.GetEnumerator();
 		}
@@ -114,16 +114,16 @@ namespace LivetEx.Messaging {
 
 		public Dispatcher Dispatcher { get; set; }
 
-		public void Add( Action<InteractionMessage> action ) {
+		public void Add( Action<Message> action ) {
 			RegisterAction( action );
 		}
 
-		public void Add( string messageKey, Action<InteractionMessage> action ) {
+		public void Add( string messageKey, Action<Message> action ) {
 			RegisterAction( messageKey, action );
 		}
 
 
-		public void Add( string messageKey, params Action<InteractionMessage>[] actions ) {
+		public void Add( string messageKey, params Action<Message>[] actions ) {
 			foreach( var action in actions ) {
 				RegisterAction( messageKey, action );
 			}

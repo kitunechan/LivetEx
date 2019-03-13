@@ -9,7 +9,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 「ファイルを開く」ダイアログを表示するアクションです。<see cref="OpenFileDialogMessage"/>に対応します。
 	/// </summary>
-	public class OpenFileDialogInteractionMessageAction : InteractionMessageAction<DependencyObject> {
+	public class OpenFileDialogMessageAction : MessageAction<DependencyObject> {
 
 		static Settings setting;
 		static Dictionary<string, string> InitialDirectoryGroupList;
@@ -19,7 +19,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		public string InitialDirectoryGroup { get; set; }
 
-		protected override void InvokeAction( InteractionMessage message ) {
+		protected override void InvokeAction( Message message ) {
 			if( message is OpenFileDialogMessage windowMessage ) {
 				var clone = (OpenFileDialogMessage)windowMessage.Clone();
 				if( string.IsNullOrEmpty( clone.InitialDirectoryGroup ) ){

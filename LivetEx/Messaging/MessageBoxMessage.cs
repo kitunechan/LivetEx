@@ -2,9 +2,9 @@
 
 namespace LivetEx.Messaging {
 	/// <summary>
-	/// 確認相互作用メッセージを表します。
+	/// メッセージボックスを表示ズルメッセージです。
 	/// </summary>
-	public class MessageBoxMessage : ResponsiveInteractionMessage<MessageBoxResult> {
+	public class MessageBoxMessage : ResponsiveMessage<MessageBoxResult> {
 
 		public MessageBoxMessage() { }
 

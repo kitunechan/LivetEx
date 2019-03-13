@@ -6,9 +6,9 @@ using LivetEx.Messaging;
 
 namespace LivetEx.Messaging {
 	/// <summary>
-	/// 画面遷移(Window)を行うアクションです。<see cref="WindowTransitionMessage"/>に対応します。
+	/// 画面遷移(Window)を行うアクションです。<see cref="WindowOpenMessage"/>に対応します。
 	/// </summary>
-	public class WindowTransitionInteractionMessageAction : InteractionMessageAction<FrameworkElement> {
+	public class WindowOpenMessageAction : MessageAction<FrameworkElement> {
 		/// <summary>
 		/// 遷移するウインドウの型を指定、または取得します。
 		/// </summary>
@@ -19,7 +19,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowType.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowTypeProperty =
-			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata() );
+			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( WindowOpenMessageAction ), new PropertyMetadata() );
 
 		private static bool IsValidWindowType( Type value ) {
 			if( value != null ) {
@@ -35,14 +35,14 @@ namespace LivetEx.Messaging {
 		/// 画面遷移の種類を指定するTransitionMode列挙体を指定、または取得します。<br/>
 		/// TransitionMessageでModeがUnKnown以外に指定されていた場合、そちらが優先されます。
 		/// </summary>
-		public WindowTransitionMode Mode {
-			get { return (WindowTransitionMode)GetValue( ModeProperty ); }
+		public WindowOpenMode Mode {
+			get { return (WindowOpenMode)GetValue( ModeProperty ); }
 			set { SetValue( ModeProperty, value ); }
 		}
 
 		// Using a DependencyProperty as the backing store for Mode.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ModeProperty =
-			DependencyProperty.Register( "Mode", typeof( WindowTransitionMode ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata( WindowTransitionMode.UnKnown ) );
+			DependencyProperty.Register( "Mode", typeof( WindowOpenMode ), typeof( WindowOpenMessageAction ), new PropertyMetadata( WindowOpenMode.UnKnown ) );
 
 		/// <summary>
 		/// 遷移先ウィンドウがこのウィンドウに所有されるかを設定します。
@@ -54,7 +54,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
-			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata( true ) );
+			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( WindowOpenMessageAction ), new PropertyMetadata( true ) );
 
 
 		#region Register WindowState
@@ -65,15 +65,15 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowState.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowStateProperty =
-			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowTransitionInteractionMessageAction ), new PropertyMetadata( WindowState.Normal ) );
+			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowOpenMessageAction ), new PropertyMetadata( WindowState.Normal ) );
 		#endregion
 
-		protected override void InvokeAction( InteractionMessage message ) {
-			if( message is WindowTransitionMessage transitionMessage ) {
-				var clone = (WindowTransitionMessage)transitionMessage.Clone();
+		protected override void InvokeAction( Message message ) {
+			if( message is WindowOpenMessage transitionMessage ) {
+				var clone = (WindowOpenMessage)transitionMessage.Clone();
 				{
 					clone.WindowType = transitionMessage.WindowType ?? WindowType;
-					clone.Mode = ( transitionMessage.Mode != WindowTransitionMode.UnKnown ) ? transitionMessage.Mode : Mode;
+					clone.Mode = ( transitionMessage.Mode != WindowOpenMode.UnKnown ) ? transitionMessage.Mode : Mode;
 					clone.IsOwned = transitionMessage.IsOwned ?? IsOwned;
 
 					if( transitionMessage.WindowState == WindowState.Normal ) {
@@ -89,7 +89,7 @@ namespace LivetEx.Messaging {
 		}
 
 
-		public static void Action( FrameworkElement element, WindowTransitionMessage message ) {
+		public static void Action( FrameworkElement element, WindowOpenMessage message ) {
 			var targetType = message.WindowType;
 
 			if( !IsValidWindowType( targetType ) ) {
@@ -101,13 +101,13 @@ namespace LivetEx.Messaging {
 
 
 			var mode = message.Mode;
-			if( mode == WindowTransitionMode.UnKnown ) {
-				mode = WindowTransitionMode.Modal;
+			if( mode == WindowOpenMode.UnKnown ) {
+				mode = WindowOpenMode.Modal;
 			}
 
 			switch( mode ) {
-				case WindowTransitionMode.Modeless:
-				case WindowTransitionMode.Modal: {
+				case WindowOpenMode.Modeless:
+				case WindowOpenMode.Modal: {
 					var targetWindow = (Window)defaultConstructor.Invoke( null );
 					if( message.ViewModel != null ) {
 						targetWindow.DataContext = message.ViewModel;
@@ -128,7 +128,7 @@ namespace LivetEx.Messaging {
 						message.InitializeAction?.Invoke( targetWindow );
 					};
 
-					if( mode == WindowTransitionMode.Modeless ) {
+					if( mode == WindowOpenMode.Modeless ) {
 						targetWindow.Show();
 						message.Response = null;
 					} else {
@@ -148,7 +148,7 @@ namespace LivetEx.Messaging {
 					break;
 				}
 
-				case WindowTransitionMode.NewOrActive: {
+				case WindowOpenMode.NewOrActive: {
 					var window = Application.Current.Windows
 						.OfType<Window>()
 						.FirstOrDefault( w => w.GetType() == targetType );

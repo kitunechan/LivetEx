@@ -1,5 +1,5 @@
 ﻿namespace LivetEx.Messaging {
-	public enum WindowTransitionMode {
+	public enum WindowOpenMode {
 		/// <summary>
 		/// 指定されていません。Action, MessageともにUnKnownの場合はModalが設定されます。
 		/// </summary>

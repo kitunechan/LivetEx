@@ -4,7 +4,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 戻り値のある相互作用メッセージの抽象基底クラスです。
 	/// </summary>
-	public interface IResponsiveInteractionMessage {
+	public interface IResponsiveMessage {
 		object Response { get; set; }
 
 	}
@@ -13,15 +13,15 @@ namespace LivetEx.Messaging {
 	/// 戻り値のある相互作用メッセージの基底クラスです。
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class ResponsiveInteractionMessage<T> : InteractionMessage, IResponsiveInteractionMessage {
-		public ResponsiveInteractionMessage() {
+	public class ResponsiveMessage<T> : Message, IResponsiveMessage {
+		public ResponsiveMessage() {
 		}
 
 		/// <summary>
 		/// メッセージキーを使用して、戻り値のある新しい相互作用メッセージのインスタンスを生成します
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public ResponsiveInteractionMessage( string messageKey )
+		public ResponsiveMessage( string messageKey )
 			: base( messageKey ) {
 		}
 
@@ -32,7 +32,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new ResponsiveInteractionMessage<T>();
+			return new ResponsiveMessage<T>();
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		public T Response { get; set; }
 
-		object IResponsiveInteractionMessage.Response {
+		object IResponsiveMessage.Response {
 			get => this.Response;
 			set => this.Response = (T)value;
 		}

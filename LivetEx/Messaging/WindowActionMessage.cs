@@ -4,7 +4,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// Windowを最大化・最小化・閉じる・通常化・ダイアログの結果の相互作用メッセージです。
 	/// </summary>
-	public class WindowActionMessage : InteractionMessage {
+	public class WindowActionMessage : Message {
 
 		#region StaticMessage
 

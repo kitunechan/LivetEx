@@ -8,39 +8,25 @@ using System.Windows.Input;
 
 namespace LivetEx.Commands {
 	public class CommandBindingService : IEnumerable<BindingUnit> {
-		public CommandBindingService() {
 
+		public CommandBindingService( FrameworkElement taregetElement ) {
+			this.TaregetElement = taregetElement;
 		}
 
-		public CommandBindingService( FrameworkElement element ) {
-			this.Element = element;
-		}
-
-		FrameworkElement Element;
-		Dictionary<BindingUnit, CommandBinding> Items = new Dictionary<BindingUnit, CommandBinding>();
+		public FrameworkElement TaregetElement { get; private set; }
+		readonly Dictionary<BindingUnit, CommandBinding> Items = new Dictionary<BindingUnit, CommandBinding>();
 
 		/// <summary>
 		/// コマンドの適用
 		/// </summary>
 		public void ApplyCommandBindings() {
-			if( this.Element == null ) {
+			if( this.TaregetElement == null ) {
 				throw new ArgumentException( "Elementを指定して下さい。" );
 			}
 
 			foreach( var item in Items ) {
-				if( !this.Element.CommandBindings.Contains( item.Value ) ) {
-					this.Element.CommandBindings.Add( item.Value );
-				}
-			}
-		}
-
-		/// <summary>
-		/// コマンドの適用
-		/// </summary>
-		public void ApplyCommandBindings( FrameworkElement element ) {
-			foreach( var item in Items ) {
-				if( !element.CommandBindings.Contains( item.Value ) ) {
-					element.CommandBindings.Add( item.Value );
+				if( !this.TaregetElement.CommandBindings.Contains( item.Value ) ) {
+					this.TaregetElement.CommandBindings.Add( item.Value );
 				}
 			}
 		}
@@ -49,21 +35,12 @@ namespace LivetEx.Commands {
 		/// コマンドの削除
 		/// </summary>
 		public void ClearCommandBindings() {
-			if( this.Element == null ) {
+			if( this.TaregetElement == null ) {
 				throw new ArgumentException( "Elementを指定して下さい。" );
 			}
 
 			foreach( var item in Items ) {
-				this.Element.CommandBindings.Remove( item.Value );
-			}
-		}
-
-		/// <summary>
-		/// コマンドの削除
-		/// </summary>
-		public void ClearCommandBindings( FrameworkElement element ) {
-			foreach( var item in Items ) {
-				element.CommandBindings.Remove( item.Value );
+				this.TaregetElement.CommandBindings.Remove( item.Value );
 			}
 		}
 
@@ -89,7 +66,7 @@ namespace LivetEx.Commands {
 
 		public bool Remove( BindingUnit item ) {
 			if( Items.ContainsKey( item ) ) {
-				this.Element.CommandBindings.Remove( Items[item] );
+				this.TaregetElement.CommandBindings.Remove( Items[item] );
 				return this.Items.Remove( item );
 			}
 
@@ -97,7 +74,7 @@ namespace LivetEx.Commands {
 		}
 
 		public IEnumerator<BindingUnit> GetEnumerator() {
-			return Items.Select( x => x.Key ).GetEnumerator();
+			return Items.Keys.GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
@@ -138,7 +115,7 @@ namespace LivetEx.Commands {
 			this.CommandParameter = commandParameter;
 		}
 
-		public RoutedUICommand Target { get; set; }
+		public RoutedUICommand Target { get; private set; }
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
 

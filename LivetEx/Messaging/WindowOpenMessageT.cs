@@ -6,15 +6,15 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowTransitionMessage<T> : WindowTransitionMessage where T : ViewModel {
-		public WindowTransitionMessage() {
+	public class WindowOpenMessage<VM> : WindowOpenMessage where VM : ViewModel {
+		public WindowOpenMessage() {
 		}
 
 		/// <summary>
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( string messageKey ) : base( messageKey ) { }
+		public WindowOpenMessage( string messageKey ) : base( messageKey ) { }
 
 
 		/// <summary>
@@ -22,14 +22,14 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessage( string messageKey, T ViewModel )
+		public WindowOpenMessage( string messageKey, VM ViewModel )
 			: this( messageKey, null, ViewModel ) { }
 
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowTransitionMessage( T ViewModel )
+		public WindowOpenMessage( VM ViewModel )
 			: this( null, null, ViewModel ) { }
 
 		/// <summary>
@@ -38,7 +38,7 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		/// <param name="windowType">新しいWindowの型</param>
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowTransitionMessage( string messageKey, Type windowType, T viewModel )
+		public WindowOpenMessage( string messageKey, Type windowType, VM viewModel )
 			: base( messageKey, windowType, viewModel ) {
 			ViewModel = viewModel;
 
@@ -56,8 +56,8 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
 		/// </summary>
-		public new T ViewModel {
-			get { return (T)GetValue( ViewModelProperty ); }
+		public new VM ViewModel {
+			get { return (VM)GetValue( ViewModelProperty ); }
 			set { SetValue( ViewModelProperty, value ); }
 		}
 
@@ -67,7 +67,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessage<T>();
+			return new WindowOpenMessage<VM>();
 		}
 	}
 
@@ -76,8 +76,8 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowTransitionMessageV<V> : WindowTransitionMessage where V : Window {
-		public WindowTransitionMessageV() {
+	public class WindowOpenMessageV<Window> : WindowOpenMessage where Window : System.Windows.Window {
+		public WindowOpenMessageV() {
 			this.WindowType = this.GetType().GetGenericArguments()[0];
 		}
 
@@ -85,24 +85,24 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowTransitionMessageV( string messageKey ) : base( messageKey ) {
+		public WindowOpenMessageV( string messageKey ) : base( messageKey ) {
 			this.WindowType = this.GetType().GetGenericArguments()[0];
 		}
 
 		/// <summary>
 		/// ウインドウの設定を行う関数
 		/// </summary>
-		public new Action<V> WindowSettingAction {
+		public new Action<Window> WindowSettingAction {
 			get => base.WindowSettingAction;
-			set => base.WindowSettingAction = window => value?.Invoke( (V)window );
+			set => base.WindowSettingAction = window => value?.Invoke( (Window)window );
 		}
 
 		/// <summary>
 		/// ウインドウコンテンツがレンダリングされた後に実行する関数
 		/// </summary>
-		public new Action<V> InitializeAction {
+		public new Action<Window> InitializeAction {
 			get => base.InitializeAction;
-			set => base.InitializeAction = window => value?.Invoke( (V)window );
+			set => base.InitializeAction = window => value?.Invoke( (Window)window );
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowTransitionMessageV<V>();
+			return new WindowOpenMessageV<Window>();
 		}
 
 

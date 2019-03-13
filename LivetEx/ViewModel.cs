@@ -11,7 +11,7 @@ namespace LivetEx {
 		[NonSerialized]
 		private bool _disposed;
 		[NonSerialized]
-		private InteractionMessenger _messenger;
+		private Messenger _messenger;
 		[NonSerialized]
 		private DisposableCollection _disposableCollection;
 
@@ -35,10 +35,10 @@ namespace LivetEx {
 		/// このViewModelクラスの基本Messegerインスタンスです。
 		/// </summary>
 		[XmlIgnore]
-		public InteractionMessenger Messenger {
+		public Messenger Messenger {
 			get {
 				if( _messenger == null ) {
-					_messenger = new InteractionMessenger();
+					_messenger = new Messenger();
 				}
 				return _messenger;
 			}

@@ -9,13 +9,13 @@ namespace LivetEx.Messaging {
 	/// 独自のアクションを定義する場合はこのクラスを継承してください。
 	/// </summary>
 	/// <typeparam name="T">このアクションがアタッチ可能な型を示します。</typeparam>
-	[System.Windows.Markup.ContentProperty( "DirectInteractionMessage" )]
+	[System.Windows.Markup.ContentProperty( "DirectMessage" )]
 	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes" )]
-	public abstract class InteractionMessageAction<T> : TriggerAction<T> where T : DependencyObject {
+	public abstract class MessageAction<T> : TriggerAction<T> where T : DependencyObject {
 		protected override sealed void Invoke( object parameter ) {
 			if( (bool)( DesignerProperties.IsInDesignModeProperty.GetMetadata( typeof( DependencyObject ) ).DefaultValue ) ) return;
 
-			var message = DirectInteractionMessage?.Message ?? parameter as InteractionMessage;
+			var message = DirectMessage?.Message ?? parameter as Message;
 
 			var window = Window.GetWindow( this.AssociatedObject );
 			if( window == null ) {
@@ -29,25 +29,25 @@ namespace LivetEx.Messaging {
 			if( message != null ) {
 				InvokeAction( message );
 
-				if( DirectInteractionMessage != null ) {
-					DirectInteractionMessage.InvokeCallbacks( message );
+				if( DirectMessage != null ) {
+					DirectMessage.InvokeCallbacks( message );
 				}
 			}
 		}
 
-		protected abstract void InvokeAction( InteractionMessage message );
+		protected abstract void InvokeAction( Message message );
 
 		/// <summary>
-		/// Viewで直接相互作用メッセージを定義する場合に使用する、DirectInteractionMessageを指定、または取得します。
+		/// Viewで直接相互作用メッセージを定義する場合に使用する、<see cref="Messaging.DirectMessage"/>を指定、または取得します。
 		/// </summary>
-		public DirectInteractionMessage DirectInteractionMessage {
-			get { return (DirectInteractionMessage)GetValue( DirectInteractionMessageProperty ); }
-			set { SetValue( DirectInteractionMessageProperty, value ); }
+		public DirectMessage DirectMessage {
+			get { return (DirectMessage)GetValue( DirectMessageProperty ); }
+			set { SetValue( DirectMessageProperty, value ); }
 		}
 
-		// Using a DependencyProperty as the backing store for DirectInteractionMessage.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty DirectInteractionMessageProperty =
-			DependencyProperty.Register( "DirectInteractionMessage", typeof( DirectInteractionMessage ), typeof( InteractionMessageAction<T> ), new PropertyMetadata() );
+		// Using a DependencyProperty as the backing store for DirectMessage.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty DirectMessageProperty =
+			DependencyProperty.Register( nameof(DirectMessage), typeof( DirectMessage ), typeof( MessageAction<T> ), new PropertyMetadata() );
 
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for InvokeActionOnlyWhenWindowIsActive.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty InvokeActionOnlyWhenWindowIsActiveProperty =
-			DependencyProperty.Register( "InvokeActionOnlyWhenWindowIsActive", typeof( bool ), typeof( InteractionMessageAction<T> ), new PropertyMetadata( false ) );
+			DependencyProperty.Register( nameof(InvokeActionOnlyWhenWindowIsActive), typeof( bool ), typeof( MessageAction<T> ), new PropertyMetadata( false ) );
 
 
 	}

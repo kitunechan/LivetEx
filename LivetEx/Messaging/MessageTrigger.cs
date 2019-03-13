@@ -7,22 +7,22 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// ViewModelからの相互作用メッセージを受信し、アクションを実行します。
 	/// </summary>
-	public class InteractionMessageTrigger : TriggerBase<FrameworkElement>, IDisposable {
-		private LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs> _listener;
+	public class MessageTrigger : TriggerBase<FrameworkElement>, IDisposable {
+		private LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs> _listener;
 		
 		private bool _loaded = true;
 
 		/// <summary>
 		/// ViewModelのMessengerを指定、または取得します。
 		/// </summary>
-		public InteractionMessenger Messenger {
-			get { return (InteractionMessenger)GetValue( MessengerProperty ); }
+		public Messenger Messenger {
+			get { return (Messenger)GetValue( MessengerProperty ); }
 			set { SetValue( MessengerProperty, value ); }
 		}
 
 		// Using a DependencyProperty as the backing store for Messenger.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty MessengerProperty =
-			DependencyProperty.Register( "Messenger", typeof( InteractionMessenger ), typeof( InteractionMessageTrigger ),
+			DependencyProperty.Register( "Messenger", typeof( Messenger ), typeof( MessageTrigger ),
 										new PropertyMetadata( MessengerChanged ) );
 
 
@@ -36,7 +36,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for FireActionsOnlyWhileAttatchedObjectLoading.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty InvokeActionsOnlyWhileAttatchedObjectLoadedProperty =
-			DependencyProperty.Register( "InvokeActionsOnlyWhileAttatchedObjectLoaded", typeof( bool ), typeof( InteractionMessageTrigger ), new PropertyMetadata( false ) );
+			DependencyProperty.Register( "InvokeActionsOnlyWhileAttatchedObjectLoaded", typeof( bool ), typeof( MessageTrigger ), new PropertyMetadata( false ) );
 
 
 
@@ -50,7 +50,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for IsEnable.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty IsEnableProperty =
-			DependencyProperty.Register( "IsEnable", typeof( bool ), typeof( InteractionMessageTrigger ), new PropertyMetadata( true ) );
+			DependencyProperty.Register( "IsEnable", typeof( bool ), typeof( MessageTrigger ), new PropertyMetadata( true ) );
 
 
 
@@ -61,7 +61,7 @@ namespace LivetEx.Messaging {
 		public string MessageKey { get; set; }
 
 		private static void MessengerChanged( DependencyObject obj, DependencyPropertyChangedEventArgs e ) {
-			var sender = (InteractionMessageTrigger)obj;
+			var sender = (MessageTrigger)obj;
 
 			if( e.OldValue == e.NewValue ) {
 				return;
@@ -72,9 +72,9 @@ namespace LivetEx.Messaging {
 			}
 
 			if( e.NewValue != null ) {
-				var newMessenger = (InteractionMessenger)e.NewValue;
+				var newMessenger = (Messenger)e.NewValue;
 
-				sender._listener = new LivetWeakEventListener<EventHandler<InteractionMessageRaisedEventArgs>, InteractionMessageRaisedEventArgs>(
+				sender._listener = new LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs>(
 					h => h,
 					h => newMessenger.Raised += h,
 					h => newMessenger.Raised -= h,
@@ -83,10 +83,10 @@ namespace LivetEx.Messaging {
 			}
 		}
 
-		private void MessageReceived( object sender, InteractionMessageRaisedEventArgs e ) {
+		private void MessageReceived( object sender, MessageRaisedEventArgs e ) {
 			var message = e.Message;
 
-			var cloneMessage = (InteractionMessage)message.Clone();
+			var cloneMessage = (Message)message.Clone();
 				cloneMessage.Freeze();
 
 			var checkResult = false;
@@ -117,8 +117,8 @@ namespace LivetEx.Messaging {
 
 			DoActionOnDispatcher( () => InvokeActions( cloneMessage ) );
 
-			if( message is IResponsiveInteractionMessage responsiveMessage ) {
-				responsiveMessage.Response = ( (IResponsiveInteractionMessage)cloneMessage ).Response;
+			if( message is IResponsiveMessage responsiveMessage ) {
+				responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
 			}
 			
 		}

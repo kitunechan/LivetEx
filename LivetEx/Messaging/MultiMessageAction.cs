@@ -30,8 +30,8 @@ namespace LivetEx.Messaging {
 					break;
 				}
 
-				case WindowOpenMessage _message: {
-					WindowOpenMessageAction.Action( this.AssociatedObject, _message );
+				case WindowMessage _message: {
+					WindowMessageAction.Action( this.AssociatedObject, _message );
 					break;
 				}
 

@@ -129,10 +129,10 @@
     <Compile Include="Messaging\ResponsiveMessage.cs" />
     <Compile Include="Messaging\SaveFileDialogMessageAction.cs" />
     <Compile Include="Messaging\WindowActionMessageAction.cs" />
-    <Compile Include="Messaging\WindowOpenMessageAction.cs" />
-    <Compile Include="Messaging\WindowOpenMessageT.cs" />
-    <Compile Include="Messaging\WindowOpenMessage.cs" />
-    <Compile Include="Messaging\WindowOpenMode.cs" />
+    <Compile Include="Messaging\WindowMode.cs" />
+    <Compile Include="Messaging\WindowMessageAction.cs" />
+    <Compile Include="Messaging\WindowMessageT.cs" />
+    <Compile Include="Messaging\WindowMessage.cs" />
     <Compile Include="ObservableSynchronizedUniqueCollection.cs" />
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />

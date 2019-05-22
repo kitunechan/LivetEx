@@ -148,7 +148,5 @@ namespace LivetEx.Messaging {
 			this.InitializeAction = source.InitializeAction;
 			this.WindowSettingAction = source.WindowSettingAction;
 		}
-
-
 	}
 }

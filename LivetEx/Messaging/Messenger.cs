@@ -83,7 +83,7 @@ namespace LivetEx.Messaging {
 		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
 		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
 		/// <returns>アクション実行後に、戻り情報を含んだ相互作用メッセージ</returns>
-		public T GetResponseVM<T>( T message ) where T : Message, IResponsiveMessage {
+		public T GetResponseMessage<T>( T message ) where T : Message, IResponsiveMessage {
 			if( message == null ) {
 				throw new ArgumentException( "messageはnullにできません" );
 			}

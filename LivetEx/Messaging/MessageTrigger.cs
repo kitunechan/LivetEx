@@ -120,6 +120,9 @@ namespace LivetEx.Messaging {
 			if( message is IResponsiveMessage responsiveMessage ) {
 				responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
 			}
+			if( message is WindowMessage windowMessage ) {
+				windowMessage.ViewModel = ( (WindowMessage)cloneMessage ).ViewModel;
+			}
 			
 		}
 

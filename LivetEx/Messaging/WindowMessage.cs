@@ -26,8 +26,7 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		/// <param name="windowType">新しいWindowの型</param>
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowMessage( string messageKey, Type windowType, ViewModel viewModel )
-			: base( messageKey ) {
+		public WindowMessage( string messageKey, Type windowType, ViewModel viewModel ) : base( messageKey ) {
 			ViewModel = viewModel;
 
 			if( windowType != null ) {
@@ -43,15 +42,7 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
 		/// </summary>
-		public ViewModel ViewModel {
-			get { return (ViewModel)GetValue( ViewModelProperty ); }
-			set { SetValue( ViewModelProperty, value ); }
-		}
-
-		// Using a DependencyProperty as the backing store for ViewModel.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty ViewModelProperty =
-			DependencyProperty.Register( nameof( ViewModel ), typeof( ViewModel ), typeof( WindowMessage ), new PropertyMetadata( null ) );
-
+		public ViewModel ViewModel { get; set; }
 
 		/// <summary>
 		/// 新しいWindowの表示方法を決定するWindowModeを指定、または取得します。<br/>
@@ -147,6 +138,7 @@ namespace LivetEx.Messaging {
 
 			this.InitializeAction = source.InitializeAction;
 			this.WindowSettingAction = source.WindowSettingAction;
+			this.ViewModel = source.ViewModel;
 		}
 	}
 }

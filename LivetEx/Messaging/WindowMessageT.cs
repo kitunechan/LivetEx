@@ -85,8 +85,8 @@ namespace LivetEx.Messaging {
 		/// 新しいWindowのDataContextに設定するViewModelを指定、または取得します。
 		/// </summary>
 		public new TViewModel ViewModel {
-			get { return (TViewModel)GetValue( ViewModelProperty ); }
-			set { SetValue( ViewModelProperty, value ); }
+			get { return (TViewModel)base.ViewModel; }
+			set { base.ViewModel = value; }
 		}
 
 

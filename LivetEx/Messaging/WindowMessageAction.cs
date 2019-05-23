@@ -98,8 +98,6 @@ namespace LivetEx.Messaging {
 
 			var defaultConstructor = targetType.GetConstructor( Type.EmptyTypes );
 
-
-
 			var mode = message.Mode;
 			if( mode == WindowMode.UnKnown ) {
 				mode = WindowMode.Modal;
@@ -143,6 +141,10 @@ namespace LivetEx.Messaging {
 						};
 
 						message.Response = targetWindow.ShowDialog();
+					}
+
+					if( message.ViewModel == null ) {
+						message.ViewModel = targetWindow.DataContext as ViewModel;
 					}
 
 					break;

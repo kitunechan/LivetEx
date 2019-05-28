@@ -115,8 +115,6 @@
     <None Include="License\LivetEx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Messaging\CallMethodMessageAction.cs" />
-    <Compile Include="Messaging\CallMethodMessage.cs" />
     <Compile Include="Messaging\DirectMessage.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageAction.cs" />
@@ -129,6 +127,8 @@
     <Compile Include="Messaging\ResponsiveMessage.cs" />
     <Compile Include="Messaging\SaveFileDialogMessageAction.cs" />
     <Compile Include="Messaging\WindowActionMessageAction.cs" />
+    <Compile Include="Messaging\WindowCallMethodMessage.cs" />
+    <Compile Include="Messaging\WindowCallMethodMessageAction.cs" />
     <Compile Include="Messaging\WindowMode.cs" />
     <Compile Include="Messaging\WindowMessageAction.cs" />
     <Compile Include="Messaging\WindowMessageT.cs" />

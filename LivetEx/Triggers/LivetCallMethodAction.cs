@@ -3,6 +3,7 @@ using System.Windows;
 using LivetEx.Messaging;
 using System.Linq;
 using System.Windows.Input;
+using System;
 
 namespace LivetEx.Triggers {
 
@@ -123,6 +124,7 @@ namespace LivetEx.Triggers {
 					}
 
 					return;
+
 				} else if( parameter is IResponsiveMessageOneParameter responsiveOne ) {
 					var t = responsiveOne.GetType();
 
@@ -134,15 +136,18 @@ namespace LivetEx.Triggers {
 
 					return;
 				}
-			}
 
-			if( parameter is IResponsiveMessage responsive ) {
-				responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
+				throw new ArgumentException("未対応のMessageです。");
 
-			} else if( !_parameterSet ) {
-				_method.Invoke( MethodTarget, MethodName );
 			} else {
-				_callbackMethod.Invoke( MethodTarget, MethodName, typeof( object ), MethodParameter );
+				if( parameter is IResponsiveMessage responsive ) {
+					responsive.Response = _method.Invoke( MethodTarget, MethodName, responsive.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object ) );
+
+				} else if( !_parameterSet ) {
+					_method.Invoke( MethodTarget, MethodName );
+				} else {
+					_callbackMethod.Invoke( MethodTarget, MethodName, typeof( object ), MethodParameter );
+				}
 			}
 		}
 	}

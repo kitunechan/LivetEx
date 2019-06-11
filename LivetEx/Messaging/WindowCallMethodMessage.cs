@@ -8,6 +8,12 @@ namespace LivetEx.Messaging {
 
 		public WindowCallMethodMessage() { }
 
+		public WindowCallMethodMessage( string methodName, T methodParameter ) {
+			this.MethodName = methodName;
+			this.MethodParameter = methodParameter;
+		}
+
+
 		public WindowCallMethodMessage( string messageKey ) : base( messageKey ) { }
 
 		/// <summary>

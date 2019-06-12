@@ -7,6 +7,10 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace LivetEx.Commands {
+	/// <summary>
+	/// 対象のElementにコマンドを適用させるクラス
+	/// コマンド追加後にApplyCommandBindingsで適用してください。
+	/// </summary>
 	public class CommandBindingService : IEnumerable<BindingUnit> {
 
 		public CommandBindingService( FrameworkElement taregetElement ) {

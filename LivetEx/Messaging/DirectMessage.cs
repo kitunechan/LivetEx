@@ -68,7 +68,7 @@ namespace LivetEx.Messaging {
 				}
 			}
 			if( CallbackMethodTarget != null && CallbackMethodName != null ) {
-				_callbackMethod.Invoke( CallbackMethodTarget, CallbackMethodName, null, message );
+				_callbackMethod.Invoke( CallbackMethodTarget, CallbackMethodName, message.GetType(), message );
 			}
 		}
 

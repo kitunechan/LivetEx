@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace LivetEx.Triggers {
 	/// <summary>
@@ -11,124 +12,135 @@ namespace LivetEx.Triggers {
 	/// 引数の無いメソッドを実行します。メソッドの実行はキャッシュされます。
 	/// </summary>
 	public class MethodBinder {
-		private static ConcurrentDictionary<Type, ConcurrentDictionary<string, Action<object>>> _ActionCacheDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<string, Action<object>>>();
-		private static ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<object, object>>> _FuncCacheDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<object, object>>>();
+		private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, Action<object>>> _ActionCacheDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<string, Action<object>>>();
+		private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<object, object>>> _FuncCacheDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<string, Func<object, object>>>();
 
-		private static bool TryGetCacheFromActionCacheDictionary( Type targetObjectType, string methodName, out Action<object> m ) {
-			if( _ActionCacheDictionary.TryGetValue( targetObjectType, out var actionDictionary ) ) {
-				return actionDictionary.TryGetValue( methodName, out m );
+		private static readonly List<Task> taskList = new List<Task>();
+
+		public static IEnumerable<Task> Tasks => taskList;
+
+		private static bool TryGetCacheFromActionCacheDictionary( Type targetType, string methodName, out Action<object> action ) {
+			if( _ActionCacheDictionary.TryGetValue( targetType, out var actionDictionary ) ) {
+				return actionDictionary.TryGetValue( methodName, out action );
 			}
-
-			m = null;
+			action = null;
 			return false;
 		}
 
-		private static bool TryGetCacheFromFunctionCacheDictionary( Type targetObjectType, string methodName, out Func<object, object> m ) {
-			if( _FuncCacheDictionary.TryGetValue( targetObjectType, out var functionDictionary ) ) {
-				return functionDictionary.TryGetValue( methodName, out m );
+		private static bool TryGetCacheFromFunctionCacheDictionary( Type targetType, string methodName, out Func<object, object> func ) {
+			if( _FuncCacheDictionary.TryGetValue( targetType, out var functionDictionary ) ) {
+				return functionDictionary.TryGetValue( methodName, out func );
 			}
-
-			m = null;
+			func = null;
 			return false;
 		}
 
-		private Func<object, object> _function;
-		private Action<object> _action;
+		private Type _targetTypeCache;
+		private string _methodNameCache;
 
-		private string _methodName;
-		private MethodInfo _methodInfo;
-		private Type _targetObjectType;
+		private Func<object, object> _functionCache;
+		private Action<object> _actionCache;
+		private MethodInfo _methodInfoCache;
 
-		public void Invoke( object targetObject, string methodName ) {
-			Invoke( targetObject, methodName, typeof( void ) );
-		}
-
-		public object Invoke( object targetObject, string methodName, Type resultType ) {
-			if( targetObject == null ) throw new ArgumentNullException( "targetObject" );
+		public object Invoke( object target, string methodName ) {
+			if( target == null ) throw new ArgumentNullException( "targetObject" );
 			if( methodName == null ) throw new ArgumentNullException( "methodName" );
 
-			var newTargetObjectType = targetObject.GetType();
+			var targetType = target.GetType();
 
-			if( _targetObjectType == newTargetObjectType && _methodName == methodName ) {
-				if( resultType == typeof( void ) ) {
-					if( _action != null ) {
-						_action( targetObject );
-						return null;
-					}
-
-					if( TryGetCacheFromActionCacheDictionary( _targetObjectType, _methodName, out _action ) ) {
-						_action( targetObject );
-						return null;
-					}
-
-				} else {
-					if( _function != null ) {
-						return _function( targetObject );
-					}
-
-					if( TryGetCacheFromFunctionCacheDictionary( _targetObjectType, _methodName, out _function ) ) {
-						return _function( targetObject );
-					}
-				}
-
-				if( _methodInfo != null ) {
-					return _methodInfo.Invoke( targetObject, new object[] { } );
-				}
-			}
-
-			_targetObjectType = newTargetObjectType;
-			_methodName = methodName;
-
-			if( resultType == typeof( void ) ) {
-				if( TryGetCacheFromActionCacheDictionary( _targetObjectType, _methodName, out _action ) ) {
-					_action( targetObject );
+			if( targetType == _targetTypeCache && methodName == _methodNameCache ) {
+				if( _actionCache != null ) {
+					_actionCache( target );
 					return null;
 				}
+				if( _functionCache != null ) {
+					return _functionCache( target );
+				}
+
+				if( TryGetCacheFromActionCacheDictionary( targetType, methodName, out _actionCache ) ) {
+					_actionCache( target );
+					return null;
+				}
+				if( TryGetCacheFromFunctionCacheDictionary( targetType, methodName, out _functionCache ) ) {
+					return _functionCache( target );
+				}
+
+				if( _methodInfoCache != null ) {
+					return _methodInfoCache.Invoke( target, null );
+				}
+
+				throw new Exception( "Cache Error" );
+
 			} else {
-				if( TryGetCacheFromFunctionCacheDictionary( _targetObjectType, _methodName, out _function ) ) {
-					return _function( targetObject );
+				_targetTypeCache = targetType;
+				_methodNameCache = methodName;
+				_actionCache = null;
+				_functionCache = null;
+
+				if( TryGetCacheFromActionCacheDictionary( targetType, methodName, out _actionCache ) ) {
+					_actionCache( target );
+					return null;
+				}
+				if( TryGetCacheFromFunctionCacheDictionary( targetType, methodName, out _functionCache ) ) {
+					return _functionCache( target );
 				}
 			}
 
-			_methodInfo = _targetObjectType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
-							.FirstOrDefault( method => method.Name == methodName && !method.GetParameters().Any() && method.ReturnType == resultType );
+			_methodInfoCache = targetType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
+									.FirstOrDefault( method => method.Name == methodName && !method.GetParameters().Any() );
 
-			if( _methodInfo == null ) {
-				throw new ArgumentException( $"{_targetObjectType.Name}型に{resultType}を返す引数の無いメソッド{methodName}が見つかりません。" );
+			if( _methodInfoCache == null ) {
+				throw new ArgumentException( $"{targetType.Name}型に引数の無いメソッド{methodName}が見つかりません。" );
 			}
 
-			var result = _methodInfo.Invoke( targetObject, new object[] { } );
-			var taskArgument = new Tuple<Type, MethodInfo>( _targetObjectType, _methodInfo );
+			var result = _methodInfoCache.Invoke( target, null );
+			var taskArgs = new { TargetType= targetType, MethodInfo = _methodInfoCache };
 
-			if( resultType == typeof( void ) ) {
-				Task.Factory.StartNew( arg => {
-					var taskArg = (Tuple<Type, MethodInfo>)arg;
-
-					var paraTarget = Expression.Parameter( typeof( object ), "target" );
-					var method = Expression.Lambda<Action<object>>( Expression.Call( Expression.Convert( paraTarget, taskArg.Item1 ), taskArg.Item2 ), paraTarget ).Compile();
-
-					var dic = _ActionCacheDictionary.GetOrAdd( taskArg.Item1, _ => new ConcurrentDictionary<string, Action<object>>() );
-					dic.TryAdd( taskArg.Item2.Name, method );
-				}, taskArgument );
-			} else if( Nullable.GetUnderlyingType( resultType ) != null ) {
-				// Func<object,Nullable>が作れない・・・
-
-				//} else if( resultType == typeof( ValueType ) ) {
-				// Func<object,ValueType>が作れない・・・
-
-
-			} else if( resultType == typeof( object ) || resultType.BaseType == typeof( object ) ) {
-				Task.Factory.StartNew( arg => {
-					var taskArg = (Tuple<Type, MethodInfo>)arg;
+			// メソッドのキャッシュ処理
+			if( _methodInfoCache.ReturnType == typeof( void ) ) {
+				var t = Task.Run( () => {
 
 					var paraTarget = Expression.Parameter( typeof( object ), "target" );
+					var method = Expression.Lambda<Action<object>>(
+									Expression.Call(
+										Expression.Convert( paraTarget, taskArgs.TargetType ),
+										taskArgs.MethodInfo
+									),
+									paraTarget
+								).Compile();
 
-					var method = Expression.Lambda<Func<object, object>>( Expression.Call( Expression.Convert( paraTarget, taskArg.Item1 ), taskArg.Item2 ), paraTarget ).Compile();
+					_ActionCacheDictionary
+						.GetOrAdd( taskArgs.TargetType, _ => new ConcurrentDictionary<string, Action<object>>() )
+						.TryAdd( taskArgs.MethodInfo.Name, method );
+				} );
 
-					var dic = _FuncCacheDictionary.GetOrAdd( taskArg.Item1, _ => new ConcurrentDictionary<string, Func<object, object>>() );
-					dic.TryAdd( taskArg.Item2.Name, method );
-				}, taskArgument );
+				taskList.Add( t );
+				t.ContinueWith( _ => {
+					taskList.Remove( _ );
+				} );
+
+			} else {
+				var t = Task.Run( () => {
+					var paraTarget = Expression.Parameter( typeof( object ), "target" );
+					var method = Expression.Lambda<Func<object, object>>(
+									Expression.Convert(
+										Expression.Call( Expression.Convert( paraTarget, taskArgs.TargetType ), taskArgs.MethodInfo ),
+										typeof( object )
+									),
+									paraTarget
+								).Compile();
+
+					_FuncCacheDictionary
+						.GetOrAdd( taskArgs.TargetType, _ => new ConcurrentDictionary<string, Func<object, object>>() )
+						.TryAdd( taskArgs.MethodInfo.Name, method );
+				} );
+
+				taskList.Add( t );
+				t.ContinueWith( _ => {
+					taskList.Remove( _ );
+				} );
 			}
+
 			return result;
 		}
 

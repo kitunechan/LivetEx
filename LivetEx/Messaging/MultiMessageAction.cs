@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using LivetEx.Messaging;
+using LivetEx.Triggers;
 
 namespace LivetEx.Messaging {
-	public class MultiMessageAction : MessageAction<FrameworkElement> {
+	public class MultiMessageAction : MessageAction<FrameworkElement, Message> {
 		protected override void InvokeAction( Message message ) {
 			switch( message ) {
 				case MessageBoxMessage _message: {
@@ -34,15 +35,11 @@ namespace LivetEx.Messaging {
 					SaveFileDialogMessageAction.Action( this.AssociatedObject, _message );
 					return;
 				}
-			}
 
-			var baseType = message.GetType().GetGenericTypeDefinition();
-			if( baseType == typeof( WindowCallResponseMethodMessage<> ) ) {
-				WindowCallMethodMessageAction.Action( this.AssociatedObject, message );
-			} else if( baseType == typeof( WindowCallResponseMethodMessage<,> ) ) {
-				WindowCallMethodMessageAction.Action( this.AssociatedObject, message );
-			} else if( baseType == typeof( WindowCallMethodMessage<> ) ) {
-				WindowCallMethodMessageAction.Action( this.AssociatedObject, message );
+				case ICallMethodMessage _message: {
+					CallMethodAction.Action( this.AssociatedObject, _message );
+					return;
+				}
 			}
 
 		}

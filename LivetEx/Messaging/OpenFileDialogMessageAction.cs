@@ -9,7 +9,7 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 「ファイルを開く」ダイアログを表示するアクションです。<see cref="OpenFileDialogMessage"/>に対応します。
 	/// </summary>
-	public class OpenFileDialogMessageAction : MessageAction<DependencyObject> {
+	public class OpenFileDialogMessageAction : MessageAction<DependencyObject, OpenFileDialogMessage> {
 
 		static Settings setting;
 		static Dictionary<string, string> InitialDirectoryGroupList;
@@ -19,16 +19,15 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		public string InitialDirectoryGroup { get; set; }
 
-		protected override void InvokeAction( Message message ) {
-			if( message is OpenFileDialogMessage windowMessage ) {
-				var clone = (OpenFileDialogMessage)windowMessage.Clone();
-				if( string.IsNullOrEmpty( clone.InitialDirectoryGroup ) ){
-					clone.InitialDirectoryGroup = InitialDirectoryGroup;
-				}
-
-				Action( this.AssociatedObject, clone );
-				windowMessage.Response = clone.Response;
+		protected override void InvokeAction( OpenFileDialogMessage openFileDialogMessage ) {
+			var clone = (OpenFileDialogMessage)openFileDialogMessage.Clone();
+			if( string.IsNullOrEmpty( clone.InitialDirectoryGroup ) ) {
+				clone.InitialDirectoryGroup = InitialDirectoryGroup;
 			}
+
+			Action( this.AssociatedObject, clone );
+			openFileDialogMessage.Response = clone.Response;
+
 		}
 
 		public static void Action( DependencyObject element, OpenFileDialogMessage message ) {
@@ -68,7 +67,7 @@ namespace LivetEx.Messaging {
 				CheckFileExists = message.CheckFileExists,
 			};
 
-			if( dialog.ShowDialog(window) == true ) {
+			if( dialog.ShowDialog( window ) == true ) {
 				message.Response = dialog.FileNames;
 
 				if( !string.IsNullOrEmpty( group ) ) {

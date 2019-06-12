@@ -1,12 +1,29 @@
 ﻿using System.Windows;
 
 namespace LivetEx.Messaging {
+
 	/// <summary>
 	/// 戻り値のある相互作用メッセージの抽象基底クラスです。
 	/// </summary>
 	public interface IResponsiveMessage {
 		object Response { get; set; }
+	}
 
+	public class ResponsiveMessage : Message, IResponsiveMessage {
+		public ResponsiveMessage() {
+
+		}
+
+		public ResponsiveMessage( string messageKey ) : base( messageKey ) {
+
+		}
+
+		public object Response { get; set; }
+
+
+		protected override Freezable CreateInstanceCore() {
+			return new ResponsiveMessage();
+		}
 	}
 
 	/// <summary>
@@ -21,8 +38,7 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを使用して、戻り値のある新しい相互作用メッセージのインスタンスを生成します
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public ResponsiveMessage( string messageKey )
-			: base( messageKey ) {
+		public ResponsiveMessage( string messageKey ) : base( messageKey ) {
 		}
 
 

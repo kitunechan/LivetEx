@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LivetEx</RootNamespace>
     <AssemblyName>LivetEx</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -119,7 +119,6 @@
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageAction.cs" />
     <Compile Include="Messaging\MessageBoxMessageAction.cs" />
-    <Compile Include="Messaging\MessageOneParameter.cs" />
     <Compile Include="Messaging\MessageTrigger.cs" />
     <Compile Include="Messaging\Messenger.cs" />
     <Compile Include="Messaging\MultiMessageAction.cs" />
@@ -127,8 +126,7 @@
     <Compile Include="Messaging\ResponsiveMessage.cs" />
     <Compile Include="Messaging\SaveFileDialogMessageAction.cs" />
     <Compile Include="Messaging\WindowActionMessageAction.cs" />
-    <Compile Include="Messaging\WindowCallMethodMessage.cs" />
-    <Compile Include="Messaging\WindowCallMethodMessageAction.cs" />
+    <Compile Include="Messaging\CallMethodMessage.cs" />
     <Compile Include="Messaging\WindowMode.cs" />
     <Compile Include="Messaging\WindowMessageAction.cs" />
     <Compile Include="Messaging\WindowMessageT.cs" />
@@ -142,8 +140,9 @@
     <Compile Include="EventListeners\AnonymousCollectionItemNotifyPropertyChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\LivetCollectionItemNotifyPropertyChangedEventListener.cs" />
     <Compile Include="ICollectionItemNotifyPropertyChanged.cs" />
+    <Compile Include="Triggers\CallCommandAction.cs" />
     <Compile Include="Triggers\DataContextDisposeAction.cs" />
-    <Compile Include="Triggers\LivetCallMethodAction.cs" />
+    <Compile Include="Triggers\CallMethodAction.cs" />
     <Compile Include="Triggers\DataTrigger.cs" />
     <Compile Include="Triggers\MethodBinder.cs" />
     <Compile Include="Triggers\MethodBinderWithArgument.cs" />
@@ -165,8 +164,6 @@
     <Compile Include="EventListeners\LivetCollectionChangedEventListener.cs" />
     <Compile Include="EventListeners\LivetEventListener.cs" />
     <Compile Include="EventListeners\LivetPropertyChangedEventListener.cs" />
-    <Compile Include="Messaging\MessageGeneric.cs" />
-    <Compile Include="Messaging\ResponsiveMessageGeneric.cs" />
     <Compile Include="Messaging\MessageListener.cs" />
     <Compile Include="ObservableSynchronizedCollection.cs" />
     <Compile Include="DispatcherCollection.cs" />

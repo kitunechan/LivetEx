@@ -9,19 +9,14 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// メッセージボックスを表示するアクションです。<see cref="MessageBoxMessage"/>に対応します。
 	/// </summary>
-	public class MessageBoxMessageAction : MessageAction<FrameworkElement> {
-		protected override void InvokeAction( Message message ) {
-			if( message is MessageBoxMessage messageBoxMessage ) {
-				var clone = (MessageBoxMessage)messageBoxMessage.Clone();
-				{
-					clone.IsOwned = messageBoxMessage.IsOwned ?? IsOwned ?? true;
-				}
+	public class MessageBoxMessageAction : MessageAction<FrameworkElement, MessageBoxMessage> {
+		protected override void InvokeAction( MessageBoxMessage messageBoxMessage ) {
+			var clone = (MessageBoxMessage)messageBoxMessage.Clone();
+			clone.IsOwned = messageBoxMessage.IsOwned ?? IsOwned ?? true;
 
+			Action( this.AssociatedObject, clone );
 
-				Action( this.AssociatedObject, clone );
-
-				messageBoxMessage.Response = clone.Response;
-			}
+			messageBoxMessage.Response = clone.Response;
 		}
 
 		/// <summary>

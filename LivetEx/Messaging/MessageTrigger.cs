@@ -8,6 +8,18 @@ namespace LivetEx.Messaging {
 	/// ViewModelからの相互作用メッセージを受信し、アクションを実行します。
 	/// </summary>
 	public class MessageTrigger : TriggerBase<FrameworkElement>, IDisposable {
+		public MessageTrigger() {
+
+		}
+		public MessageTrigger( Messenger messenger ) {
+			this.Messenger = messenger;
+		}
+
+		public MessageTrigger( Messenger messenger, string messageKey ) {
+			this.Messenger = messenger;
+			this.MessageKey = messageKey;
+		}
+
 		private LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs> _listener;
 		
 		private bool _loaded = true;

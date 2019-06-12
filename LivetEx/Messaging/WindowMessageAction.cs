@@ -8,7 +8,10 @@ namespace LivetEx.Messaging {
 	/// <summary>
 	/// 画面遷移(Window)を行うアクションです。<see cref="WindowMessage"/>に対応します。
 	/// </summary>
-	public class WindowMessageAction : MessageAction<FrameworkElement> {
+	public class WindowMessageAction : MessageAction<FrameworkElement, WindowMessage> {
+
+		#region Register WindowType
+
 		/// <summary>
 		/// 遷移するウインドウの型を指定、または取得します。
 		/// </summary>
@@ -21,16 +24,9 @@ namespace LivetEx.Messaging {
 		public static readonly DependencyProperty WindowTypeProperty =
 			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( WindowMessageAction ), new PropertyMetadata() );
 
-		private static bool IsValidWindowType( Type value ) {
-			if( value != null ) {
-				if( value.IsSubclassOf( typeof( Window ) ) ) {
-					return value.GetConstructor( Type.EmptyTypes ) != null;
-				}
-			}
+		#endregion
 
-			return false;
-		}
-
+		#region Register Mode
 		/// <summary>
 		/// 画面遷移の種類を指定するTransitionMode列挙体を指定、または取得します。<br/>
 		/// TransitionMessageでModeがUnKnown以外に指定されていた場合、そちらが優先されます。
@@ -43,7 +39,9 @@ namespace LivetEx.Messaging {
 		// Using a DependencyProperty as the backing store for Mode.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ModeProperty =
 			DependencyProperty.Register( "Mode", typeof( WindowMode ), typeof( WindowMessageAction ), new PropertyMetadata( WindowMode.UnKnown ) );
+		#endregion
 
+		#region Register IsOwned
 		/// <summary>
 		/// 遷移先ウィンドウがこのウィンドウに所有されるかを設定します。
 		/// </summary>
@@ -55,7 +53,7 @@ namespace LivetEx.Messaging {
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
 			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( WindowMessageAction ), new PropertyMetadata( true ) );
-
+		#endregion
 
 		#region Register WindowState
 		public WindowState WindowState {
@@ -68,24 +66,33 @@ namespace LivetEx.Messaging {
 			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowMessageAction ), new PropertyMetadata( WindowState.Normal ) );
 		#endregion
 
-		protected override void InvokeAction( Message message ) {
-			if( message is WindowMessage transitionMessage ) {
-				var clone = (WindowMessage)transitionMessage.Clone();
-				{
-					clone.WindowType = transitionMessage.WindowType ?? WindowType;
-					clone.Mode = ( transitionMessage.Mode != WindowMode.UnKnown ) ? transitionMessage.Mode : Mode;
-					clone.IsOwned = transitionMessage.IsOwned ?? IsOwned;
+		protected override void InvokeAction( WindowMessage message ) {
+			
+			var clone = (WindowMessage)message.Clone();
+			{
+				clone.WindowType = message.WindowType ?? WindowType;
+				clone.Mode = ( message.Mode != WindowMode.UnKnown ) ? message.Mode : Mode;
+				clone.IsOwned = message.IsOwned ?? IsOwned;
 
-					if( transitionMessage.WindowState == WindowState.Normal ) {
-						clone.WindowState = this.WindowState;
-					}
-
-					clone.Freeze();
+				if( message.WindowState == WindowState.Normal ) {
+					clone.WindowState = this.WindowState;
 				}
-				Action( this.AssociatedObject, clone );
 
-				transitionMessage.Response = clone.Response;
+				clone.Freeze();
 			}
+			Action( this.AssociatedObject, clone );
+
+			message.Response = clone.Response;
+		}
+
+		private static bool IsValidWindowType( Type value ) {
+			if( value != null ) {
+				if( value.IsSubclassOf( typeof( Window ) ) ) {
+					return value.GetConstructor( Type.EmptyTypes ) != null;
+				}
+			}
+
+			return false;
 		}
 
 

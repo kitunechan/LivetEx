@@ -27,13 +27,39 @@ namespace LivetEx.Messaging {
 			}
 		}
 
+
 		/// <summary>
-		/// 指定された、戻り値情報のある相互作用メッセージを同期的に送信します。
+		/// 戻り値のあるメッセージを送信します。
 		/// </summary>
-		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
-		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
-		/// <returns>アクション実行後に、戻り情報を含んだ相互作用メッセージ</returns>
-		public T GetResponse<T>( ResponsiveMessage<T> message ) {
+		public object GetResponse( IResponsiveMessage responsiveMessage ) {
+			if( responsiveMessage == null ) {
+				throw new ArgumentException( $"{nameof( responsiveMessage )}はnullにできません", nameof( responsiveMessage ) );
+			}
+			if( responsiveMessage is Message message ) {
+				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
+				if( threadSafeHandler != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+
+					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					return responsiveMessage.Response;
+				}
+
+			} else {
+				throw new ArgumentException( $"{nameof( responsiveMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( responsiveMessage ) );
+			}
+
+			return default( object );
+		}
+
+		/// <summary>
+		/// 戻り値のあるメッセージを送信します。
+		/// </summary>
+		/// <typeparam name="TResult">戻り値の型</typeparam>
+		/// <param name="message">メッセージ</param>
+		/// <returns>呼び出したメッセージの戻り値</returns>
+		public TResult GetResponse<TResult>( ResponsiveMessage<TResult> message ) {
 			if( message == null ) {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
@@ -48,44 +74,81 @@ namespace LivetEx.Messaging {
 				return message.Response;
 			}
 
-			return default( T );
+			return default( TResult );
 		}
 
 
 		/// <summary>
-		/// 指定された、戻り値情報のある相互作用メッセージを同期的に送信します。
+		/// １つの引数を持った、戻り値のあるメソッドを呼び出すメッセージを送信します。
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="V">戻り値情報のある相互作用メッセージの型</typeparam>
-		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
-		/// <returns>アクション実行後に、戻り情報を含んだ相互作用メッセージ</returns>
-		public V GetResponse<T, V>( ResponsiveMessage<T, V> message ) {
-			if( message == null ) {
-				throw new ArgumentException( "messageはnullにできません" );
+		/// <typeparam name="TArgument">引数の型</typeparam>
+		/// <typeparam name="TResult">戻り値の型</typeparam>
+		/// <param name="callResultMethodMessage">メッセージ</param>
+		/// <returns>呼び出したメソッドの戻り値</returns>
+		public object GetResponse( ICallFuncMessage callResultMethodMessage ) {
+			if( callResultMethodMessage == null ) {
+				throw new ArgumentException( $"{nameof( callResultMethodMessage )}はnullにできません", nameof( callResultMethodMessage ) );
 			}
 
-			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-			if( threadSafeHandler != null ) {
-				if( !message.IsFrozen ) {
-					message.Freeze();
+			if( callResultMethodMessage is Message message ) {
+				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
+				if( threadSafeHandler != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+
+					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					return callResultMethodMessage.Result;
 				}
 
-				threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
-				return message.Response;
-			}
+			} else {
+				throw new ArgumentException( $"{nameof( callResultMethodMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( callResultMethodMessage ) );
 
-			return default( V );
+			}
+			return default( object );
 		}
 
 		/// <summary>
-		/// 指定された、戻り値情報のある相互作用メッセージを同期的に送信します。
+		/// 戻り値のあるメソッドを呼び出すメッセージを送信します。
 		/// </summary>
-		/// <typeparam name="T">戻り値情報のある相互作用メッセージの型</typeparam>
-		/// <param name="message">戻り値情報のある相互作用メッセージ</param>
-		/// <returns>アクション実行後に、戻り情報を含んだ相互作用メッセージ</returns>
+		/// <typeparam name="TResult">戻り値の型</typeparam>
+		/// <param name="callResultMethodMessage">メッセージ</param>
+		/// <returns>呼び出したメソッドの戻り値</returns>
+		public TResult GetResponse<TResult>( CallFuncMessage<TResult> callResultMethodMessage ) {
+			if( callResultMethodMessage == null ) {
+				throw new ArgumentException( $"{nameof( callResultMethodMessage )}はnullにできません", nameof( callResultMethodMessage ) );
+			}
+
+			if( callResultMethodMessage is Message message ) {
+				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
+				if( threadSafeHandler != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+
+					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					return callResultMethodMessage.Result;
+				}
+
+			} else {
+				throw new ArgumentException( $"{nameof( callResultMethodMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( callResultMethodMessage ) );
+			}
+
+			return default( TResult );
+		}
+
+
+
+
+		/// <summary>
+		/// メッセージを送信し、そのメッセージを返します。
+		/// </summary>
+		/// <typeparam name="T">メッセージの型</typeparam>
+		/// <param name="message">メッセージ</param>
+		/// <returns>送信したメッセージ</returns>
 		public T GetResponseMessage<T>( T message ) where T : Message, IResponsiveMessage {
 			if( message == null ) {
-				throw new ArgumentException( "messageはnullにできません" );
+				throw new ArgumentException( $"{nameof( message )}はnullにできません", nameof( message ) );
 			}
 
 			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );

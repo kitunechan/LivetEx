@@ -20,6 +20,8 @@ bld/
 *.ide/
 .vs/
 
+.axoCover/
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
@@ -188,4 +190,5 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
 

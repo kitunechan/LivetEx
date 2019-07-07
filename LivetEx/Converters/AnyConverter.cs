@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,27 +10,20 @@ using System.Windows.Markup;
 
 namespace LivetEx.Converters {
 	public class AnyConverter : MarkupExtension, IValueConverter {
-		public static AnyConverter Instance {
-			get {
-				if( _Instance == null ) {
-					_Instance = new AnyConverter();
-				}
-				return _Instance;
-			}
-		}
+		public static AnyConverter Instance => _Instance ?? ( _Instance = new AnyConverter() );
 		static AnyConverter _Instance;
 
-		public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
-			if( value is IEnumerable<object> items ) {
-				return items.Any();
+		public object Convert( object target, Type targetType, object parameter, CultureInfo culture ) {
+			if( target is IEnumerable items ) {
+				return items.GetEnumerator().MoveNext();
 			}
-
 			return false;
 		}
 
-		public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
+		public object ConvertBack( object target, Type targetType, object parameter, CultureInfo culture ) {
 			throw new NotImplementedException();
 		}
+
 
 		public override object ProvideValue( IServiceProvider serviceProvider ) {
 			return this;

@@ -5,13 +5,6 @@ VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivetEx", "LivetEx\LivetEx.csproj", "{0EF98261-40BF-45A5-B990-8DAC1DE43D67}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{09144B9B-BF60-4AA0-BDA7-00C9977A6A08}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivetExTests", "LivetExTests\LivetExTests.csproj", "{C062EDD7-DCD9-4FC5-BB9B-C2B5E9322B30}"
 EndProject
 Global

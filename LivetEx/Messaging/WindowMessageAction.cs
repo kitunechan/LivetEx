@@ -29,7 +29,7 @@ namespace LivetEx.Messaging {
 		#region Register Mode
 		/// <summary>
 		/// 画面遷移の種類を指定するTransitionMode列挙体を指定、または取得します。<br/>
-		/// TransitionMessageでModeがUnKnown以外に指定されていた場合、そちらが優先されます。
+		/// MessageでModeがUnKnown以外に指定されていた場合、そちらが優先されます。
 		/// </summary>
 		public WindowMode Mode {
 			get { return (WindowMode)GetValue( ModeProperty ); }
@@ -102,6 +102,7 @@ namespace LivetEx.Messaging {
 			if( !IsValidWindowType( targetType ) ) {
 				return;
 			}
+			message.IsHandled = true;
 
 			var defaultConstructor = targetType.GetConstructor( Type.EmptyTypes );
 
@@ -147,7 +148,7 @@ namespace LivetEx.Messaging {
 							}
 						};
 
-						message.Response = targetWindow.ShowDialog();
+						 message.Response = targetWindow.ShowDialog();
 					}
 
 					if( message.ViewModel == null ) {

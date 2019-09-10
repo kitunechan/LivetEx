@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace LivetEx.Messaging {
 
@@ -14,6 +15,7 @@ namespace LivetEx.Messaging {
 	/// メソッドの名称にアクセスできるオブジェクトを表します。
 	/// </summary>
 	public interface ICallMethodMessage {
+		Type MethodTarget { get; }
 		string MethodName { get; }
 	}
 
@@ -31,10 +33,26 @@ namespace LivetEx.Messaging {
 	public class CallActionMessage : Message, ICallMethodMessage {
 		public CallActionMessage() { }
 
+
+		public CallActionMessage( Type methodTarget, string methodName ) {
+			this.MethodTarget = methodTarget;
+			this.MethodName = methodName;
+		}
+
 		public CallActionMessage( string methodName ) {
 			this.MethodName = methodName;
 		}
 
+
+		#region Register MethodTarget
+		public Type MethodTarget {
+			get => (Type)GetValue( MethodTargetProperty );
+			set => SetValue( MethodTargetProperty, value );
+		}
+
+		public static readonly DependencyProperty MethodTargetProperty =
+			DependencyProperty.Register( nameof( MethodTarget ), typeof( Type ), typeof( CallActionMessage ), new PropertyMetadata( default( Type ) ) );
+		#endregion
 
 		#region Register MethodName
 		public string MethodName {
@@ -61,10 +79,13 @@ namespace LivetEx.Messaging {
 
 		public CallActionMessage() { }
 
-		public CallActionMessage( string methodName, TParameter methodParameter ) : base( methodName ) {
+		public CallActionMessage( Type methodTarget, string methodName, TParameter methodParameter ) : base( methodTarget, methodName ) {
 			this.MethodParameter = methodParameter;
 		}
 
+		public CallActionMessage( string methodName, TParameter methodParameter ) : base( methodName ) {
+			this.MethodParameter = methodParameter;
+		}
 
 		#region Register MethodParameter
 		public TParameter MethodParameter {
@@ -101,6 +122,20 @@ namespace LivetEx.Messaging {
 			this.MethodName = methodName;
 		}
 
+		public CallFuncMessage( Type methodTarget, string methodName ) {
+			this.MethodTarget = methodTarget;
+			this.MethodName = methodName;
+		}
+		
+		#region Register MethodTarget
+		public Type MethodTarget {
+			get => (Type)GetValue( MethodTargetProperty );
+			set => SetValue( MethodTargetProperty, value );
+		}
+
+		public static readonly DependencyProperty MethodTargetProperty =
+			DependencyProperty.Register( nameof( MethodTarget ), typeof( Type ), typeof( CallFuncMessage<TResult> ), new PropertyMetadata( default( Type ) ) );
+		#endregion
 
 		#region Register MethodName
 		public string MethodName {
@@ -142,10 +177,18 @@ namespace LivetEx.Messaging {
 	public class CallFuncMessage<TParameter, TResult> : CallFuncMessage<TResult>, ICallOneParameterMethodMessage {
 		public CallFuncMessage() { }
 
+
+		public CallFuncMessage( TParameter methodParameter ) : base() {
+			this.MethodParameter = methodParameter;
+		}
+
 		public CallFuncMessage( string methodName, TParameter methodParameter ) : base( methodName ) {
 			this.MethodParameter = methodParameter;
 		}
 
+		public CallFuncMessage( Type methodTarget, string methodName, TParameter methodParameter ) : base( methodTarget, methodName ) {
+			this.MethodParameter = methodParameter;
+		}
 
 		#region Register MethodParameter
 		public TParameter MethodParameter {

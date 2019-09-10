@@ -97,45 +97,47 @@ namespace LivetEx.Messaging {
 
 		private void MessageReceived( object sender, MessageRaisedEventArgs e ) {
 			var message = e.Message;
-
-			var cloneMessage = (Message)message.Clone();
+			if( !message.IsHandled ) {
+				var cloneMessage = (Message)message.Clone();
 				cloneMessage.Freeze();
 
-			var checkResult = false;
-			DoActionOnDispatcher( () => {
-				if( !IsEnable ) {
-					return;
-				}
+				var checkResult = false;
+				DoActionOnDispatcher( () => {
+					if( !IsEnable ) {
+						return;
+					}
 
-				if( InvokeActionsOnlyWhileAttatchedObjectLoaded && ( !_loaded ) ) {
-					return;
-				}
+					if( InvokeActionsOnlyWhileAttatchedObjectLoaded && ( !_loaded ) ) {
+						return;
+					}
 
-				if( string.IsNullOrEmpty( MessageKey ) && string.IsNullOrEmpty( cloneMessage.MessageKey ) ) {
+					if( string.IsNullOrEmpty( MessageKey ) && string.IsNullOrEmpty( cloneMessage.MessageKey ) ) {
+						checkResult = true;
+						return;
+					}
+
+					if( MessageKey != cloneMessage.MessageKey ) {
+						return;
+					}
+
 					checkResult = true;
+				} );
+
+				if( !checkResult ) {
 					return;
 				}
 
-				if( MessageKey != cloneMessage.MessageKey ) {
-					return;
+				DoActionOnDispatcher( () => InvokeActions( cloneMessage ) );
+
+				message.IsHandled = cloneMessage.IsHandled;
+
+				if( message is IResponsiveMessage responsiveMessage ) {
+					responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
 				}
-
-				checkResult = true;
-			} );
-
-			if( !checkResult ) {
-				return;
+				if( message is WindowMessage windowMessage ) {
+					windowMessage.ViewModel = ( (WindowMessage)cloneMessage ).ViewModel;
+				}
 			}
-
-			DoActionOnDispatcher( () => InvokeActions( cloneMessage ) );
-
-			if( message is IResponsiveMessage responsiveMessage ) {
-				responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
-			}
-			if( message is WindowMessage windowMessage ) {
-				windowMessage.ViewModel = ( (WindowMessage)cloneMessage ).ViewModel;
-			}
-			
 		}
 
 		private void DoActionOnDispatcher( Action action ) {

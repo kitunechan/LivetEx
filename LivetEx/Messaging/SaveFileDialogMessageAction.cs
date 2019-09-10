@@ -12,25 +12,25 @@ namespace LivetEx.Messaging {
 
 
 		public static void Action( DependencyObject element, SaveFileDialogMessage message ) {
-			if( message != null ) {
-				var dialog = new SaveFileDialog {
-					FileName = message.FileName,
-					InitialDirectory = message.InitialDirectory,
-					AddExtension = message.AddExtension,
-					CreatePrompt = message.CreatePrompt,
-					Filter = message.Filter,
-					OverwritePrompt = message.OverwritePrompt,
-					Title = message.Title,
-					DefaultExt = message.DefaultExt,
-					FilterIndex = message.FilterIndex,
-					CheckFileExists = message.CheckFileExists,
-					CheckPathExists = message.CheckPathExists,
-				};
+			message.IsHandled = true;
 
-				var window = Window.GetWindow( element );
+			var dialog = new SaveFileDialog {
+				FileName = message.FileName,
+				InitialDirectory = message.InitialDirectory,
+				AddExtension = message.AddExtension,
+				CreatePrompt = message.CreatePrompt,
+				Filter = message.Filter,
+				OverwritePrompt = message.OverwritePrompt,
+				Title = message.Title,
+				DefaultExt = message.DefaultExt,
+				FilterIndex = message.FilterIndex,
+				CheckFileExists = message.CheckFileExists,
+				CheckPathExists = message.CheckPathExists,
+			};
 
-				message.Response = ( dialog.ShowDialog( window ) == true ) ? dialog.FileNames : null;
-			}
+			var window = Window.GetWindow( element );
+
+			message.Response = ( dialog.ShowDialog( window ) == true ) ? dialog.FileNames : null;
 		}
 	}
 }

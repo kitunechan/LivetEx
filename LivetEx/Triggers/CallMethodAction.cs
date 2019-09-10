@@ -74,11 +74,16 @@ namespace LivetEx.Triggers {
 		}
 
 		static void Invoke( object methodTarget, string methodName, Type methodParameterType, object methodParameter, object parameter ) {
-			if( parameter is ICallOneParameterMethodMessage callMethodMessageOneParameter ) {
-				methodName = callMethodMessageOneParameter.MethodName ?? methodName;
-				methodParameter = callMethodMessageOneParameter.MethodParameter ?? methodParameter;
-			} else if( parameter is ICallMethodMessage callMethodMessage ) {
+			if( parameter is ICallMethodMessage callMethodMessage ) {
+				if( callMethodMessage.MethodTarget != null && callMethodMessage.MethodTarget != methodTarget.GetType() ) {
+					return;
+				}
+
 				methodName = callMethodMessage.MethodName ?? methodName;
+			}
+
+			if( parameter is ICallOneParameterMethodMessage callMethodMessageOneParameter ) {
+				methodParameter = callMethodMessageOneParameter.MethodParameter ?? methodParameter;
 			}
 
 			var t = parameter.GetType();
@@ -104,6 +109,10 @@ namespace LivetEx.Triggers {
 				} else {
 					_argumentMethod.Invoke( methodTarget, methodName, methodParameter?.GetType() ?? methodParameterType, methodParameter );
 				}
+			}
+
+			if( parameter is Message message ) {
+				message.IsHandled = true;
 			}
 		}
 

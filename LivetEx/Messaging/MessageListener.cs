@@ -12,28 +12,27 @@ namespace LivetEx.Messaging {
 		private WeakReference<Messenger> _source;
 		private ConcurrentDictionary<string, ConcurrentBag<Action<Message>>> _actionDictionary = new ConcurrentDictionary<string, ConcurrentBag<Action<Message>>>();
 
-
-		public MessageListener( Messenger sendMessenger, Messenger receiveMessenger )
-			: this( sendMessenger ) {
-			RegisterAction( message=> {
-				receiveMessenger.Raise( message );
-			} );
-		}
-
 		public MessageListener( Messenger messenger ) {
 			Dispatcher = Dispatcher.CurrentDispatcher;
 			_source = new WeakReference<Messenger>( messenger );
 			_listener = new LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs>
 				(
 					h => h,
-					h => messenger.Raised += h,
-					h => messenger.Raised -= h,
+					h => messenger.RaisedLater += h,
+					h => messenger.RaisedLater -= h,
 					MessageReceived
 				);
 		}
+		public MessageListener( Messenger messenger, Action<Message> action ) : this( messenger, null, action ) {
+		}
 
-		public MessageListener( Messenger messenger, string messageKey, Action<Message> action )
-			: this( messenger ) {
+		public MessageListener( Messenger sendMessenger, Messenger receiveMessenger ) : this( sendMessenger ) {
+			RegisterAction( message => {
+				receiveMessenger.Raise( message );
+			} );
+		}
+
+		public MessageListener( Messenger messenger, string messageKey, Action<Message> action ) : this( messenger ) {
 			if( messageKey == null ) {
 				messageKey = string.Empty;
 			}
@@ -41,9 +40,7 @@ namespace LivetEx.Messaging {
 			RegisterAction( messageKey, action );
 		}
 
-		public MessageListener( Messenger messenger, Action<Message> action )
-			: this( messenger, null, action ) {
-		}
+
 
 		public void RegisterAction( Action<Message> action ) {
 			ThrowExceptionIfDisposed();
@@ -59,39 +56,36 @@ namespace LivetEx.Messaging {
 			if( _disposed ) return;
 
 			var message = e.Message;
+			if( !message.IsHandled ) {
+				var cloneMessage = (Message)message.Clone();
 
-			var cloneMessage = (Message)message.Clone();
+				cloneMessage.Freeze();
 
-			cloneMessage.Freeze();
+				DoActionOnDispatcher( () => {
+					GetValue( e, cloneMessage );
+				} );
 
-			DoActionOnDispatcher( () => {
-				GetValue( e, cloneMessage );
-			} );
+				if( message is IResponsiveMessage responsiveMessage ) {
+					responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
+				}
 
-			if( message is IResponsiveMessage responsiveMessage ) {
-				responsiveMessage.Response = ( (IResponsiveMessage)cloneMessage ).Response;
+				if( message is WindowMessage windowMessage ) {
+					windowMessage.ViewModel = ( (WindowMessage)cloneMessage ).ViewModel;
+				}
 			}
-
-			if( message is WindowMessage windowMessage ) {
-				windowMessage.ViewModel = ( (WindowMessage)cloneMessage ).ViewModel;
-			}
-
 		}
 
 		private void GetValue( MessageRaisedEventArgs e, Message cloneMessage ) {
 			if( _source.TryGetTarget( out var _ ) ) {
 				if( e.Message.MessageKey != null ) {
-					_actionDictionary.TryGetValue( e.Message.MessageKey, out var list );
-
-					if( list != null ) {
+					if( _actionDictionary.TryGetValue( e.Message.MessageKey, out var list ) ) {
 						foreach( var action in list ) {
 							action( cloneMessage );
 						}
 					}
 				}
 
-				_actionDictionary.TryGetValue( string.Empty, out var allList );
-				if( allList != null ) {
+				if( _actionDictionary.TryGetValue( string.Empty, out var allList ) ) {
 					foreach( var action in allList ) {
 						action( cloneMessage );
 					}

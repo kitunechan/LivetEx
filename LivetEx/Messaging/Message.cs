@@ -27,7 +27,9 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for MessageKey.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty MessageKeyProperty =
-			DependencyProperty.Register( nameof(MessageKey), typeof( string ), typeof( Message ), new PropertyMetadata( null ) );
+			DependencyProperty.Register( nameof( MessageKey ), typeof( string ), typeof( Message ), new PropertyMetadata( null ) );
+
+		public bool IsHandled { get; set; }
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -36,6 +38,12 @@ namespace LivetEx.Messaging {
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
 			return new Message();
+		}
+
+		protected override void CloneCore( Freezable sourceFreezable ) {
+			this.IsHandled = ((Message)sourceFreezable).IsHandled;
+
+			base.CloneCore( sourceFreezable );
 		}
 	}
 }

@@ -17,13 +17,16 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
-			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-			if( threadSafeHandler != null ) {
+			var raised = Interlocked.CompareExchange( ref Raised, null, null );
+			if( raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
 
-				threadSafeHandler.Invoke( this, new MessageRaisedEventArgs( message ) );
+				raised.Invoke( this, new MessageRaisedEventArgs( message ) );
+
+				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 			}
 		}
 
@@ -36,13 +39,17 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( $"{nameof( responsiveMessage )}はnullにできません", nameof( responsiveMessage ) );
 			}
 			if( responsiveMessage is Message message ) {
-				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-				if( threadSafeHandler != null ) {
+				var raised = Interlocked.CompareExchange( ref Raised, null, null );
+				if( raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
 
-					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					raised( this, new MessageRaisedEventArgs( message ) );
+
+					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+
 					return responsiveMessage.Response;
 				}
 
@@ -64,13 +71,16 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
-			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-			if( threadSafeHandler != null ) {
+			var raised = Interlocked.CompareExchange( ref Raised, null, null );
+			if( raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
 
-				threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+				raised( this, new MessageRaisedEventArgs( message ) );
+
+				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 				return message.Response;
 			}
 
@@ -91,13 +101,16 @@ namespace LivetEx.Messaging {
 			}
 
 			if( callResultMethodMessage is Message message ) {
-				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-				if( threadSafeHandler != null ) {
+				var raised = Interlocked.CompareExchange( ref Raised, null, null );
+				if( raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
 
-					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					raised( this, new MessageRaisedEventArgs( message ) );
+
+					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 					return callResultMethodMessage.Result;
 				}
 
@@ -120,13 +133,16 @@ namespace LivetEx.Messaging {
 			}
 
 			if( callResultMethodMessage is Message message ) {
-				var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-				if( threadSafeHandler != null ) {
+				var raised = Interlocked.CompareExchange( ref Raised, null, null );
+				if( raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
 
-					threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+					raised( this, new MessageRaisedEventArgs( message ) );
+
+					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 					return callResultMethodMessage.Result;
 				}
 
@@ -151,13 +167,16 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( $"{nameof( message )}はnullにできません", nameof( message ) );
 			}
 
-			var threadSafeHandler = Interlocked.CompareExchange( ref Raised, null, null );
-			if( threadSafeHandler != null ) {
+			var raised = Interlocked.CompareExchange( ref Raised, null, null );
+			if( raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
 
-				threadSafeHandler( this, new MessageRaisedEventArgs( message ) );
+				raised( this, new MessageRaisedEventArgs( message ) );
+
+				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
+				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 				return message;
 			}
 
@@ -168,6 +187,10 @@ namespace LivetEx.Messaging {
 		/// 相互作用メッセージが送信された時に発生するイベントです。
 		/// </summary>
 		public event EventHandler<MessageRaisedEventArgs> Raised;
+
+
+		public event EventHandler<MessageRaisedEventArgs> RaisedLater;
+
 
 		/// <summary>
 		/// 指定された相互作用メッセージを非同期で送信します。

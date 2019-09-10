@@ -11,79 +11,37 @@ namespace LivetEx.Messaging {
 		/// <summary>
 		/// メッセージキーの無い WindowAction.Close のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage Close {
-			get {
-				_Close = _Close ?? new WindowActionMessage( WindowAction.Close );
-				return _Close;
-			}
-		}
-		static WindowActionMessage _Close;
+		public static WindowActionMessage Close => new WindowActionMessage( WindowAction.Close );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.Minimize のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage Minimize {
-			get {
-				_Minimize = _Minimize ?? new WindowActionMessage( WindowAction.Minimize );
-				return _Minimize;
-			}
-		}
-		static WindowActionMessage _Minimize;
+		public static WindowActionMessage Minimize => new WindowActionMessage( WindowAction.Minimize );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.Maximize のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage Maximize {
-			get {
-				_Maximize = _Maximize ?? new WindowActionMessage( WindowAction.Maximize );
-				return _Maximize;
-			}
-		}
-		static WindowActionMessage _Maximize;
+		public static WindowActionMessage Maximize => new WindowActionMessage( WindowAction.Maximize );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.Normal のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage Normal {
-			get {
-				_Normal = _Normal ?? new WindowActionMessage( WindowAction.Normal );
-				return _Normal;
-			}
-		}
-		static WindowActionMessage _Normal;
+		public static WindowActionMessage Normal => new WindowActionMessage( WindowAction.Normal );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.Active のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage Active {
-			get {
-				_Active = _Active ?? new WindowActionMessage( WindowAction.Active );
-				return _Active;
-			}
-		}
-		static WindowActionMessage _Active;
+		public static WindowActionMessage Active => new WindowActionMessage( WindowAction.Active );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.ResultOK のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage ResultOK {
-			get {
-				_ResultOK = _ResultOK ?? new WindowActionMessage( WindowAction.ResultOK );
-				return _ResultOK;
-			}
-		}
-		static WindowActionMessage _ResultOK;
+		public static WindowActionMessage ResultOK => new WindowActionMessage( WindowAction.ResultOK );
 
 		/// <summary>
 		/// メッセージキーの無い WindowAction.ResultCancel のメッセージを取得します。
 		/// </summary>
-		public static WindowActionMessage ResultCancel {
-			get {
-				_ResultCancel = _ResultCancel ?? new WindowActionMessage( WindowAction.ResultCancel );
-				return _ResultCancel;
-			}
-		}
-		static WindowActionMessage _ResultCancel;
+		public static WindowActionMessage ResultCancel => new WindowActionMessage( WindowAction.ResultCancel );
 
 		#endregion
 
@@ -94,16 +52,14 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowActionMessage( string messageKey )
-			: base( messageKey ) { }
+		public WindowActionMessage( string messageKey ) : base( messageKey ) { }
 
 		/// <summary>
 		/// メッセージキーとWindowが遷移すべき状態を定義して、新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="action">Windowが遷移すべき状態を表すWindowAction列挙体</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowActionMessage( string messageKey, WindowAction action )
-			: this( messageKey ) {
+		public WindowActionMessage( string messageKey, WindowAction action ) : this( messageKey ) {
 			Action = action;
 		}
 
@@ -111,8 +67,7 @@ namespace LivetEx.Messaging {
 		/// Windowが遷移すべき状態を定義して、新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="action">Windowが遷移すべき状態を表すWindowAction列挙体</param>
-		public WindowActionMessage( WindowAction action )
-			: this( null, action ) { }
+		public WindowActionMessage( WindowAction action ) : this( null, action ) { }
 
 		/// <summary>
 		/// 派生クラスでは必ずオーバーライドしてください。Freezableオブジェクトとして必要な実装です。<br/>
@@ -120,7 +75,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowActionMessage(  );
+			return new WindowActionMessage();
 		}
 
 		/// <summary>

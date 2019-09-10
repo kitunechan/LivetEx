@@ -33,6 +33,8 @@ namespace LivetEx.Messaging {
 
 
 		public static void Action( FrameworkElement element, MessageBoxMessage message ) {
+			message.IsHandled = true;
+
 			if( message.IsOwned == false ) {
 				message.Response = MessageBox.Show(
 					message.Text,

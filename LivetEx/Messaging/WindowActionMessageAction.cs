@@ -10,9 +10,9 @@ namespace LivetEx.Messaging {
 		}
 
 		public static void Action( FrameworkElement element, WindowActionMessage message ) {
-
 			var window = Window.GetWindow( element );
 			if( window != null ) {
+				message.IsHandled = true;
 				switch( message.Action ) {
 					case WindowAction.Close: {
 						window.Close();

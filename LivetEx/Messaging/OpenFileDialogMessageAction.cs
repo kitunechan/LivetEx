@@ -31,6 +31,8 @@ namespace LivetEx.Messaging {
 		}
 
 		public static void Action( DependencyObject element, OpenFileDialogMessage message ) {
+			message.IsHandled = true;
+
 			var window = Window.GetWindow( element );
 
 			if( InitialDirectoryGroupList == null ) {

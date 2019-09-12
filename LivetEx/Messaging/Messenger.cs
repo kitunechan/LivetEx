@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Media.Animation;
 
 namespace LivetEx.Messaging {
 	/// <summary>
@@ -17,16 +18,18 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
-			var raised = Interlocked.CompareExchange( ref Raised, null, null );
-			if( raised != null ) {
+			if( this.Raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
+				this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+			}
 
-				raised.Invoke( this, new MessageRaisedEventArgs( message ) );
-
-				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+			if( this.RaisedLater != null ) {
+				if( !message.IsFrozen ) {
+					message.Freeze();
+				}
+				this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
 			}
 		}
 
@@ -39,25 +42,28 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( $"{nameof( responsiveMessage )}はnullにできません", nameof( responsiveMessage ) );
 			}
 			if( responsiveMessage is Message message ) {
-				var raised = Interlocked.CompareExchange( ref Raised, null, null );
-				if( raised != null ) {
+				var hasEvent = false;
+				if( this.Raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
-
-					raised( this, new MessageRaisedEventArgs( message ) );
-
-					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
-
-					return responsiveMessage.Response;
+					this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
 				}
+
+				if( this.RaisedLater != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+					this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
+				}
+
+				return hasEvent ? responsiveMessage.Response : default( object );
 
 			} else {
 				throw new ArgumentException( $"{nameof( responsiveMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( responsiveMessage ) );
 			}
-
-			return default( object );
 		}
 
 		/// <summary>
@@ -71,20 +77,24 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( "messageはnullにできません" );
 			}
 
-			var raised = Interlocked.CompareExchange( ref Raised, null, null );
-			if( raised != null ) {
+			var hasEvent = false;
+			if( this.Raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
-
-				raised( this, new MessageRaisedEventArgs( message ) );
-
-				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
-				return message.Response;
+				this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+				hasEvent = true;
 			}
 
-			return default( TResult );
+			if( this.RaisedLater != null ) {
+				if( !message.IsFrozen ) {
+					message.Freeze();
+				}
+				this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+				hasEvent = true;
+			}
+
+			return hasEvent ? message.Response : default( TResult );
 		}
 
 
@@ -101,24 +111,29 @@ namespace LivetEx.Messaging {
 			}
 
 			if( callResultMethodMessage is Message message ) {
-				var raised = Interlocked.CompareExchange( ref Raised, null, null );
-				if( raised != null ) {
+				var hasEvent = false;
+				if( this.Raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
-
-					raised( this, new MessageRaisedEventArgs( message ) );
-
-					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
-					return callResultMethodMessage.Result;
+					this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
 				}
+
+				if( this.RaisedLater != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+					this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
+				}
+
+				return hasEvent ? callResultMethodMessage.Result : default( object );
 
 			} else {
 				throw new ArgumentException( $"{nameof( callResultMethodMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( callResultMethodMessage ) );
 
 			}
-			return default( object );
 		}
 
 		/// <summary>
@@ -133,24 +148,29 @@ namespace LivetEx.Messaging {
 			}
 
 			if( callResultMethodMessage is Message message ) {
-				var raised = Interlocked.CompareExchange( ref Raised, null, null );
-				if( raised != null ) {
+				var hasEvent = false;
+				if( this.Raised != null ) {
 					if( !message.IsFrozen ) {
 						message.Freeze();
 					}
-
-					raised( this, new MessageRaisedEventArgs( message ) );
-
-					var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-					raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
-					return callResultMethodMessage.Result;
+					this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
 				}
+
+				if( this.RaisedLater != null ) {
+					if( !message.IsFrozen ) {
+						message.Freeze();
+					}
+					this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+					hasEvent = true;
+				}
+
+				return hasEvent ? callResultMethodMessage.Result : default( TResult );
+
 
 			} else {
 				throw new ArgumentException( $"{nameof( callResultMethodMessage )}は{ typeof( Message ) }を継承している必要があります。", nameof( callResultMethodMessage ) );
 			}
-
-			return default( TResult );
 		}
 
 
@@ -167,20 +187,24 @@ namespace LivetEx.Messaging {
 				throw new ArgumentException( $"{nameof( message )}はnullにできません", nameof( message ) );
 			}
 
-			var raised = Interlocked.CompareExchange( ref Raised, null, null );
-			if( raised != null ) {
+			var hasEvent = false;
+			if( this.Raised != null ) {
 				if( !message.IsFrozen ) {
 					message.Freeze();
 				}
-
-				raised( this, new MessageRaisedEventArgs( message ) );
-
-				var raisedLater = Interlocked.CompareExchange( ref RaisedLater, null, null );
-				raisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
-				return message;
+				this.Raised?.Invoke( this, new MessageRaisedEventArgs( message ) );
+				hasEvent = true;
 			}
 
-			return default( T );
+			if( this.RaisedLater != null ) {
+				if( !message.IsFrozen ) {
+					message.Freeze();
+				}
+				this.RaisedLater?.Invoke( this, new MessageRaisedEventArgs( message ) );
+				hasEvent = true;
+			}
+
+			return hasEvent ? message : default( T );
 		}
 
 		/// <summary>

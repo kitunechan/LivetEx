@@ -67,7 +67,7 @@ namespace LivetEx.Messaging {
 		#endregion
 
 		protected override void InvokeAction( WindowMessage message ) {
-			
+
 			var clone = (WindowMessage)message.Clone();
 			{
 				clone.WindowType = message.WindowType ?? WindowType;
@@ -137,8 +137,8 @@ namespace LivetEx.Messaging {
 					if( mode == WindowMode.Modeless ) {
 						targetWindow.Show();
 						message.Response = null;
-					} else {
 
+					} else {
 						targetWindow.StateChanged += ( s, e ) => {
 							var target = (Window)s;
 							if( target.WindowState == WindowState.Minimized ) {
@@ -148,7 +148,9 @@ namespace LivetEx.Messaging {
 							}
 						};
 
-						 message.Response = targetWindow.ShowDialog();
+						if( !( targetWindow is IWindowClosed isClosedWindow && isClosedWindow.IsClosed ) ) {
+							message.Response = targetWindow.ShowDialog();
+						}
 					}
 
 					if( message.ViewModel == null ) {
@@ -208,5 +210,9 @@ namespace LivetEx.Messaging {
 
 		}
 
+	}
+
+	public interface IWindowClosed {
+		bool IsClosed { get; }
 	}
 }

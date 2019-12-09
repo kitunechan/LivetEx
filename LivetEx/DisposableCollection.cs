@@ -22,8 +22,9 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="sourceDisposableList">ソースとなるIDosposableコレクション</param>
 		public DisposableCollection( IEnumerable<IDisposable> sourceDisposableList ) {
-			if( sourceDisposableList == null ) throw new ArgumentNullException( "sourceDisposableList" );
-
+			if( sourceDisposableList == null ) {
+				throw new ArgumentNullException( "sourceDisposableList" );
+			}
 			_targetLists = new List<IDisposable>( sourceDisposableList );
 		}
 
@@ -50,8 +51,9 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="item">追加するオブジェクト</param>
 		public void Add( IDisposable item ) {
-			if( item == null ) throw new ArgumentNullException( "item" );
-
+			if( item == null ) {
+				throw new ArgumentNullException( "item" );
+			}
 			ThrowExceptionIfDisposed();
 			lock( _lockObject ) {
 				_targetLists.Add( item );
@@ -59,8 +61,9 @@ namespace LivetEx {
 		}
 
 		public void AddRange( IEnumerable<IDisposable> collection ) {
-			if( collection == null ) throw new ArgumentNullException( "collection" );
-
+			if( collection == null ) {
+				throw new ArgumentNullException( "collection" );
+			}
 			ThrowExceptionIfDisposed();
 			lock( _lockObject ) {
 				_targetLists.AddRange( collection );
@@ -85,8 +88,9 @@ namespace LivetEx {
 		/// </summary>
 		/// <param name="item">追加するオブジェクト</param>
 		public void AddFirst( IDisposable item ) {
-			if( item == null ) throw new ArgumentNullException( "item" );
-
+			if( item == null ) {
+				throw new ArgumentNullException( "item" );
+			}
 			ThrowExceptionIfDisposed();
 			lock( _lockObject ) {
 				_targetLists.Insert( 0, item );
@@ -122,8 +126,9 @@ namespace LivetEx {
 		/// <param name="item">コレクションに含まれているか判断したい要素</param>
 		/// <returns>このコレクションに含まれているかどうか</returns>
 		public bool Contains( IDisposable item ) {
-			if( item == null ) throw new ArgumentNullException( "item" );
-
+			if( item == null ) {
+				throw new ArgumentNullException( "item" );
+			}
 			ThrowExceptionIfDisposed();
 			lock( _lockObject ) {
 				return _targetLists.Contains( item );
@@ -191,7 +196,8 @@ namespace LivetEx {
 		}
 
 		protected virtual void Dispose( bool disposing ) {
-			if( _disposed ) return;
+			if( _disposed )
+				return;
 
 			if( disposing ) {
 				lock( _lockObject ) {
@@ -213,19 +219,13 @@ namespace LivetEx {
 
 namespace LivetEx.Extensions {
 	public static class DisposableCollectionExtensions {
-		public static IDisposable AddTo( this ObservableDisposableCollection disposable, DisposableCollection disposableCollection ) {
+		public static IDisposable AddToDispose( this IDisposable disposable, DisposableCollection disposableCollection ) {
 			disposableCollection.Add( disposable );
 
 			return disposable;
 		}
 
-		public static IDisposable AddTo( this IDisposable disposable, DisposableCollection disposableCollection ) {
-			disposableCollection.Add( disposable );
-
-			return disposable;
-		}
-
-		public static IEnumerable<IDisposable> AddTo( this IEnumerable<IDisposable> disposables, DisposableCollection disposableCollection ) {
+		public static IEnumerable<IDisposable> AddToDispose( this IEnumerable<IDisposable> disposables, DisposableCollection disposableCollection ) {
 			disposableCollection.AddRange( disposables );
 
 			return disposables;

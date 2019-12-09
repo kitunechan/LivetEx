@@ -88,6 +88,24 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'HV-Win8|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\HV-Win8\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'HV-Win8|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\HV-Win8\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -131,10 +149,8 @@
     <Compile Include="Messaging\WindowMessageAction.cs" />
     <Compile Include="Messaging\WindowMessageT.cs" />
     <Compile Include="Messaging\WindowMessage.cs" />
-    <Compile Include="ObservableSynchronizedUniqueCollection.cs" />
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />
-    <Compile Include="ObservableDisposableCollection.cs" />
     <Compile Include="Commands\CommandBindingService.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="EventListeners\AnonymousCollectionItemNotifyPropertyChangedEventHandlerBag.cs" />
@@ -157,7 +173,6 @@
     <Compile Include="EventListeners\AnonymousCollectionChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\AnonymousPropertyChangedEventHandlerBag.cs" />
     <Compile Include="Messaging\MessageBoxMessage.cs" />
-    <Compile Include="NotifyObservableSyncCollection.cs" />
     <Compile Include="WeakEventListeners\LivetCollectionChangedWeakEventListener.cs" />
     <Compile Include="WeakEventListeners\LivetPropertyChangedWeakEventListener.cs" />
     <Compile Include="DisposableCollection.cs" />

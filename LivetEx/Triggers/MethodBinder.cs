@@ -93,11 +93,11 @@ namespace LivetEx.Triggers {
 				throw new ArgumentException( $"{targetType.Name}型に引数の無いメソッド{methodName}が見つかりません。" );
 			}
 
-			var result = _methodInfoCache.Invoke( target, null );
 			var taskArgs = new { TargetType= targetType, MethodInfo = _methodInfoCache };
+			var result = _methodInfoCache.Invoke( target, null );
 
 			// メソッドのキャッシュ処理
-			if( _methodInfoCache.ReturnType == typeof( void ) ) {
+			if( taskArgs.MethodInfo.ReturnType == typeof( void ) ) {
 				var t = Task.Run( () => {
 
 					var paraTarget = Expression.Parameter( typeof( object ), "target" );

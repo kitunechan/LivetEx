@@ -6,8 +6,8 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowMessage<TWindow> : WindowMessage where TWindow : Window {
-		public WindowMessage() : base() {
+	public class ShowWindowMessage<TWindow> : ShowWindowMessage where TWindow : Window {
+		public ShowWindowMessage() : base() {
 			this.WindowType = typeof( TWindow );
 		}
 
@@ -15,7 +15,7 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowMessage( string messageKey ) : base( messageKey ) {
+		public ShowWindowMessage( string messageKey ) : base( messageKey ) {
 			this.WindowType = typeof( TWindow );
 		}
 
@@ -41,7 +41,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowMessage<TWindow>();
+			return new ShowWindowMessage<TWindow>();
 		}
 
 
@@ -51,8 +51,8 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowMessage<TWindow, TViewModel> : WindowMessage<TWindow> where TWindow : Window where TViewModel : ViewModel {
-		public WindowMessage() : base() {
+	public class ShowWindowMessage<TWindow, TViewModel> : ShowWindowMessage<TWindow> where TWindow : Window where TViewModel : ViewModel {
+		public ShowWindowMessage() : base() {
 
 		}
 
@@ -60,7 +60,7 @@ namespace LivetEx.Messaging {
 		/// メッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowMessage( string messageKey ) : base( messageKey ) { }
+		public ShowWindowMessage( string messageKey ) : base( messageKey ) { }
 
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowMessage( string messageKey, TViewModel viewModel ) : base( messageKey ) {
+		public ShowWindowMessage( string messageKey, TViewModel viewModel ) : base( messageKey ) {
 			this.ViewModel = viewModel;
 		}
 
@@ -76,7 +76,7 @@ namespace LivetEx.Messaging {
 		/// 新しいWindowのDataContextに設定するViewModelとメッセージキーを指定して新しい相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="ViewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowMessage( TViewModel viewModel ) : this() {
+		public ShowWindowMessage( TViewModel viewModel ) : this() {
 			this.ViewModel = viewModel;
 		}
 
@@ -96,20 +96,20 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowMessage<TWindow, TViewModel>();
+			return new ShowWindowMessage<TWindow, TViewModel>();
 		}
 	}
 
-	public static class WindowMessageGenerator<TWindow> where TWindow : Window {
-		public static WindowMessage<TWindow, TViewModel> Create<TViewModel>( TViewModel viewModel ) where TViewModel : ViewModel {
-			return new WindowMessage<TWindow, TViewModel>( viewModel ) {
+	public static class ShowWindowMessageGenerator<TWindow> where TWindow : Window {
+		public static ShowWindowMessage<TWindow, TViewModel> Create<TViewModel>( TViewModel viewModel ) where TViewModel : ViewModel {
+			return new ShowWindowMessage<TWindow, TViewModel>( viewModel ) {
 				WindowType = typeof( TWindow )
 
 			};
 		}
 
-		public static WindowMessage<TWindow, TViewModel> Create<TViewModel>( string messageKey, TViewModel viewModel ) where TViewModel : ViewModel {
-			return new WindowMessage<TWindow, TViewModel>( messageKey, viewModel ) {
+		public static ShowWindowMessage<TWindow, TViewModel> Create<TViewModel>( string messageKey, TViewModel viewModel ) where TViewModel : ViewModel {
+			return new ShowWindowMessage<TWindow, TViewModel>( messageKey, viewModel ) {
 				WindowType = typeof( TWindow )
 
 			};

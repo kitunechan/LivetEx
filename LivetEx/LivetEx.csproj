@@ -143,12 +143,12 @@
     <Compile Include="Messaging\OpenFileDialogMessageAction.cs" />
     <Compile Include="Messaging\ResponsiveMessage.cs" />
     <Compile Include="Messaging\SaveFileDialogMessageAction.cs" />
+    <Compile Include="Messaging\ShowWindowMessage.cs" />
+    <Compile Include="Messaging\ShowWindowMessageT.cs" />
+    <Compile Include="Messaging\ShowWindowMessageAction.cs" />
     <Compile Include="Messaging\WindowActionMessageAction.cs" />
     <Compile Include="Messaging\CallMethodMessage.cs" />
     <Compile Include="Messaging\WindowMode.cs" />
-    <Compile Include="Messaging\WindowMessageAction.cs" />
-    <Compile Include="Messaging\WindowMessageT.cs" />
-    <Compile Include="Messaging\WindowMessage.cs" />
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />
     <Compile Include="Commands\CommandBindingService.cs" />

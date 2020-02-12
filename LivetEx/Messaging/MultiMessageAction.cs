@@ -21,8 +21,8 @@ namespace LivetEx.Messaging {
 					return;
 				}
 
-				case WindowMessage _message: {
-					WindowMessageAction.Action( this.AssociatedObject, _message );
+				case ShowWindowMessage _message: {
+					ShowWindowMessageAction.Action( this.AssociatedObject, _message );
 					return;
 				}
 

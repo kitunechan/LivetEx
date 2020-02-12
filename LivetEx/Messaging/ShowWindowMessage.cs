@@ -6,18 +6,18 @@ namespace LivetEx.Messaging {
 	/// 画面遷移アクション用の相互作用メッセージです。
 	/// </summary>
 	[System.Windows.Markup.ContentProperty( "ViewModel" )]
-	public class WindowMessage : ResponsiveMessage<bool?> {
+	public class ShowWindowMessage : ResponsiveMessage<bool?> {
 		/// <summary>
 		/// 相互作用メッセージのインスタンスを生成します。
 		/// </summary>
-		public WindowMessage() {
+		public ShowWindowMessage() {
 		}
 
 		/// <summary>
 		/// メッセージキーを指定して相互作用メッセージのインスタンスを生成します。
 		/// </summary>
 		/// <param name="messageKey">メッセージキー</param>
-		public WindowMessage( string messageKey ) : base( messageKey ) { }
+		public ShowWindowMessage( string messageKey ) : base( messageKey ) { }
 
 
 		/// <summary>
@@ -26,7 +26,7 @@ namespace LivetEx.Messaging {
 		/// <param name="messageKey">メッセージキー</param>
 		/// <param name="windowType">新しいWindowの型</param>
 		/// <param name="viewModel">新しいWindowのDataContextに設定するViewModel</param>
-		public WindowMessage( string messageKey, Type windowType, ViewModel viewModel ) : base( messageKey ) {
+		public ShowWindowMessage( string messageKey, Type windowType, ViewModel viewModel ) : base( messageKey ) {
 			ViewModel = viewModel;
 
 			if( windowType != null ) {
@@ -55,7 +55,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for Mode.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ModeProperty =
-			DependencyProperty.Register( "Mode", typeof( WindowMode ), typeof( WindowMessage ), new PropertyMetadata( WindowMode.UnKnown ) );
+			DependencyProperty.Register( "Mode", typeof( WindowMode ), typeof( ShowWindowMessage ), new PropertyMetadata( WindowMode.UnKnown ) );
 
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowType.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowTypeProperty =
-			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( WindowMessage ), new PropertyMetadata( null ) );
+			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( ShowWindowMessage ), new PropertyMetadata( null ) );
 
 		/// <summary>
 		/// 遷移先ウィンドウがアクションのウィンドウに所有されるかを設定します。
@@ -80,7 +80,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
-			DependencyProperty.Register( "IsOwned", typeof( bool? ), typeof( WindowMessage ), new PropertyMetadata( true ) );
+			DependencyProperty.Register( "IsOwned", typeof( bool? ), typeof( ShowWindowMessage ), new PropertyMetadata( true ) );
 
 
 
@@ -92,7 +92,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowState.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowStateProperty =
-			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowMessage ), new PropertyMetadata( WindowState.Normal ) );
+			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( ShowWindowMessage ), new PropertyMetadata( WindowState.Normal ) );
 		#endregion
 
 
@@ -103,7 +103,7 @@ namespace LivetEx.Messaging {
 		}
 
 		public static readonly DependencyProperty WindowStartupLocationProperty =
-			DependencyProperty.Register( nameof( WindowStartupLocation ), typeof( WindowStartupLocation? ), typeof( WindowMessage ), new PropertyMetadata( default( WindowStartupLocation? ) ) );
+			DependencyProperty.Register( nameof( WindowStartupLocation ), typeof( WindowStartupLocation? ), typeof( ShowWindowMessage ), new PropertyMetadata( default( WindowStartupLocation? ) ) );
 		#endregion
 
 
@@ -124,7 +124,7 @@ namespace LivetEx.Messaging {
 		/// </summary>
 		/// <returns>自身の新しいインスタンス</returns>
 		protected override Freezable CreateInstanceCore() {
-			return new WindowMessage();
+			return new ShowWindowMessage();
 		}
 
 
@@ -134,7 +134,7 @@ namespace LivetEx.Messaging {
 		protected override void CloneCore( Freezable sourceFreezable ) {
 			base.CloneCore( sourceFreezable );
 
-			var source = (WindowMessage)sourceFreezable;
+			var source = (ShowWindowMessage)sourceFreezable;
 
 			this.InitializeAction = source.InitializeAction;
 			this.WindowSettingAction = source.WindowSettingAction;

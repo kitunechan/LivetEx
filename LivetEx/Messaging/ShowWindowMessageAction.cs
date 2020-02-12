@@ -6,9 +6,9 @@ using LivetEx.Messaging;
 
 namespace LivetEx.Messaging {
 	/// <summary>
-	/// 画面遷移(Window)を行うアクションです。<see cref="WindowMessage"/>に対応します。
+	/// 画面遷移(Window)を行うアクションです。<see cref="ShowWindowMessage"/>に対応します。
 	/// </summary>
-	public class WindowMessageAction : MessageAction<FrameworkElement, WindowMessage> {
+	public class ShowWindowMessageAction : MessageAction<FrameworkElement, ShowWindowMessage> {
 
 		#region Register WindowType
 
@@ -22,7 +22,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowType.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowTypeProperty =
-			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( WindowMessageAction ), new PropertyMetadata() );
+			DependencyProperty.Register( "WindowType", typeof( Type ), typeof( ShowWindowMessageAction ), new PropertyMetadata() );
 
 		#endregion
 
@@ -38,7 +38,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for Mode.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty ModeProperty =
-			DependencyProperty.Register( "Mode", typeof( WindowMode ), typeof( WindowMessageAction ), new PropertyMetadata( WindowMode.UnKnown ) );
+			DependencyProperty.Register( "Mode", typeof( WindowMode ), typeof( ShowWindowMessageAction ), new PropertyMetadata( WindowMode.UnKnown ) );
 		#endregion
 
 		#region Register IsOwned
@@ -52,7 +52,7 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for OwnedFromThis.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty OwnedFromThisProperty =
-			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( WindowMessageAction ), new PropertyMetadata( true ) );
+			DependencyProperty.Register( "IsOwned", typeof( bool ), typeof( ShowWindowMessageAction ), new PropertyMetadata( true ) );
 		#endregion
 
 		#region Register WindowState
@@ -63,12 +63,12 @@ namespace LivetEx.Messaging {
 
 		// Using a DependencyProperty as the backing store for WindowState.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty WindowStateProperty =
-			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( WindowMessageAction ), new PropertyMetadata( WindowState.Normal ) );
+			DependencyProperty.Register( nameof( WindowState ), typeof( WindowState ), typeof( ShowWindowMessageAction ), new PropertyMetadata( WindowState.Normal ) );
 		#endregion
 
-		protected override void InvokeAction( WindowMessage message ) {
+		protected override void InvokeAction( ShowWindowMessage message ) {
 
-			var clone = (WindowMessage)message.Clone();
+			var clone = (ShowWindowMessage)message.Clone();
 			{
 				clone.WindowType = message.WindowType ?? WindowType;
 				clone.Mode = ( message.Mode != WindowMode.UnKnown ) ? message.Mode : Mode;
@@ -96,7 +96,7 @@ namespace LivetEx.Messaging {
 		}
 
 
-		public static void Action( FrameworkElement element, WindowMessage message ) {
+		public static void Action( FrameworkElement element, ShowWindowMessage message ) {
 			var targetType = message.WindowType;
 
 			if( !IsValidWindowType( targetType ) ) {

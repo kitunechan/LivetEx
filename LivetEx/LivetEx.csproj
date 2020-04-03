@@ -133,6 +133,8 @@
     <None Include="License\LivetEx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="IIsChanged.cs" />
+    <Compile Include="IsChangedChangingEventArgs.cs" />
     <Compile Include="Messaging\DirectMessage.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageAction.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Messaging\WindowActionMessageAction.cs" />
     <Compile Include="Messaging\CallMethodMessage.cs" />
     <Compile Include="Messaging\WindowMode.cs" />
+    <Compile Include="NotifyKeepObject.cs" />
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />
     <Compile Include="Commands\CommandBindingService.cs" />

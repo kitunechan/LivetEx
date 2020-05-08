@@ -5,7 +5,7 @@ using System.Windows.Input;
 namespace LivetEx.Triggers {
 	public class CallCommandAction : TriggerAction<DependencyObject> {
 		protected override void Invoke( object parameter ) {
-			if( Command.CanExecute( parameter ) ) {
+			if( Command != null && Command.CanExecute( parameter ) ) {
 				Command.Execute( parameter );
 			}
 		}

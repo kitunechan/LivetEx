@@ -43,13 +43,13 @@ namespace LivetEx {
 		/// 変更フラグをリセットします。
 		/// </summary>
 		public void IsChangedReset() {
-			IsChanged = false;
-
 			foreach( var child in ChangedChildren ) {
 				if( child != null ) {
 					child.IsChangedReset();
 				}
 			}
+
+			IsChanged = false;
 		}
 
 		/// <summary>

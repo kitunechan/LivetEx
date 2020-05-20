@@ -21,7 +21,7 @@ namespace LivetEx {
 			get {
 				return _IsChanged || ChangedChildren.Where( x => x != null ).Any( x => x.IsChanged );
 			}
-			protected set {
+			set {
 				IsChangedChanging?.Invoke( this, new IsChangedChangingEventArgs( _IsChanged, value ) );
 
 				if( _IsChanged != value ) {

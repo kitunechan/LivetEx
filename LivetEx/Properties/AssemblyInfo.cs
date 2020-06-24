@@ -48,6 +48,6 @@ using System.Resources;
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Messaging")]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Behaviors")]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Triggers" )]
-[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Converters" )]
+//[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Converters" )]
 
-[assembly: AssemblyFileVersion( "1.3.5" )]
+[assembly: AssemblyFileVersion( "1.3.6" )]

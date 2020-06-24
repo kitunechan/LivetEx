@@ -89,8 +89,6 @@
     <Compile Include="AnonymousDisposable.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Commands\DelegateCommandTV.cs" />
-    <Compile Include="Converters\AnyConverter.cs" />
-    <Compile Include="Converters\EqualConverter.cs" />
     <Compile Include="EqualityComparer.cs" />
     <None Include="License\LivetEx.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -117,7 +115,6 @@
     <Compile Include="ReaderWriterLockSlimEx.cs" />
     <Compile Include="SystemTypeExtension.cs" />
     <Compile Include="Commands\CommandBindingService.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="EventListeners\AnonymousCollectionItemNotifyPropertyChangedEventHandlerBag.cs" />
     <Compile Include="EventListeners\LivetCollectionItemNotifyPropertyChangedEventListener.cs" />
     <Compile Include="ICollectionItemNotifyPropertyChanged.cs" />

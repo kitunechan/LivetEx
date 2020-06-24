@@ -5,8 +5,14 @@ using System.Windows.Input;
 namespace LivetEx.Triggers {
 	public class CallCommandAction : TriggerAction<DependencyObject> {
 		protected override void Invoke( object parameter ) {
-			if( Command != null && Command.CanExecute( parameter ) ) {
-				Command.Execute( parameter );
+			if( this.UseCommandParameter ) {
+				if( Command.CanExecute( CommandParameter ) ) {
+					Command.Execute( CommandParameter );
+				}
+			} else {
+				if( Command.CanExecute( parameter ) ) {
+					Command.Execute( parameter );
+				}
 			}
 		}
 
@@ -20,6 +26,8 @@ namespace LivetEx.Triggers {
 			DependencyProperty.Register( nameof( Command ), typeof( ICommand ), typeof( CallCommandAction ), new PropertyMetadata( default( ICommand ) ) );
 		#endregion
 
+		public bool UseCommandParameter { get; set; }
+
 		#region Register CommandParameter
 		public object CommandParameter {
 			get => (object)GetValue( CommandParameterProperty );
@@ -29,6 +37,7 @@ namespace LivetEx.Triggers {
 		public static readonly DependencyProperty CommandParameterProperty =
 			DependencyProperty.Register( nameof( CommandParameter ), typeof( object ), typeof( CallCommandAction ), new PropertyMetadata( default( object ) ) );
 		#endregion
+
 
 	}
 }

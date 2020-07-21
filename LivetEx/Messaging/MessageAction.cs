@@ -20,10 +20,6 @@ namespace LivetEx.Messaging {
 				return;
 			}
 
-			if( ( !window.IsActive ) && InvokeActionOnlyWhenWindowIsActive ) {
-				return;
-			}
-
 			if( ( DirectMessage?.Message ?? parameter ) is TMessage message ) {
 				InvokeAction( message );
 
@@ -46,20 +42,6 @@ namespace LivetEx.Messaging {
 		// Using a DependencyProperty as the backing store for DirectMessage.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty DirectMessageProperty =
 			DependencyProperty.Register( nameof( DirectMessage ), typeof( DirectMessage ), typeof( MessageAction<T, TMessage> ), new PropertyMetadata() );
-
-
-		/// <summary>
-		/// Windowがアクティブな時のみアクションを実行するかどうかを指定、または取得します。初期値はfalseです。
-		/// </summary>
-		public bool InvokeActionOnlyWhenWindowIsActive {
-			get { return (bool)GetValue( InvokeActionOnlyWhenWindowIsActiveProperty ); }
-			set { SetValue( InvokeActionOnlyWhenWindowIsActiveProperty, value ); }
-		}
-
-		// Using a DependencyProperty as the backing store for InvokeActionOnlyWhenWindowIsActive.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty InvokeActionOnlyWhenWindowIsActiveProperty =
-			DependencyProperty.Register( nameof( InvokeActionOnlyWhenWindowIsActive ), typeof( bool ), typeof( MessageAction<T, TMessage> ), new PropertyMetadata( false ) );
-
 
 	}
 }

@@ -2,6 +2,7 @@
 using System.Windows.Interactivity;
 
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace LivetEx.Messaging {
 	/// <summary>
@@ -20,12 +21,15 @@ namespace LivetEx.Messaging {
 				return;
 			}
 
-			if( ( DirectMessage?.Message ?? parameter ) is TMessage message ) {
+			var value = DirectMessage?.Message ?? parameter;
+			if( value is TMessage message ) {
 				InvokeAction( message );
 
 				if( DirectMessage != null ) {
 					DirectMessage.InvokeCallbacks( message );
 				}
+			} else {
+				Debug.WriteLine( $"パラメータとなるメッセージの型が {typeof(TMessage)} ではありません。Type: {value?.GetType()}" );
 			}
 		}
 

@@ -39,20 +39,6 @@ namespace LivetEx.Messaging {
 
 
 		/// <summary>
-		/// アタッチされたオブジェクトがロードされている期間(Loaded~Unloaded)だけActionを実行するかどうかを指定、または取得します。デフォルトはfalseです。
-		/// </summary>
-		public bool InvokeActionsOnlyWhileAttatchedObjectLoaded {
-			get { return (bool)GetValue( InvokeActionsOnlyWhileAttatchedObjectLoadedProperty ); }
-			set { SetValue( InvokeActionsOnlyWhileAttatchedObjectLoadedProperty, value ); }
-		}
-
-		// Using a DependencyProperty as the backing store for FireActionsOnlyWhileAttatchedObjectLoading.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty InvokeActionsOnlyWhileAttatchedObjectLoadedProperty =
-			DependencyProperty.Register( "InvokeActionsOnlyWhileAttatchedObjectLoaded", typeof( bool ), typeof( MessageTrigger ), new PropertyMetadata( false ) );
-
-
-
-		/// <summary>
 		/// このトリガーが有効かどうかを指定、または取得します。デフォルトはtrueです。
 		/// </summary>
 		public bool IsEnable {
@@ -104,10 +90,6 @@ namespace LivetEx.Messaging {
 				var checkResult = false;
 				DoActionOnDispatcher( () => {
 					if( !IsEnable ) {
-						return;
-					}
-
-					if( InvokeActionsOnlyWhileAttatchedObjectLoaded && ( !_loaded ) ) {
 						return;
 					}
 

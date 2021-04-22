@@ -8,8 +8,7 @@ using System.Windows.Input;
 
 namespace LivetEx.Commands {
 	/// <summary>
-	/// 対象のElementにコマンドを適用させるクラス
-	/// コマンド追加後にApplyCommandBindingsで適用してください。
+	/// 対象のFrameworkElementにCommandBindingを適用させるクラス
 	/// </summary>
 	public class CommandBindingService : IEnumerable<BindingUnit> {
 
@@ -17,18 +16,14 @@ namespace LivetEx.Commands {
 			this.TaregetElement = taregetElement;
 		}
 
-		public FrameworkElement TaregetElement { get; private set; }
+		public FrameworkElement TaregetElement { get; }
 		readonly Dictionary<BindingUnit, CommandBinding> Items = new Dictionary<BindingUnit, CommandBinding>();
 
 		/// <summary>
-		/// コマンドの適用
+		/// コマンドを有効にします。
 		/// </summary>
-		public void ApplyCommandBindings() {
-			if( this.TaregetElement == null ) {
-				throw new ArgumentException( "Elementを指定して下さい。" );
-			}
-
-			foreach( var item in Items ) {
+		public void EnableCommandBindings() {
+			foreach( var item in this.Items ) {
 				if( !this.TaregetElement.CommandBindings.Contains( item.Value ) ) {
 					this.TaregetElement.CommandBindings.Add( item.Value );
 				}
@@ -36,40 +31,55 @@ namespace LivetEx.Commands {
 		}
 
 		/// <summary>
-		/// コマンドの削除
+		/// コマンドを無効にします。
 		/// </summary>
-		public void ClearCommandBindings() {
-			if( this.TaregetElement == null ) {
-				throw new ArgumentException( "Elementを指定して下さい。" );
-			}
-
-			foreach( var item in Items ) {
+		public void DisableCommandBindings() {
+			foreach( var item in this.Items ) {
 				this.TaregetElement.CommandBindings.Remove( item.Value );
 			}
 		}
 
+		/// <summary>
+		/// コマンドを登録して有効にします。
+		/// </summary>
+		/// <param name="item"></param>
 		public void Add( BindingUnit item ) {
-			this.Items[item] = new CommandBinding( item.Target,
+			var commandBinding = new CommandBinding( item.Target,
 				( s, ex ) => item.Command.Execute( item.CommandParameter ?? ex ),
 				( s, ex ) => {
 					ex.CanExecute = item.Command.CanExecute( item.CommandParameter ?? ex );
 					ex.Handled = true;
 				} );
+
+			this.Items[item] = commandBinding;
+			this.TaregetElement.CommandBindings.Add( commandBinding );
 		}
 
+		/// <summary>
+		/// 複数のコマンドを登録して有効にします。
+		/// </summary>
+		/// <param name="collection"></param>
 		public void AddRange( IEnumerable<BindingUnit> collection ) {
 			foreach( var item in collection ) {
 				Add( item );
 			}
 		}
 
+		/// <summary>
+		/// 登録したすべてのコマンドを無効にして削除します。
+		/// </summary>
 		public void Clear() {
+			DisableCommandBindings();
 			this.Items.Clear();
-			ClearCommandBindings();
 		}
 
+		/// <summary>
+		/// 指定したコマンドを無効にして削除します。
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		public bool Remove( BindingUnit item ) {
-			if( Items.ContainsKey( item ) ) {
+			if( this.Items.ContainsKey( item ) ) {
 				this.TaregetElement.CommandBindings.Remove( Items[item] );
 				return this.Items.Remove( item );
 			}
@@ -78,17 +88,15 @@ namespace LivetEx.Commands {
 		}
 
 		public IEnumerator<BindingUnit> GetEnumerator() {
-			return Items.Keys.GetEnumerator();
+			return this.Items.Keys.GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
 			return this.GetEnumerator();
 		}
 
-		public int Count {
-			get { return Items.Count; }
-		}
-		
+		public int Count => Items.Count;
+
 	}
 
 	public class BindingUnit {

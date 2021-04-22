@@ -76,6 +76,7 @@ namespace LivetEx.Triggers {
 		static void Invoke( object methodTarget, string methodName, Type methodParameterType, object methodParameter, object parameter ) {
 			if( parameter is ICallMethodMessage callMethodMessage ) {
 				if( callMethodMessage.MethodTarget != null && callMethodMessage.MethodTarget != methodTarget.GetType() ) {
+					System.Diagnostics.Debug.WriteLine( $"CallMethodAction({methodTarget.GetType().FullName}): {callMethodMessage.MethodTarget.FullName}" );
 					return;
 				}
 

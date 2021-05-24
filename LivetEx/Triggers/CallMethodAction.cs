@@ -1,9 +1,8 @@
-﻿using System.Windows.Interactivity;
+﻿using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using LivetEx.Messaging;
 using System.Linq;
 using System;
-using System.Runtime.Remoting.Messaging;
 
 namespace LivetEx.Triggers {
 

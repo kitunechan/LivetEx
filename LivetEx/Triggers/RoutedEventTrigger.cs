@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 using System.Windows;
 
 namespace LivetEx.Triggers {

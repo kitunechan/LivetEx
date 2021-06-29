@@ -22,8 +22,9 @@ namespace LivetEx.Messaging {
 
 		private LivetWeakEventListener<EventHandler<MessageRaisedEventArgs>, MessageRaisedEventArgs> _listener;
 		
-		private bool _loaded = true;
+		private bool _IsLoaded;
 
+		#region Register Messenger
 		/// <summary>
 		/// ViewModelのMessengerを指定、または取得します。
 		/// </summary>
@@ -32,23 +33,23 @@ namespace LivetEx.Messaging {
 			set { SetValue( MessengerProperty, value ); }
 		}
 
-		// Using a DependencyProperty as the backing store for Messenger.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty MessengerProperty =
 			DependencyProperty.Register( "Messenger", typeof( Messenger ), typeof( MessageTrigger ),
 										new PropertyMetadata( MessengerChanged ) );
+		#endregion
 
-
+		#region Register IsActionLoadedOnly
 		/// <summary>
-		/// このトリガーが有効かどうかを指定、または取得します。デフォルトはtrueです。
+		/// アタッチされたオブジェクトがロードされている期間(Loaded~Unloaded)だけActionを実行するかどうかを指定、または取得します。デフォルトはfalseです。
 		/// </summary>
-		public bool IsEnable {
-			get { return (bool)GetValue( IsEnableProperty ); }
-			set { SetValue( IsEnableProperty, value ); }
+		public bool IsActionLoadedOnly {
+			get { return (bool)GetValue( IsActionLoadedOnlyProperty ); }
+			set { SetValue( IsActionLoadedOnlyProperty, value ); }
 		}
 
-		// Using a DependencyProperty as the backing store for IsEnable.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty IsEnableProperty =
-			DependencyProperty.Register( "IsEnable", typeof( bool ), typeof( MessageTrigger ), new PropertyMetadata( true ) );
+		public static readonly DependencyProperty IsActionLoadedOnlyProperty =
+			DependencyProperty.Register( "IsActionLoadedOnly", typeof( bool ), typeof( MessageTrigger ), new PropertyMetadata( false ) );
+		#endregion
 
 
 
@@ -89,7 +90,7 @@ namespace LivetEx.Messaging {
 
 				var checkResult = false;
 				DoActionOnDispatcher( () => {
-					if( !IsEnable ) {
+					if( IsActionLoadedOnly && !_IsLoaded ) {
 						return;
 					}
 
@@ -140,11 +141,11 @@ namespace LivetEx.Messaging {
 		}
 
 		void AssociatedObjectLoaded( object sender, RoutedEventArgs e ) {
-			_loaded = true;
+			_IsLoaded = true;
 		}
 
 		void AssociatedObjectUnloaded( object sender, RoutedEventArgs e ) {
-			_loaded = false;
+			_IsLoaded = false;
 		}
 
 		protected override void OnDetaching() {

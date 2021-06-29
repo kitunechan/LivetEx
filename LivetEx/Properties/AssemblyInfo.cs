@@ -41,7 +41,7 @@ using System.Resources;
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.0.*")]
+[assembly: AssemblyVersion("2.1.*")]
 
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx")]
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Commands")]
@@ -50,4 +50,4 @@ using System.Resources;
 [assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Triggers" )]
 //[assembly: XmlnsDefinition("http://schemas.livet-Ex/", "LivetEx.Converters" )]
 
-[assembly: AssemblyFileVersion( "2.0a" )]
+[assembly: AssemblyFileVersion( "2.1" )]

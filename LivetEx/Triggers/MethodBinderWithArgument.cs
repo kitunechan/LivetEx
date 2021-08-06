@@ -119,11 +119,8 @@ namespace LivetEx.Triggers {
 				throw new ArgumentException( $"{targetType.Name} 型に {argumentType.Name} 型の引数を一つだけ持つメソッド {methodName} が見つかりません。" );
 			}
 
-			var result = _methodInfoCache.Invoke( target, new[] { argument } );
-
-
-
 			var taskArgs = new { TargetType = targetType, MethodInfo = _methodInfoCache, ParameterType = _methodInfoCache.GetParameters()[0].ParameterType };
+			var result = _methodInfoCache.Invoke( target, new[] { argument } );
 
 			if( _methodInfoCache.ReturnType == typeof( void ) ) {
 				var t = Task.Run( () => {
